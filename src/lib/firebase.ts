@@ -23,12 +23,9 @@ const auth = getAuth(app);
 const registerUser = (email: string, password: string) =>
   createUserWithEmailAndPassword(auth, email, password);
 
-const loginUser = (email: string, password: string) =>
-  signInWithEmailAndPassword(auth, email, password);
-
 const logoutUser = () => signOut(auth);
 
 const subscribeToAuthChanges = (callback: (user: User | null) => void) =>
   onAuthStateChanged(auth, callback);
 
-export { auth, registerUser, loginUser, logoutUser, subscribeToAuthChanges };
+export { auth, signInWithEmailAndPassword, registerUser, logoutUser, subscribeToAuthChanges };
