@@ -2,6 +2,7 @@ import { registerUser } from "@/lib/firebase";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +14,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { toast } from "sonner";
 
 const FormSchema = z
   .object({
@@ -49,6 +49,7 @@ export default function RegisterForm({
     try {
       const userCredential = await registerUser(values.email, values.password);
       console.log("user", userCredential.user);
+      toast.success("註冊成功，歡迎使用");
     } catch (error: any) {
       console.error("註冊錯誤", error);
       if (error.code === "auth/email-already-in-use") {
