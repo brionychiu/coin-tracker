@@ -27,7 +27,7 @@ export default function AuthModal() {
       ) : (
         <Dialog>
           <DialogTrigger>會員登入/註冊</DialogTrigger>
-          <DialogContent>
+          <DialogContent className="w-350">
             <DialogHeader>
               <DialogTitle>{isLoginView ? "登入" : "註冊"}</DialogTitle>
               <DialogDescription></DialogDescription>
