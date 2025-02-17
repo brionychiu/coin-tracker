@@ -4,8 +4,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-
 import { signIn } from "next-auth/react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +38,11 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
     },
   });
 
+  const handleTestLogin = () => {
+    form.setValue("email", "test@mail.com");
+    form.setValue("password", "abc1234");
+  };
+
   async function onSubmit(values: z.infer<typeof FormSchema>) {
     const result = await signIn("credentials", {
       email: values.email,
@@ -47,6 +52,7 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
 
     if (result?.error) {
       console.error("登入失敗", result.error);
+      toast.error("登入失敗，請輸入正確信箱或密碼");
     } else {
       router.push("/dashboard");
     }
@@ -54,7 +60,7 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="email"
@@ -83,8 +89,17 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
             </FormItem>
           )}
         />
-        <Button type="submit">登入</Button>
-        <Button onClick={toggleForm}>沒有帳號？請點擊註冊</Button>
+        <div>
+          <Button type="submit" className="w-full">
+            登入
+          </Button>
+          <Button variant="link" onClick={toggleForm} className="mt-2">
+            沒有帳號？請點擊註冊
+          </Button>
+          <Button variant="link" onClick={handleTestLogin} className="mt-2">
+            使用測試帳號登入
+          </Button>
+        </div>
       </form>
     </Form>
   );
