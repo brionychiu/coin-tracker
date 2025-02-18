@@ -4,8 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
-import { toast } from "sonner";
+import { signIn } from "@/lib/firebase";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -44,16 +43,8 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
   };
 
   async function onSubmit(values: z.infer<typeof FormSchema>) {
-    const result = await signIn("credentials", {
-      email: values.email,
-      password: values.password,
-      redirect: false,
-    });
-
-    if (result?.error) {
-      console.error("登入失敗", result.error);
-      toast.error("登入失敗，請輸入正確信箱或密碼");
-    } else {
+    const userCredential = await signIn(values.email, values.password);
+    if (userCredential) {
       router.push("/dashboard");
     }
   }
