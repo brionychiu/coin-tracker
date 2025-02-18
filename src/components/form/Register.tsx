@@ -1,34 +1,34 @@
-import { registerUser } from "@/lib/firebase";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
+import { registerUser } from '@/lib/firebase';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/ui/password-input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { PasswordInput } from '@/components/ui/password-input';
 
 const FormSchema = z
   .object({
-    email: z.string().email({ message: "請輸入正確格式電子信箱" }),
+    email: z.string().email({ message: '請輸入正確格式電子信箱' }),
     password: z
       .string()
-      .min(6, { message: "請輸入 6 位以上包含英數密碼" })
+      .min(6, { message: '請輸入 6 位以上包含英數密碼' })
       .regex(/^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9\-_]{6,50}$/, {
-        message: "輸入6位以上包含英數密碼",
+        message: '輸入6位以上包含英數密碼',
       }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "密碼不相符",
-    path: ["confirmPassword"],
+    message: '密碼不相符',
+    path: ['confirmPassword'],
   });
 
 export default function RegisterForm({
@@ -39,23 +39,23 @@ export default function RegisterForm({
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      email: "",
-      password: "",
-      confirmPassword: "",
+      email: '',
+      password: '',
+      confirmPassword: '',
     },
   });
 
   async function onSubmit(values: z.infer<typeof FormSchema>) {
     try {
       const userCredential = await registerUser(values.email, values.password);
-      console.log("user", userCredential.user);
-      toast.success("註冊成功，歡迎使用");
+      console.log('user', userCredential.user);
+      toast.success('註冊成功，歡迎使用');
     } catch (error: any) {
-      console.error("註冊錯誤", error);
-      if (error.code === "auth/email-already-in-use") {
-        toast.error("此信箱已被註冊");
+      console.error('註冊錯誤', error);
+      if (error.code === 'auth/email-already-in-use') {
+        toast.error('此信箱已被註冊');
       } else {
-        toast.error("註冊失敗，請稍後再試");
+        toast.error('註冊失敗，請稍後再試');
       }
     }
   }

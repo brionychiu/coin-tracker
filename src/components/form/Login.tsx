@@ -1,29 +1,30 @@
-"use client";
+'use client';
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useRouter } from "next/navigation";
-import { signIn } from "@/lib/firebase";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useRouter } from 'next/navigation';
+import { signIn } from '@/lib/firebase';
+import { toast } from 'sonner';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/ui/password-input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { PasswordInput } from '@/components/ui/password-input';
 
 const FormSchema = z.object({
-  email: z.string().email({ message: "請輸入正確格式電子信箱" }),
+  email: z.string().email({ message: '請輸入正確格式電子信箱' }),
   password: z
     .string()
-    .min(6, { message: "請輸入 6 位以上包含英數密碼" })
+    .min(6, { message: '請輸入 6 位以上包含英數密碼' })
     .regex(/^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9\-_]{6,50}$/, {
-      message: "輸入6位以上包含英數密碼",
+      message: '輸入6位以上包含英數密碼',
     }),
 });
 
@@ -32,20 +33,20 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
   const handleTestLogin = () => {
-    form.setValue("email", "test@mail.com");
-    form.setValue("password", "abc1234");
+    form.setValue('email', 'test@mail.com');
+    form.setValue('password', 'abc1234');
   };
 
   async function onSubmit(values: z.infer<typeof FormSchema>) {
     const userCredential = await signIn(values.email, values.password);
     if (userCredential) {
-      router.push("/dashboard");
+      router.push('/dashboard');
     }
   }
 
