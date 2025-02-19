@@ -1,11 +1,9 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { signIn } from '@/lib/firebase';
-import { toast } from 'sonner';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -17,6 +15,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
+import { signIn } from '@/lib/firebase';
 
 const FormSchema = z.object({
   email: z.string().email({ message: '請輸入正確格式電子信箱' }),

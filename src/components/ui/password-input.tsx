@@ -1,8 +1,9 @@
 'use client';
 
-import * as React from 'react';
 import { EyeOffIcon } from 'lucide-react';
+import * as React from 'react';
 import { TbEyeFilled } from 'react-icons/tb';
+
 import { Button } from '@/components/ui/button';
 import { Input, type InputProps } from '@/components/ui/input';
 import { cn } from '@/lib/utils';

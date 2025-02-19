@@ -1,0 +1,6 @@
+{
+  "cSpell.words": ["sonner"],
+  "editor.codeActionsOnSave": {
+        "source.organizeImports": true,
+    },
+}
