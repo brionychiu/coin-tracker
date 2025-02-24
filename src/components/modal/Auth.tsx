@@ -25,7 +25,7 @@ export default function AuthModal() {
       {isAuthenticated ? (
         <Button onClick={logout}>登出</Button>
       ) : (
-        <Dialog>
+        <Dialog onOpenChange={(open) => open && setIsLoginView(true)}>
           <DialogTrigger>會員登入/註冊</DialogTrigger>
           <DialogContent className="w-350">
             <DialogHeader>
