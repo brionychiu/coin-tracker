@@ -34,6 +34,7 @@ export default {
         },
         system: {
           '01': '#212529',
+          '02': '#FFEF98',
         },
         gray: {
           '01': '#6b7280',
