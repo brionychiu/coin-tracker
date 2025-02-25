@@ -23,10 +23,20 @@ export default function AuthModal() {
   return (
     <>
       {isAuthenticated ? (
-        <Button onClick={logout}>登出</Button>
+        <Button
+          variant="link"
+          className="text-base font-normal"
+          onClick={logout}
+        >
+          登出
+        </Button>
       ) : (
         <Dialog onOpenChange={(open) => open && setIsLoginView(true)}>
-          <DialogTrigger>登入/註冊</DialogTrigger>
+          <DialogTrigger>
+            <span className="text-gray-01 underline-offset-4 hover:underline">
+              登入/註冊
+            </span>
+          </DialogTrigger>
           <DialogContent className="w-350">
             <DialogHeader>
               <DialogTitle>{isLoginView ? '登入' : '註冊'}</DialogTitle>
