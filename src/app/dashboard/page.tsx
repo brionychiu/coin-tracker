@@ -1,13 +1,20 @@
-import Navbar from '@/components/layout/Navbar';
+'use client';
 
-export default async function Dashboard() {
+import { DashboardCalendar } from '@/components/page/DashboardCalendar';
+import TabsCategory from '@/components/page/TabsCategory';
+import { useState } from 'react';
+export default function Dashboard() {
+  const [date, setDate] = useState<Date | undefined>(new Date());
+
   return (
-    <div>
-      <header>
-        <Navbar />
-      </header>
-      <p>使用者 ID: </p>
-      <p>電子郵件: </p>
+    <div className="flex w-full flex-row justify-center">
+      <DashboardCalendar
+        mode="single"
+        selected={date}
+        onSelect={setDate}
+        className="rounded-md border p-4 shadow"
+      />
+      <TabsCategory />
     </div>
   );
 }
