@@ -18,28 +18,28 @@ import {
 
 const items = [
   {
-    title: '帳本',
-    url: '#',
+    title: '記帳本',
+    url: '/dashboard/accounting-book',
     icon: BookOpenText,
   },
   {
     title: '帳戶',
-    url: '#',
+    url: '/dashboard/account',
     icon: CalendarCheck2,
   },
   {
-    title: '報告',
-    url: '#',
+    title: '圖表分析',
+    url: '/dashboard/report',
     icon: ChartNoAxesCombined,
   },
   {
     title: '搜尋',
-    url: '#',
+    url: '/dashboard/search',
     icon: Search,
   },
   {
     title: '設定',
-    url: '#',
+    url: '/dashboard/settings',
     icon: Settings,
   },
 ];
