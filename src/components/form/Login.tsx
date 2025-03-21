@@ -45,7 +45,7 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
   async function onSubmit(values: z.infer<typeof FormSchema>) {
     const userCredential = await signIn(values.email, values.password);
     if (userCredential) {
-      router.push('/dashboard');
+      router.push('/dashboard/accounting-book');
     }
   }
 
