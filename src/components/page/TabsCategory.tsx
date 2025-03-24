@@ -23,6 +23,7 @@ export default function TabsCategory({ value, onChange }: TabsCategoryProps) {
                 key={index}
                 variant={value === label ? 'default' : 'ghost'}
                 className="flex flex-col items-center"
+                type="button" 
                 onClick={() => onChange?.(label)}
               >
                 <Icon className="h-6 w-6" />
@@ -39,6 +40,7 @@ export default function TabsCategory({ value, onChange }: TabsCategoryProps) {
                 key={index}
                 variant={value === label ? 'default' : 'ghost'}
                 className="flex flex-col items-center"
+                type="button" 
                 onClick={() => onChange?.(label)}
               >
                 <Icon className="h-6 w-6" />
