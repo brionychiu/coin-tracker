@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app';
+import { getFirestore } from "firebase/firestore";
 import type { User } from 'firebase/auth';
 import {
   createUserWithEmailAndPassword,
@@ -20,6 +21,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 const auth = getAuth(app);
 
 const signIn = async (email: string, password: string) => {
