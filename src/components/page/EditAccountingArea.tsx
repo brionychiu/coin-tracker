@@ -20,6 +20,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/categories';
+
+import { addAccountingRecord } from '@/lib/api/accounting';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -62,8 +64,14 @@ export default function EditAccountingArea() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      console.log('新增中...', data);
+      const docId = await addAccountingRecord(data);
+      console.log('新增成功，文件 ID:', docId);
+    } catch (error) {
+      console.error('新增失敗:', error);
+    }
   }
 
   return (
