@@ -1,5 +1,4 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from "firebase/firestore";
 import type { User } from 'firebase/auth';
 import {
   createUserWithEmailAndPassword,
@@ -8,6 +7,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 import Cookies from 'js-cookie';
 import { toast } from 'sonner';
 
@@ -22,6 +23,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const storage = getStorage(app);
 const auth = getAuth(app);
 
 const signIn = async (email: string, password: string) => {
@@ -60,4 +62,5 @@ const logoutUser = () => signOut(auth);
 const subscribeToAuthChanges = (callback: (user: User | null) => void) =>
   onAuthStateChanged(auth, callback);
 
-export { auth, logoutUser, registerUser, signIn, subscribeToAuthChanges };
+export { auth, db, logoutUser, registerUser, signIn, storage, subscribeToAuthChanges };
+
