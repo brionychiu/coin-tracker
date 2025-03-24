@@ -2,7 +2,12 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/categories';
 
-export default function TabsCategory() {
+interface TabsCategoryProps {
+  value?: string;
+  onChange?: (value: string) => void;
+}
+
+export default function TabsCategory({ value, onChange }: TabsCategoryProps) {
   return (
     <div className="rounded-md border p-4 shadow">
       <Tabs defaultValue="expenses" className="w-full max-w-[500px]">
@@ -16,8 +21,9 @@ export default function TabsCategory() {
             {EXPENSE_CATEGORIES.map(({ icon: Icon, label }, index) => (
               <Button
                 key={index}
-                variant="ghost"
+                variant={value === label ? 'default' : 'ghost'}
                 className="flex flex-col items-center"
+                onClick={() => onChange?.(label)}
               >
                 <Icon className="h-6 w-6" />
                 <p className="text-sm">{label}</p>
@@ -31,8 +37,9 @@ export default function TabsCategory() {
             {INCOME_CATEGORIES.map(({ icon: Icon, label }, index) => (
               <Button
                 key={index}
-                variant="ghost"
+                variant={value === label ? 'default' : 'ghost'}
                 className="flex flex-col items-center"
+                onClick={() => onChange?.(label)}
               >
                 <Icon className="h-6 w-6" />
                 <p className="text-sm">{label}</p>
