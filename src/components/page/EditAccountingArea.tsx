@@ -2,10 +2,10 @@
 
 import TabsCategory from '@/components/page/TabsCategory';
 import { Button } from '@/components/ui/button';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,25 +19,46 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/categories';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+const categoryEnumValues = [
+  ...EXPENSE_CATEGORIES.map((c) => c.label),
+  ...INCOME_CATEGORIES.map((c) => c.label),
+] as [string, ...string[]];
+
 const FormSchema = z.object({
+  date: z.date({
+    required_error: '請選擇日期',
+  }),
   amount: z.string().min(1, {
-    message: 'Amount must be at least 1 character.',
+    message: '請輸入正整數',
   }),
-  username: z.string().min(2, {
-    message: 'Username must be at least 2 characters.',
+  category: z.enum(categoryEnumValues),
+  account: z.enum(['cash', 'bank', 'credit'], {
+    errorMap: () => ({ message: '請選擇一個帳戶' }),
   }),
+  images: z
+    .array(z.instanceof(File))
+    .max(5, { message: '最多只能上傳 5 張圖片' })
+    .optional(),
+  note: z.string().max(500, { message: '最多只能輸入 500 個字' }).optional(),
 });
 
 export default function EditAccountingArea() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    mode: 'onSubmit',
     defaultValues: {
+      date: new Date(),
       amount: '',
-      username: '',
+      category:
+        EXPENSE_CATEGORIES.length > 0 ? EXPENSE_CATEGORIES[0].label : undefined,
+      account: 'cash',
+      images: [],
+      note: '',
     },
   });
 
@@ -50,16 +71,13 @@ export default function EditAccountingArea() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
         <FormField
           control={form.control}
-          name="username"
+          name="date"
           render={({ field }) => (
             <FormItem>
               <FormLabel>日期：</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <DatePicker value={field.value} onChange={field.onChange} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -73,11 +91,10 @@ export default function EditAccountingArea() {
               <FormControl>
                 <Input
                   type="number"
-                  placeholder="請輸入輸字"
+                  placeholder="請輸入數字"
                   min={1}
                   step={1}
                   onKeyDown={(e) => {
-                    // 阻止使用者輸入 "e", "-", "."，避免負數與小數點
                     if (['e', 'E', '-', '.'].includes(e.key)) {
                       e.preventDefault();
                     }
@@ -85,39 +102,36 @@ export default function EditAccountingArea() {
                   {...field}
                 />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name="username"
+          name="category"
           render={({ field }) => (
             <FormItem>
               <FormLabel>類別：</FormLabel>
               <FormControl>
-                <TabsCategory />
+                <TabsCategory value={field.value} onChange={field.onChange} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name="username"
+          name="account"
           render={({ field }) => (
             <FormItem>
               <FormLabel>帳戶：</FormLabel>
               <FormControl>
-                <Select>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <SelectTrigger className="w-[280px]">
-                    <SelectValue placeholder="Select a timezone" />
+                    <SelectValue placeholder="請選擇帳戶" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="cash">現金</SelectItem>
@@ -126,41 +140,40 @@ export default function EditAccountingArea() {
                   </SelectContent>
                 </Select>
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name="username"
+          name="images"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>收據照片（最多三張）：</FormLabel>
+              <FormLabel>收據照片（最多五張）：</FormLabel>
               <FormControl>
-                <Input type="file" accept="image/*" />
+                <Input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files || []);
+                    field.onChange(files);
+                  }}
+                />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name="username"
+          name="note"
           render={({ field }) => (
             <FormItem>
               <FormLabel>寫點備註吧：</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="寫點備註吧：" {...field} />
+                <Input type="text" placeholder="寫點備註吧" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
