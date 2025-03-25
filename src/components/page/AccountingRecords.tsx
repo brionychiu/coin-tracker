@@ -2,7 +2,7 @@ import { db } from '@/lib/firebase';
 import { endOfMonth, isSameDay, startOfMonth } from 'date-fns';
 import {
   collection,
-  getDocs,
+  onSnapshot,
   query,
   Timestamp,
   where,
@@ -55,23 +55,28 @@ export default function AccountingRecords({
         where('date', '>=', startTimestamp),
         where('date', '<=', endTimestamp),
       );
-      const querySnapshot = await getDocs(q);
-      const data = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as AccountingRecord[];
-      console.log('data', data);
+      // 使用 onSnapshot 來監聽資料變動
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const data = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as AccountingRecord[];
 
-      // const filteredRecords = date
-      //   ? data.filter((record) => isSameDay(record.date.toDate(), date))
-      //   : [];
-      // console.log('filteredRecords1', filteredRecords);
-      // console.log(
-      //   'isSameDay(record.date.toDate(), date)',
-      //   data.length && date ? isSameDay(data[0].date.toDate(), date) : '6',
-      // );
+        console.log('data', data);
 
-      setRecords(data);
+        setRecords(data); // 更新所有記錄
+        // 根據日期篩選資料
+        if (date) {
+          const filtered = data.filter((record) =>
+            isSameDay(record.date.toDate(), date),
+          );
+          console.log('filteredRecords2', filtered);
+          setFilteredRecords(filtered);
+        }
+      });
+
+      // 清理監聽器
+      return () => unsubscribe();
     } catch (error) {
       console.error('Error fetching records:', error);
     }
