@@ -19,11 +19,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/categories';
-
 import { addAccountingRecord } from '@/lib/api/accounting';
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/categories';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 const categoryEnumValues = [
@@ -49,7 +50,9 @@ const FormSchema = z.object({
   note: z.string().max(500, { message: '最多只能輸入 500 個字' }).optional(),
 });
 
-export default function EditAccountingArea() {
+export default function AddAccountingArea() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     mode: 'onSubmit',
@@ -65,12 +68,18 @@ export default function EditAccountingArea() {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setIsLoading(true);
     try {
       console.log('新增中...', data);
       const docId = await addAccountingRecord(data);
+      toast.success('新增成功!');
       console.log('新增成功，文件 ID:', docId);
-    } catch (error) {
+      form.reset();
+    } catch (error: any) {
       console.error('新增失敗:', error);
+      toast.warning(`新增失敗:${error.message}, 請稍後再試`);
+    } finally {
+      setIsLoading(false); // 結束載入動畫
     }
   }
 
@@ -186,7 +195,15 @@ export default function EditAccountingArea() {
             </FormItem>
           )}
         />
-        <Button type="submit">儲存</Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? (
+            <>
+              <span className="mr-2 animate-spin">⏳</span> 儲存中...
+            </>
+          ) : (
+            '新增記帳'
+          )}
+        </Button>
       </form>
     </Form>
   );
