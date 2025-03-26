@@ -1,3 +1,4 @@
+import { getCategoryIcon, getCategoryLabel } from '@/lib/categories';
 import { db } from '@/lib/firebase';
 import { endOfMonth, isSameDay, startOfMonth } from 'date-fns';
 import {
@@ -20,8 +21,8 @@ interface AccountingRecord {
 }
 
 interface RecordsProps {
-  date: Date | undefined; // 接收日期 prop
-  month: number; // 接收月份 prop
+  date: Date | undefined;
+  month: number;
 }
 
 export default function Records({ date, month }: RecordsProps) {
@@ -39,10 +40,10 @@ export default function Records({ date, month }: RecordsProps) {
   // 🔹 計算當前月份的時間範圍
   const startTimestamp = Timestamp.fromDate(
     startOfMonth(new Date(now.getFullYear(), month, 1)),
-  ); // 月初
+  );
   const endTimestamp = Timestamp.fromDate(
     endOfMonth(new Date(now.getFullYear(), month, 1)),
-  ); // 月底
+  );
 
   // 🔥 查詢當月份的記帳紀錄
   async function fetchRecords() {
@@ -61,7 +62,7 @@ export default function Records({ date, month }: RecordsProps) {
 
         console.log('data', data);
 
-        setRecords(data); // 更新所有記錄
+        setRecords(data);
         // 根據日期篩選資料
         if (date) {
           const filtered = data.filter((record) =>
@@ -98,18 +99,22 @@ export default function Records({ date, month }: RecordsProps) {
   }, [date]); // 當日期變動時，根據日期篩選記錄
 
   return (
-    <div className="border p-4">
+    <div className="rounded-2xl">
       {loading && <p>Loading...</p>}
 
       <ul className="mt-4 space-y-2">
+        <h2 className="pb-2 text-center text-xl font-bold">
+          {date ? date.toLocaleDateString('zh-TW') : ''} 的記帳記錄
+        </h2>
         {filteredRecords.length === 0 ? (
           <p>⚠ 本日無記帳紀錄</p>
         ) : (
           filteredRecords.map((record) => (
             <li key={record.id} className="rounded border p-2">
-              <p>📅 日期: {record.date.toDate().toLocaleDateString()}</p>
               <p>💰 金額: {record.amount}</p>
               <p>🏷️ 類別: {record.category}</p>
+              <p> {getCategoryLabel(record.category)}</p>
+              <p>{getCategoryIcon(record.category)}</p>
               <p>🏦 帳戶: {record.account}</p>
               {record.note && <p>📝 備註: {record.note}</p>}
               {record.images && record.images.length > 0 && (
