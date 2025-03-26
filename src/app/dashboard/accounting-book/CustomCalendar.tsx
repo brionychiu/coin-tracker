@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
-function AccountingBookCalendar({
+function CustomCalendar({
   className,
   classNames,
   showOutsideDays = true,
@@ -71,6 +71,6 @@ function AccountingBookCalendar({
     />
   );
 }
-AccountingBookCalendar.displayName = 'Calendar';
+CustomCalendar.displayName = 'Calendar';
 
-export { AccountingBookCalendar };
+export { CustomCalendar };
