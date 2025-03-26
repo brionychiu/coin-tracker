@@ -27,6 +27,11 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
+interface AddRecordProps {
+  onCancel: () => void;
+  onSave: () => void;
+}
+
 const categoryEnumValues = [
   ...EXPENSE_CATEGORIES.map((c) => c.label),
   ...INCOME_CATEGORIES.map((c) => c.label),
@@ -50,7 +55,7 @@ const FormSchema = z.object({
   note: z.string().max(500, { message: '最多只能輸入 500 個字' }).optional(),
 });
 
-export default function AddRecord() {
+export default function AddRecord({ onCancel, onSave }: AddRecordProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -71,10 +76,23 @@ export default function AddRecord() {
     setIsLoading(true);
     try {
       console.log('新增中...', data);
-      const docId = await addAccountingRecord(data);
+      // 將選擇的 category label 轉換為對應的 category code
+      const selectedCategory = [
+        ...EXPENSE_CATEGORIES,
+        ...INCOME_CATEGORIES,
+      ].find((category) => category.label === data.category);
+
+      if (!selectedCategory) {
+        throw new Error('選擇的分類無效');
+      }
+
+      const recordData = { ...data, category: selectedCategory.code };
+      const docId = await addAccountingRecord(recordData);
+
       toast.success('新增成功!');
       console.log('新增成功，文件 ID:', docId);
       form.reset();
+      onSave();
     } catch (error: any) {
       console.error('新增失敗:', error);
       toast.warning(`新增失敗:${error.message}, 請稍後再試`);
@@ -201,9 +219,10 @@ export default function AddRecord() {
               <span className="mr-2 animate-spin">⏳</span> 儲存中...
             </>
           ) : (
-            '新增記帳'
+            '確認'
           )}
         </Button>
+        <Button onClick={onCancel}>取消</Button>
       </form>
     </Form>
   );
