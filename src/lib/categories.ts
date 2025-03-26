@@ -21,39 +21,59 @@ import {
   Utensils,
   Wallet
 } from 'lucide-react';
+import React from 'react';
 
 export interface Category {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
+  code: string;
 }
 
-// 支出分類
 export const EXPENSE_CATEGORIES: Category[] = [
-  { icon: Utensils, label: '食物' },
-  { icon: CupSoda, label: '飲品' },
-  { icon: ShoppingCart, label: '生活雜貨' },
-  { icon: Flower, label: '保持美麗' },
-  { icon: Car, label: '汽車' },
-  { icon: House, label: '房子' },
-  { icon: Gamepad2, label: '遊戲' },
-  { icon: Pill, label: '醫療' },
-  { icon: ShoppingBag, label: '購物' },
-  { icon: BriefcaseConveyorBelt, label: '交通' },
-  { icon: Beer, label: '社交' },
-  { icon: Phone, label: '通訊' },
-  { icon: Gift, label: '禮物' },
-  { icon: Umbrella, label: '保險' },
-  { icon: LayoutGrid, label: '其他' },
-  { icon: CirclePlus, label: '新增' },
+  { icon: Utensils, label: '食物', code: 'food' },
+  { icon: CupSoda, label: '飲品', code: 'drink' },
+  { icon: ShoppingCart, label: '生活雜貨', code: 'groceries' },
+  { icon: Flower, label: '保持美麗', code: 'beauty' },
+  { icon: Car, label: '汽車', code: 'car' },
+  { icon: House, label: '房子', code: 'house' },
+  { icon: Gamepad2, label: '遊戲', code: 'games' },
+  { icon: Pill, label: '醫療保健', code: 'medical' },
+  { icon: ShoppingBag, label: '購物', code: 'shopping' },
+  { icon: BriefcaseConveyorBelt, label: '交通', code: 'transport' },
+  { icon: Beer, label: '社交', code: 'social' },
+  { icon: Phone, label: '通訊', code: 'communication' },
+  { icon: Gift, label: '禮物', code: 'gifts' },
+  { icon: Umbrella, label: '保險', code: 'insurance' },
+  { icon: LayoutGrid, label: '其他', code: 'other' },
+  { icon: CirclePlus, label: '新增', code: 'add' },
 ];
 
-// 收入分類
 export const INCOME_CATEGORIES: Category[] = [
-  { icon: Wallet, label: '薪水' },
-  { icon: Award, label: '獎金' },
-  { icon: Coins, label: '投資' },
-  { icon: CircleDollarSign, label: '股利' },
-  { icon: PiggyBank, label: '存款' },
-  { icon: LayoutGrid, label: '其他' },
-  { icon: CirclePlus, label: '新增' },
+  { icon: Wallet, label: '薪水', code: 'salary' },
+  { icon: Award, label: '獎金', code: 'bonus' },
+  { icon: Coins, label: '投資', code: 'investment' },
+  { icon: CircleDollarSign, label: '股利', code: 'dividends' },
+  { icon: PiggyBank, label: '存款', code: 'savings' },
+  { icon: LayoutGrid, label: '其他', code: 'other' },
+  { icon: CirclePlus, label: '新增', code: 'add' },
 ];
+
+// 根據 category code 取得對應的 category label
+export const getCategoryLabel = (code: string): string => {
+  const category = [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES].find(
+    (category) => category.code === code
+  );
+  return category ? category.label : '未知類別'; // 如果找不到對應的 category 返回 '未知類別'
+};
+
+// 根據 category code 取得對應的 category icon
+export const getCategoryIcon = (code: string): React.JSX.Element => {
+  const category = [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES].find(
+    (category) => category.code === code
+  );
+
+  // 使用 React.createElement 動態渲染組件
+  return category
+    ? React.createElement(category.icon, { className: 'h-6 w-6' })
+    : React.createElement(LayoutGrid, { className: 'h-6 w-6' }); // 用 React.createElement 處理 LayoutGrid
+};
