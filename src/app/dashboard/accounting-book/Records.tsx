@@ -110,13 +110,18 @@ export default function Records({ date, month }: RecordsProps) {
           <p>⚠ 本日無記帳紀錄</p>
         ) : (
           filteredRecords.map((record) => (
-            <li key={record.id} className="rounded border p-2">
-              <p>💰 金額: {record.amount}</p>
-              <p>🏷️ 類別: {record.category}</p>
-              <p> {getCategoryLabel(record.category)}</p>
-              <p>{getCategoryIcon(record.category)}</p>
-              <p>🏦 帳戶: {record.account}</p>
-              {record.note && <p>📝 備註: {record.note}</p>}
+            <li key={record.id} className="rounded-2xl border p-2 shadow-sm">
+              <div className="flex justify-between">
+                <div>
+                  <p>{getCategoryIcon(record.category)}</p>
+                  <p> {getCategoryLabel(record.category)}</p>
+                  {record.note && <p>{record.note}</p>}
+                </div>
+                <div>
+                  <p>{record.amount}</p>
+                  <p>{record.account}</p>
+                </div>
+              </div>
               {record.images && record.images.length > 0 && (
                 <div>
                   <p>📷 收據：</p>
