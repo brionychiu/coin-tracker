@@ -3,6 +3,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
+import Footer from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/sonner';
 
 const geistSans = Geist({
@@ -17,7 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: '快樂記帳',
-  description: '邁向快樂理財之路',
+  description: '輕鬆掌握生活收支',
   icons: {
     icon: '/icon.png',
   },
@@ -29,11 +30,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="zh-TW">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <Footer />
         <Toaster />
       </body>
     </html>
