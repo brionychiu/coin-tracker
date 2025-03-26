@@ -19,15 +19,12 @@ interface AccountingRecord {
   images?: string[];
 }
 
-interface AccountingRecordsProps {
+interface RecordsProps {
   date: Date | undefined; // 接收日期 prop
   month: number; // 接收月份 prop
 }
 
-export default function AccountingRecords({
-  date,
-  month,
-}: AccountingRecordsProps) {
+export default function Records({ date, month }: RecordsProps) {
   const [records, setRecords] = useState<AccountingRecord[]>([]);
   const [filteredRecords, setFilteredRecords] = useState<AccountingRecord[]>(
     [],
