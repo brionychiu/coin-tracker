@@ -1,6 +1,6 @@
 'use client';
 
-import TabsCategory from '@/components/page/TabsCategory';
+import TabsCategory from '@/components/tabs/TabsCategory';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
 import {
@@ -50,7 +50,7 @@ const FormSchema = z.object({
   note: z.string().max(500, { message: '最多只能輸入 500 個字' }).optional(),
 });
 
-export default function AddAccountingArea() {
+export default function AddRecord() {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
