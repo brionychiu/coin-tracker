@@ -1,3 +1,4 @@
+import { AccountType } from '@/lib/accountOptions';
 import { db, storage } from '@/lib/firebase';
 import { addDoc, collection } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
@@ -6,7 +7,7 @@ export interface AccountingRecord {
   date: Date;
   amount: string;
   category: string;
-  account: 'cash' | 'bank' | 'credit';
+  account: AccountType;
   note?: string;
   images?: File[];
 }

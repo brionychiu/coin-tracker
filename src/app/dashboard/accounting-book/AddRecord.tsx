@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { accountOptions } from '@/lib/accountOptions';
 import { addAccountingRecord } from '@/lib/api/accounting';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/categories';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,6 +33,10 @@ interface AddRecordProps {
   onSave: () => void;
 }
 
+const accountEnumValues = accountOptions.map((option) => option.value) as [
+  string,
+  ...string[],
+];
 const categoryEnumValues = [
   ...EXPENSE_CATEGORIES.map((c) => c.label),
   ...INCOME_CATEGORIES.map((c) => c.label),
@@ -45,7 +50,7 @@ const FormSchema = z.object({
     message: '請輸入正整數',
   }),
   category: z.enum(categoryEnumValues),
-  account: z.enum(['cash', 'bank', 'credit'], {
+  account: z.enum(accountEnumValues, {
     errorMap: () => ({ message: '請選擇一個帳戶' }),
   }),
   images: z
@@ -169,9 +174,11 @@ export default function AddRecord({ onCancel, onSave }: AddRecordProps) {
                     <SelectValue placeholder="請選擇帳戶" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="cash">現金</SelectItem>
-                    <SelectItem value="bank">銀行</SelectItem>
-                    <SelectItem value="credit">信用卡</SelectItem>
+                    {accountOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </FormControl>
