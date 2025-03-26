@@ -1,8 +1,8 @@
 'use client';
 
-import { AccountingBookCalendar } from '@/components/page/AccountingBookCalendar';
-import AccountingRecords from '@/components/page/AccountingRecords';
-import AddAccountingArea from '@/components/page/AddAccountingArea';
+import AddRecord from '@/app/dashboard/accounting-book/AddRecord';
+import { CustomCalendar } from '@/app/dashboard/accounting-book/CustomCalendar';
+import Records from '@/app/dashboard/accounting-book/Records';
 import { useState } from 'react';
 export default function AccountingBookPage() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -17,17 +17,17 @@ export default function AccountingBookPage() {
   return (
     <div className="w-full">
       <div className="flex flex-row justify-center">
-        <AccountingBookCalendar
+        <CustomCalendar
           mode="single"
           selected={date}
           onSelect={setDate}
           onMonthChange={handleMonthChange} // 🔥 監聽月份變更
           className="rounded-md border p-4 shadow"
         />
-        <AccountingRecords date={date} month={month} />
+        <Records date={date} month={month} />
       </div>
       <div className="flex flex-row justify-center">
-        <AddAccountingArea />
+        <AddRecord />
       </div>
     </div>
   );
