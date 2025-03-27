@@ -1,7 +1,7 @@
 'use client';
 
-import AddRecord from '@/app/dashboard/accounting-book/AddRecord';
 import { CustomCalendar } from '@/app/dashboard/accounting-book/CustomCalendar';
+import RecordForm from '@/app/dashboard/accounting-book/RecordForm';
 import Records from '@/app/dashboard/accounting-book/Records';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
@@ -36,7 +36,7 @@ export default function AccountingBookPage() {
         </div>
         <div className="flex-1">
           {isAdding ? (
-            <AddRecord
+            <RecordForm
               onCancel={() => setIsAdding(false)}
               onSave={() => setIsAdding(false)}
             />

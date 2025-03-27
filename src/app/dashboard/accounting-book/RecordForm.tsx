@@ -28,7 +28,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-interface AddRecordProps {
+interface RecordFormProps {
   onCancel: () => void;
   onSave: () => void;
 }
@@ -60,7 +60,7 @@ const FormSchema = z.object({
   note: z.string().max(500, { message: '最多只能輸入 500 個字' }).optional(),
 });
 
-export default function AddRecord({ onCancel, onSave }: AddRecordProps) {
+export default function RecordForm({ onCancel, onSave }: RecordFormProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
