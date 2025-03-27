@@ -11,23 +11,25 @@ import {
 } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
-export interface UploadAccountingRecord {
-  date: Date;
-  amount: string;
-  category: string;
-  account: AccountType;
-  note?: string;
-  images?: File[];
-}
-
+// Firestore 存的記帳紀錄（Firestore 內的格式）
 export interface AccountingRecord {
   id: string;
   date: Date;
   amount: string;
   category: string;
-  account: string;
+  account: AccountType;
   note?: string;
-  images?: string[];
+  images: string[]; // Firestore 存的 `images` 是 URL 陣列
+}
+
+// 新增時使用的型別（含 File 陣列）
+export interface AccountingRecordPayload {
+  date: Date;
+  amount: string;
+  category: string;
+  account: AccountType;
+  note?: string;
+  images?: File[]; // 新增時是 File 陣列，Firestore 會轉成 URL 陣列
 }
 
 /**
@@ -42,7 +44,7 @@ async function uploadImage(file: File): Promise<string> {
 /**
  * 新增一筆記帳紀錄到 Firestore
  */
-export async function addAccountingRecord(data: UploadAccountingRecord) {
+export async function addAccountingRecord(data: AccountingRecordPayload) {
   try {
     // 上傳所有圖片並獲取下載 URL
     const imageUrls = data.images ? await Promise.all(data.images.map(uploadImage)) : [];
@@ -52,8 +54,8 @@ export async function addAccountingRecord(data: UploadAccountingRecord) {
       amount: data.amount,
       category: data.category,
       account: data.account,
-      note: data.note || '',
-      images: imageUrls, // 存 URL，不是 File
+      note: data.note,
+      images: imageUrls, // 存的是 URL 陣列
     });
 
     console.log('Document written with ID: ', docRef.id);
@@ -72,11 +74,12 @@ export function getAccountingRecords(
   callback: (data: AccountingRecord[]) => void
 ) {
   const now = new Date();
+  const startOfMonthDate = new Date(now.getFullYear(), month, 1);
   const startTimestamp = Timestamp.fromDate(
-    startOfMonth(new Date(now.getFullYear(), month, 1))
+    startOfMonth(startOfMonthDate)
   );
   const endTimestamp = Timestamp.fromDate(
-    endOfMonth(new Date(now.getFullYear(), month, 1))
+    endOfMonth(startOfMonthDate)
   );
 
   const q = query(
