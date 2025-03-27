@@ -1,5 +1,5 @@
-import { AccountType } from '@/lib/accountOptions';
 import { db, storage } from '@/lib/firebase';
+import { AccountingRecord, AccountingRecordPayload } from '@/types/accounting';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import {
   addDoc,
@@ -10,27 +10,6 @@ import {
   where,
 } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-
-// Firestore 存的記帳紀錄（Firestore 內的格式）
-export interface AccountingRecord {
-  id: string;
-  date: Date;
-  amount: string;
-  category: string;
-  account: AccountType;
-  note?: string;
-  images: string[]; // Firestore 存的 `images` 是 URL 陣列
-}
-
-// 新增時使用的型別（含 File 陣列）
-export interface AccountingRecordPayload {
-  date: Date;
-  amount: string;
-  category: string;
-  account: AccountType;
-  note?: string;
-  images?: File[]; // 新增時是 File 陣列，Firestore 會轉成 URL 陣列
-}
 
 /**
  * 上傳單張圖片到 Firebase Storage
