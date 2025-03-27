@@ -1,4 +1,5 @@
-import { AccountingRecord, getAccountingRecords } from '@/lib/api/accounting';
+import { getAccountingRecords } from '@/lib/api/accounting';
+import { AccountingRecord } from '@/types/accounting';
 import { isSameDay } from 'date-fns';
 import { useEffect, useState } from 'react';
 
