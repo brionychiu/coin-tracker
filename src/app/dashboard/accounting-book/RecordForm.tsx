@@ -2,7 +2,6 @@
 
 import TabsCategory from '@/components/tabs/TabsCategory';
 import { Button } from '@/components/ui/button';
-import { DatePicker } from '@/components/ui/date-picker';
 import {
   Form,
   FormControl,
@@ -29,6 +28,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 interface RecordFormProps {
+  date: Date | undefined;
   onCancel: () => void;
   onSave: () => void;
 }
@@ -60,14 +60,17 @@ const FormSchema = z.object({
   note: z.string().max(500, { message: '最多只能輸入 500 個字' }).optional(),
 });
 
-export default function RecordForm({ onCancel, onSave }: RecordFormProps) {
+export default function RecordForm({
+  date,
+  onCancel,
+  onSave,
+}: RecordFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     mode: 'onSubmit',
     defaultValues: {
-      date: new Date(),
+      date: date ? new Date(date) : new Date(),
       amount: '',
       category:
         EXPENSE_CATEGORIES.length > 0 ? EXPENSE_CATEGORIES[0].label : undefined,
@@ -109,19 +112,9 @@ export default function RecordForm({ onCancel, onSave }: RecordFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
-        <FormField
-          control={form.control}
-          name="date"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>日期：</FormLabel>
-              <FormControl>
-                <DatePicker value={field.value} onChange={field.onChange} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <h2 className="pb-2 text-center text-xl font-bold">
+          新增 {date ? date.toLocaleDateString('zh-TW') : ''} 的記帳項目
+        </h2>
         <FormField
           control={form.control}
           name="amount"

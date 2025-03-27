@@ -37,6 +37,7 @@ export default function AccountingBookPage() {
         <div className="flex-1">
           {isAdding ? (
             <RecordForm
+              date={date}
               onCancel={() => setIsAdding(false)}
               onSave={() => setIsAdding(false)}
             />
