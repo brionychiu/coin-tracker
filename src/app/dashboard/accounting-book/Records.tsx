@@ -1,12 +1,16 @@
+import { Button } from '@/components/ui/button';
 import { useAccountingRecords } from '@/hooks/useAccountingRecords';
 import { getCategoryIcon, getCategoryLabel } from '@/lib/categories';
+import { AccountingRecord } from '@/types/accounting';
+import { Pencil, Trash2 } from 'lucide-react';
 
 interface RecordsProps {
   date: Date | undefined;
   month: number;
+  onEdit: (record: AccountingRecord) => void;
 }
 
-export default function Records({ date, month }: RecordsProps) {
+export default function Records({ date, month, onEdit }: RecordsProps) {
   const { filteredRecords, loading } = useAccountingRecords(date, month);
 
   return (
@@ -15,7 +19,7 @@ export default function Records({ date, month }: RecordsProps) {
 
       <ul className="mt-4 space-y-2">
         <h2 className="pb-2 text-center text-xl font-bold">
-          {date ? date.toLocaleDateString('zh-TW') : ''} 的記帳記錄
+          {date ? date.toLocaleDateString('zh-TW') : ''} 的記帳項目
         </h2>
         {filteredRecords.length === 0 ? (
           <p>⚠ 本日無記帳紀錄</p>
@@ -25,7 +29,7 @@ export default function Records({ date, month }: RecordsProps) {
               <div className="flex justify-between">
                 <div>
                   <p>{getCategoryIcon(record.category)}</p>
-                  <p> {getCategoryLabel(record.category)}</p>
+                  <p>{getCategoryLabel(record.category)}</p>
                   {record.note && <p>{record.note}</p>}
                 </div>
                 <div>
@@ -35,7 +39,6 @@ export default function Records({ date, month }: RecordsProps) {
               </div>
               {record.images && record.images.length > 0 && (
                 <div>
-                  <p>📷 收據：</p>
                   <div className="flex gap-2">
                     {record.images.map((url, index) => (
                       <img
@@ -48,6 +51,14 @@ export default function Records({ date, month }: RecordsProps) {
                   </div>
                 </div>
               )}
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => onEdit(record)}
+              >
+                <Pencil />
+              </Button>
+              <Trash2 />
             </li>
           ))
         )}

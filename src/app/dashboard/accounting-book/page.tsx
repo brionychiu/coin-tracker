@@ -4,11 +4,14 @@ import { CustomCalendar } from '@/app/dashboard/accounting-book/CustomCalendar';
 import RecordForm from '@/app/dashboard/accounting-book/RecordForm';
 import Records from '@/app/dashboard/accounting-book/Records';
 import { Button } from '@/components/ui/button';
+import { AccountingRecord } from '@/types/accounting';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
 export default function AccountingBookPage() {
-  const [isAdding, setIsAdding] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editRecord, setEditRecord] = useState<any | null>(null);
+
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [month, setMonth] = useState<number>(
     date?.getMonth() ?? new Date().getMonth(),
@@ -16,6 +19,16 @@ export default function AccountingBookPage() {
 
   const handleMonthChange = (newDate: Date) => {
     setMonth(newDate.getMonth());
+  };
+
+  const handleEdit = (record: AccountingRecord) => {
+    setEditRecord(record);
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    setIsEditing(false);
+    setEditRecord(null);
   };
 
   return (
@@ -29,20 +42,21 @@ export default function AccountingBookPage() {
             onMonthChange={handleMonthChange}
             className="p-4"
           />
-          <Button onClick={() => setIsAdding(true)}>
+          <Button onClick={() => setIsEditing(false)}>
             <Plus />
             新增記帳
           </Button>
         </div>
         <div className="flex-1">
-          {isAdding ? (
+          {isEditing ? (
             <RecordForm
-              date={date}
-              onCancel={() => setIsAdding(false)}
-              onSave={() => setIsAdding(false)}
+              date={editRecord?.date || date} // 如果有編輯資料，使用編輯資料的日期
+              record={editRecord} // 傳遞當前編輯資料
+              onCancel={() => setIsEditing(false)}
+              onSave={handleSave}
             />
           ) : (
-            <Records date={date} month={month} />
+            <Records date={date} month={month} onEdit={handleEdit} />
           )}
         </div>
       </div>

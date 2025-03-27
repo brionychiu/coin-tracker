@@ -21,6 +21,7 @@ import {
 import { accountOptions } from '@/lib/accountOptions';
 import { addAccountingRecord } from '@/lib/api/accounting';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/categories';
+import { AccountingRecord } from '@/types/accounting';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -29,6 +30,7 @@ import { z } from 'zod';
 
 interface RecordFormProps {
   date: Date | undefined;
+  record: AccountingRecord;
   onCancel: () => void;
   onSave: () => void;
 }
@@ -62,6 +64,7 @@ const FormSchema = z.object({
 
 export default function RecordForm({
   date,
+  record,
   onCancel,
   onSave,
 }: RecordFormProps) {
