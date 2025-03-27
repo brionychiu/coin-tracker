@@ -7,7 +7,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
-import { getFirestore } from "firebase/firestore";
+import { doc, getFirestore, updateDoc } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import Cookies from 'js-cookie';
 import { toast } from 'sonner';
@@ -62,5 +62,5 @@ const logoutUser = () => signOut(auth);
 const subscribeToAuthChanges = (callback: (user: User | null) => void) =>
   onAuthStateChanged(auth, callback);
 
-export { auth, db, logoutUser, registerUser, signIn, storage, subscribeToAuthChanges };
+export { auth, db, doc, logoutUser, registerUser, signIn, storage, subscribeToAuthChanges, updateDoc };
 
