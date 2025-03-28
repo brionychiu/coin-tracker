@@ -1,4 +1,4 @@
-import { logoutUser } from '@/lib/firebase';
+import { logoutUser } from '@/lib/api/auth';
 import { useAuthStore } from '@/stores/authStore';
 import Cookies from 'js-cookie';
 
