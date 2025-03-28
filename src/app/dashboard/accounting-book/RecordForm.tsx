@@ -1,5 +1,11 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+
 import TabsCategory from '@/components/tabs/TabsCategory';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,19 +25,22 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { accountOptions } from '@/lib/accountOptions';
-import { addAccountingRecord } from '@/lib/api/accounting';
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/categories';
+import {
+  addAccountingRecord,
+  updateAccountingRecord,
+} from '@/lib/api/accounting';
+import {
+  EXPENSE_CATEGORIES,
+  INCOME_CATEGORIES,
+  getCategoryLabel,
+} from '@/lib/categories';
 import { handleNumericInput } from '@/lib/inputValidators';
+import { extractFileName } from '@/lib/utils';
 import { AccountingRecord } from '@/types/accounting';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
 
 interface RecordFormProps {
   date: Date | undefined;
-  record: AccountingRecord;
+  record: AccountingRecord | null;
   onCancel: () => void;
   onSave: () => void;
 }
@@ -71,26 +80,34 @@ export default function RecordForm({
   onCancel,
   onSave,
 }: RecordFormProps) {
-  const [isLoading, setIsLoading] = useState(false);
+  const isEditMode = !!record;
+
+  const defaultValues = useMemo(
+    () => ({
+      date: record ? new Date(record.date) : date || new Date(),
+      amount: record?.amount ?? '',
+      category: record
+        ? getCategoryLabel(record.category)
+        : (EXPENSE_CATEGORIES[0]?.label ?? ''),
+      account: record?.account || 'cash',
+      images: [],
+      note: record?.note || '',
+    }),
+    [date, record],
+  );
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     mode: 'onSubmit',
-    defaultValues: {
-      date: date ? new Date(date) : new Date(),
-      amount: '',
-      category:
-        EXPENSE_CATEGORIES.length > 0 ? EXPENSE_CATEGORIES[0].label : undefined,
-      account: 'cash',
-      images: [],
-      note: '',
-    },
+    defaultValues,
   });
 
+  const { isSubmitting } = form.formState;
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    setIsLoading(true);
     try {
-      console.log('新增中...', data);
-      // 將選擇的 category label 轉換為對應的 category code
+      console.log(isEditMode ? '更新中...' : '新增中...', data);
+
       const selectedCategory = [
         ...EXPENSE_CATEGORIES,
         ...INCOME_CATEGORIES,
@@ -100,18 +117,31 @@ export default function RecordForm({
         throw new Error('選擇的分類無效');
       }
 
-      const recordData = { ...data, category: selectedCategory.code };
-      const docId = await addAccountingRecord(recordData);
+      // 將選擇的 category label 轉換為對應的 category code
+      const recordData = {
+        ...data,
+        category: selectedCategory.code,
+        images: data.images || [],
+      };
 
-      toast.success('新增成功!');
-      console.log('新增成功，文件 ID:', docId);
+      if (isEditMode) {
+        if (!record?.id) throw new Error('記錄 ID 缺失，無法更新');
+        await updateAccountingRecord(record.id, recordData);
+        toast.success('更新成功！');
+        console.log('更新成功，ID:', record.id);
+      } else {
+        const docId = await addAccountingRecord(recordData);
+        toast.success('新增成功！');
+        console.log('新增成功，文件 ID:', docId);
+      }
+
       form.reset();
       onSave();
     } catch (error: any) {
-      console.error('新增失敗:', error);
-      toast.warning(`新增失敗:${error.message}, 請稍後再試`);
-    } finally {
-      setIsLoading(false); // 結束載入動畫
+      console.error(isEditMode ? '更新失敗:' : '新增失敗:', error);
+      toast.warning(
+        `${isEditMode ? '更新' : '新增'}失敗:${error.message}，請稍後再試`,
+      );
     }
   }
 
@@ -119,7 +149,8 @@ export default function RecordForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
         <h2 className="pb-2 text-center text-xl font-bold">
-          新增 {date ? date.toLocaleDateString('zh-TW') : ''} 的記帳項目
+          {isEditMode ? '編輯' : '新增'}{' '}
+          {date ? date.toLocaleDateString('zh-TW') : ''} 的記帳項目
         </h2>
         <FormField
           control={form.control}
@@ -197,6 +228,25 @@ export default function RecordForm({
                 />
               </FormControl>
               <FormMessage />
+              {isEditMode && record?.images.length ? (
+                <div className="mt-2">
+                  <p className="text-sm font-medium">已上傳的圖片：</p>
+                  <ul className="list-disc pl-5 text-sm text-gray-600">
+                    {record.images.map((url, index) => (
+                      <li key={index}>
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 underline"
+                        >
+                          {extractFileName(url)}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
             </FormItem>
           )}
         />
@@ -213,11 +263,14 @@ export default function RecordForm({
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? (
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? (
             <>
-              <span className="mr-2 animate-spin">⏳</span> 儲存中...
+              <span className="mr-2 animate-spin">⏳</span>{' '}
+              {isEditMode ? '更新中...' : '儲存中...'}
             </>
+          ) : isEditMode ? (
+            '更新'
           ) : (
             '確認'
           )}
