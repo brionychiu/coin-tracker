@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -36,6 +37,8 @@ export default function RegisterForm({
 }: {
   toggleForm: () => void;
 }) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -46,6 +49,7 @@ export default function RegisterForm({
   });
 
   async function onSubmit(values: z.infer<typeof FormSchema>) {
+    setIsLoading(true);
     try {
       const userCredential = await registerUser(values.email, values.password);
       console.log('user', userCredential.user);
@@ -57,8 +61,11 @@ export default function RegisterForm({
       } else {
         toast.error('註冊失敗，請稍後再試');
       }
+    } finally {
+      setIsLoading(false);
     }
   }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -106,8 +113,8 @@ export default function RegisterForm({
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
-          註冊
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? '註冊中...' : '註冊'}
         </Button>
         <Button variant="link" onClick={toggleForm}>
           已有帳號？請點擊登入
