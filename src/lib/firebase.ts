@@ -4,7 +4,7 @@ import {
   getAuth,
   onAuthStateChanged,
 } from 'firebase/auth';
-import { doc, getFirestore, updateDoc } from "firebase/firestore";
+import { deleteDoc, doc, getFirestore, updateDoc } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -24,5 +24,5 @@ const auth = getAuth(app);
 const subscribeToAuthChanges = (callback: (user: User | null) => void) =>
   onAuthStateChanged(auth, callback);
 
-export { auth, db, doc, storage, subscribeToAuthChanges, updateDoc };
+export { auth, db, deleteDoc, doc, storage, subscribeToAuthChanges, updateDoc };
 
