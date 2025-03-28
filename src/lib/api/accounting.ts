@@ -4,6 +4,7 @@ import { endOfMonth, startOfMonth } from 'date-fns';
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   onSnapshot,
   query,
@@ -76,6 +77,22 @@ export async function updateAccountingRecord(id: string, data: AccountingRecordP
   }
 }
 
+/**
+ * 刪除一筆記帳紀錄
+ */
+export async function deleteAccountingRecord(id: string) {
+  try {
+    const recordRef = doc(db, 'accounting-records', id);
+
+    // 刪除記錄
+    await deleteDoc(recordRef);
+
+    console.log('Document deleted with ID: ', id);
+  } catch (error) {
+    console.error('刪除失敗:', error);
+    throw error;
+  }
+}
 
 /**
  * 監聽指定月份的 Firestore 記帳紀錄
