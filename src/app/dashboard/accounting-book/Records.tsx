@@ -1,8 +1,11 @@
+import { Pencil, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+
 import { Button } from '@/components/ui/button';
 import { useAccountingRecords } from '@/hooks/useAccountingRecords';
+import { deleteAccountingRecord } from '@/lib/api/accounting';
 import { getCategoryIcon, getCategoryLabel } from '@/lib/categories';
 import { AccountingRecord } from '@/types/accounting';
-import { Pencil, Trash2 } from 'lucide-react';
 
 interface RecordsProps {
   date: Date | undefined;
@@ -12,6 +15,17 @@ interface RecordsProps {
 
 export default function Records({ date, month, onEdit }: RecordsProps) {
   const { filteredRecords, loading } = useAccountingRecords(date, month);
+
+  // TODO: 要加提示確認
+  const handleDelete = async (record: AccountingRecord) => {
+    try {
+      await deleteAccountingRecord(record.id);
+      toast.success('刪除成功！');
+    } catch (error) {
+      console.error('刪除失敗:', error);
+      toast.error('刪除失敗，請稍後再試');
+    }
+  };
 
   return (
     <div className="rounded-2xl">
@@ -58,7 +72,13 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
               >
                 <Pencil />
               </Button>
-              <Trash2 />
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => handleDelete(record)}
+              >
+                <Trash2 />
+              </Button>
             </li>
           ))
         )}
