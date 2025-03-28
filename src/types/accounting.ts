@@ -1,4 +1,6 @@
-import { AccountType } from '@/lib/accountOptions';
+import { accountOptions } from '@/lib/accountOptions';
+
+export type AccountType = typeof accountOptions[number]['value']; 
 
 // Firestore 存的記帳紀錄（Firestore 內的格式）
 export interface AccountingRecord {
