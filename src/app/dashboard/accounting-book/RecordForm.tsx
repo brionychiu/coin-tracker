@@ -21,6 +21,7 @@ import {
 import { accountOptions } from '@/lib/accountOptions';
 import { addAccountingRecord } from '@/lib/api/accounting';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/categories';
+import { handleNumericInput } from '@/lib/inputValidators';
 import { AccountingRecord } from '@/types/accounting';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
@@ -48,9 +49,11 @@ const FormSchema = z.object({
   date: z.date({
     required_error: '請選擇日期',
   }),
-  amount: z.string().min(1, {
-    message: '請輸入正整數',
-  }),
+  amount: z
+    .string()
+    .min(1, { message: '請輸入金額' })
+    .regex(/^\d+$/, { message: '金額必須是正整數' })
+    .refine((val) => parseInt(val, 10) > 0, { message: '金額必須大於 0' }),
   category: z.enum(categoryEnumValues),
   account: z.enum(accountEnumValues, {
     errorMap: () => ({ message: '請選擇一個帳戶' }),
@@ -126,15 +129,9 @@ export default function RecordForm({
               <FormLabel>金額：</FormLabel>
               <FormControl>
                 <Input
-                  type="number"
+                  type="text"
                   placeholder="請輸入數字"
-                  min={1}
-                  step={1}
-                  onKeyDown={(e) => {
-                    if (['e', 'E', '-', '.'].includes(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
+                  onKeyDown={handleNumericInput}
                   {...field}
                 />
               </FormControl>
