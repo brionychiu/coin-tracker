@@ -22,8 +22,8 @@ export default function AccountingBookPage() {
   };
 
   const handleEdit = (record: AccountingRecord) => {
-    setEditRecord(record);
     setIsEditing(true);
+    setEditRecord(record);
   };
 
   const handleSave = () => {
@@ -42,7 +42,7 @@ export default function AccountingBookPage() {
             onMonthChange={handleMonthChange}
             className="p-4"
           />
-          <Button onClick={() => setIsEditing(false)}>
+          <Button onClick={() => setIsEditing(true)}>
             <Plus />
             新增記帳
           </Button>
