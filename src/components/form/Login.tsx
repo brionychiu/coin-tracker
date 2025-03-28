@@ -1,7 +1,9 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -29,6 +31,8 @@ const FormSchema = z.object({
 
 export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -43,9 +47,16 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
   };
 
   async function onSubmit(values: z.infer<typeof FormSchema>) {
-    const userCredential = await signIn(values.email, values.password);
-    if (userCredential) {
-      router.push('/dashboard/accounting-book');
+    setIsLoading(true);
+    try {
+      const userCredential = await signIn(values.email, values.password);
+      if (userCredential) {
+        router.push('/dashboard/accounting-book');
+      }
+    } catch (error) {
+      console.error('登入失敗:', error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -81,8 +92,8 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
           )}
         />
         <div>
-          <Button type="submit" className="w-full">
-            登入
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? '登入中...' : '登入'}
           </Button>
           <Button variant="link" onClick={toggleForm} className="mt-2">
             沒有帳號？請點擊註冊
