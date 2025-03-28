@@ -26,7 +26,7 @@ export default function AccountingBookPage() {
     setEditRecord(record);
   };
 
-  const handleSave = () => {
+  const handleCloseEdit = () => {
     setIsEditing(false);
     setEditRecord(null);
   };
@@ -52,8 +52,8 @@ export default function AccountingBookPage() {
             <RecordForm
               date={editRecord?.date || date} // 如果有編輯資料，使用編輯資料的日期
               record={editRecord} // 傳遞當前編輯資料
-              onCancel={() => setIsEditing(false)}
-              onSave={handleSave}
+              onCancel={handleCloseEdit}
+              onSave={handleCloseEdit}
             />
           ) : (
             <Records date={date} month={month} onEdit={handleEdit} />
