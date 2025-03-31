@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { useAccountingRecords } from '@/hooks/useAccountingRecords';
+import { useConfirm } from '@/hooks/useConfirmModal';
 import { deleteAccountingRecord } from '@/lib/api/accounting';
 import { getCategoryIcon, getCategoryLabel } from '@/lib/categories';
 import { AccountingRecord } from '@/types/accounting';
@@ -15,16 +16,22 @@ interface RecordsProps {
 
 export default function Records({ date, month, onEdit }: RecordsProps) {
   const { filteredRecords, loading } = useAccountingRecords(date, month);
+  const { confirm, ConfirmModal } = useConfirm();
 
-  // TODO: 要加提示確認
   const handleDelete = async (record: AccountingRecord) => {
-    try {
-      await deleteAccountingRecord(record.id);
-      toast.success('刪除成功！');
-    } catch (error) {
-      console.error('刪除失敗:', error);
-      toast.error('刪除失敗，請稍後再試');
-    }
+    confirm({
+      title: '確認刪除',
+      message: '確定要刪除此記錄嗎？此操作無法復原。',
+      onConfirm: async () => {
+        try {
+          await deleteAccountingRecord(record.id);
+          toast.success('刪除成功！');
+        } catch (error) {
+          console.error('刪除失敗:', error);
+          toast.error('刪除失敗，請稍後再試');
+        }
+      },
+    });
   };
 
   return (
@@ -83,6 +90,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
           ))
         )}
       </ul>
+      {ConfirmModal}
     </div>
   );
 }
