@@ -35,17 +35,21 @@ export default function AccountingBookPage() {
     <div className="f-full mx-auto h-full rounded-2xl border bg-white shadow 2xl:max-w-6xl">
       <div className="flex flex-row p-6">
         <div className="flex w-96 flex-col items-center">
-          <CustomCalendar
-            mode="single"
-            selected={date}
-            onSelect={setDate}
-            onMonthChange={handleMonthChange}
-            className="p-4"
-          />
-          <Button onClick={() => setIsEditing(true)}>
-            <Plus />
-            新增記帳
-          </Button>
+          {!isEditing && (
+            <>
+              <CustomCalendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                onMonthChange={handleMonthChange}
+                className="p-4"
+              />
+              <Button onClick={() => setIsEditing(true)}>
+                <Plus />
+                新增記帳
+              </Button>
+            </>
+          )}
         </div>
         <div className="flex-1">
           {isEditing ? (
