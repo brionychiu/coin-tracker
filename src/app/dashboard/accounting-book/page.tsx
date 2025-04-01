@@ -47,11 +47,20 @@ export default function AccountingBookPage() {
   };
 
   return (
-    <div className="f-full mx-auto h-full rounded-2xl border bg-white shadow 2xl:max-w-6xl">
-      <div className="flex flex-row p-6">
-        <div className="flex w-96 flex-col items-center">
-          {!isEditing && (
-            <>
+    <div className="mx-auto h-full w-full rounded-2xl border bg-white shadow 2xl:max-w-6xl">
+      <div className="flex flex-row gap-6 p-6">
+        {isEditing ? (
+          <div className="flex w-full items-center justify-center">
+            <RecordForm
+              date={editRecord?.date || date}
+              record={editRecord}
+              onCancel={handleCloseEdit}
+              onSave={handleCloseEdit}
+            />
+          </div>
+        ) : (
+          <>
+            <div className="flex w-96 flex-col items-center">
               <CustomCalendar
                 mode="single"
                 selected={date}
@@ -65,21 +74,12 @@ export default function AccountingBookPage() {
                 <Plus />
                 新增記帳
               </Button>
-            </>
-          )}
-        </div>
-        <div className="flex-1">
-          {isEditing ? (
-            <RecordForm
-              date={editRecord?.date || date} // 如果有編輯資料，使用編輯資料的日期
-              record={editRecord} // 傳遞當前編輯資料
-              onCancel={handleCloseEdit}
-              onSave={handleCloseEdit}
-            />
-          ) : (
-            <Records date={date} month={month} onEdit={handleEdit} />
-          )}
-        </div>
+            </div>
+            <div className="flex-1">
+              <Records date={date} month={month} onEdit={handleEdit} />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
