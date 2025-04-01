@@ -152,24 +152,53 @@ export default function RecordForm({
           {isEditMode ? '編輯' : '新增'}{' '}
           {date ? date.toLocaleDateString('zh-TW') : ''} 的記帳項目
         </h2>
-        <FormField
-          control={form.control}
-          name="amount"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>金額：</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="請輸入數字"
-                  onKeyDown={handleNumericInput}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="flex gap-4">
+          <FormField
+            control={form.control}
+            name="amount"
+            render={({ field }) => (
+              <FormItem className="w-1/2">
+                <FormLabel>金額：</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="請輸入數字"
+                    onKeyDown={handleNumericInput}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="account"
+            render={({ field }) => (
+              <FormItem className="w-1/2">
+                <FormLabel>帳戶：</FormLabel>
+                <FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="請選擇帳戶" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {accountOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <FormField
           control={form.control}
           name="category"
@@ -178,33 +207,6 @@ export default function RecordForm({
               <FormLabel>類別：</FormLabel>
               <FormControl>
                 <TabsCategory value={field.value} onChange={field.onChange} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="account"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>帳戶：</FormLabel>
-              <FormControl>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <SelectTrigger className="w-[280px]">
-                    <SelectValue placeholder="請選擇帳戶" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {accountOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>
