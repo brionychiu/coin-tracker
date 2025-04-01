@@ -50,7 +50,7 @@ export default function AuthModal() {
       ) : (
         <Dialog onOpenChange={(open) => open && setIsLoginView(true)}>
           <DialogTrigger>
-            <span className="text-gray-01 underline-offset-4 hover:underline">
+            <span className="text-gray-03 underline-offset-4 hover:underline">
               登入/註冊
             </span>
           </DialogTrigger>
