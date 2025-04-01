@@ -18,6 +18,8 @@ export default function AccountingBookPage() {
   const [month, setMonth] = useState<number>(
     date?.getMonth() ?? new Date().getMonth(),
   );
+
+  // TODO: 可以考慮是否將 Records.tsx 的 useAccountingRecords 部分也放在這裡
   const { records } = useAccountingRecords(date, month);
   const recordDates = records.map((record) => new Date(record.date));
 
