@@ -10,20 +10,20 @@ interface TabsCategoryProps {
 export default function TabsCategory({ value, onChange }: TabsCategoryProps) {
   return (
     <div className="rounded-md border p-4 shadow">
-      <Tabs defaultValue="expenses" className="w-full max-w-[500px]">
+      <Tabs defaultValue="expenses" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="expenses">支出</TabsTrigger>
           <TabsTrigger value="income">收入</TabsTrigger>
         </TabsList>
 
         <TabsContent value="expenses">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
             {EXPENSE_CATEGORIES.map(({ icon: Icon, label }, index) => (
               <Button
                 key={index}
                 variant={value === label ? 'default' : 'ghost'}
                 className="flex flex-col items-center"
-                type="button" 
+                type="button"
                 onClick={() => onChange?.(label)}
               >
                 <Icon className="h-6 w-6" />
@@ -34,13 +34,13 @@ export default function TabsCategory({ value, onChange }: TabsCategoryProps) {
         </TabsContent>
 
         <TabsContent value="income">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
             {INCOME_CATEGORIES.map(({ icon: Icon, label }, index) => (
               <Button
                 key={index}
                 variant={value === label ? 'default' : 'ghost'}
                 className="flex flex-col items-center"
-                type="button" 
+                type="button"
                 onClick={() => onChange?.(label)}
               >
                 <Icon className="h-6 w-6" />
