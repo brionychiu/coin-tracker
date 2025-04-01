@@ -1,12 +1,14 @@
 'use client';
 
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
+
 import { CustomCalendar } from '@/app/dashboard/accounting-book/CustomCalendar';
 import RecordForm from '@/app/dashboard/accounting-book/RecordForm';
 import Records from '@/app/dashboard/accounting-book/Records';
 import { Button } from '@/components/ui/button';
+import { useAccountingRecords } from '@/hooks/useAccountingRecords';
 import { AccountingRecord } from '@/types/accounting';
-import { Plus } from 'lucide-react';
-import { useState } from 'react';
 
 export default function AccountingBookPage() {
   const [isEditing, setIsEditing] = useState(false);
@@ -16,6 +18,8 @@ export default function AccountingBookPage() {
   const [month, setMonth] = useState<number>(
     date?.getMonth() ?? new Date().getMonth(),
   );
+  const { records } = useAccountingRecords(date, month);
+  const recordDates = records.map((record) => new Date(record.date));
 
   const handleMonthChange = (newDate: Date) => {
     setMonth(newDate.getMonth());
@@ -42,6 +46,7 @@ export default function AccountingBookPage() {
                 selected={date}
                 onSelect={setDate}
                 onMonthChange={handleMonthChange}
+                recordDates={recordDates}
                 className="p-4"
               />
               <Button onClick={() => setIsEditing(true)}>
