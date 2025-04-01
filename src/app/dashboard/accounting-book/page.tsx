@@ -30,11 +30,20 @@ export default function AccountingBookPage() {
   const handleEdit = (record: AccountingRecord) => {
     setIsEditing(true);
     setEditRecord(record);
+
+    if (record?.date) {
+      const recordDate = new Date(record.date);
+      setDate(recordDate);
+      setMonth(recordDate.getMonth());
+    }
   };
 
   const handleCloseEdit = () => {
     setIsEditing(false);
     setEditRecord(null);
+    if (date) {
+      setMonth(date.getMonth());
+    }
   };
 
   return (
@@ -47,6 +56,7 @@ export default function AccountingBookPage() {
                 mode="single"
                 selected={date}
                 onSelect={setDate}
+                month={new Date(new Date().getFullYear(), month)}
                 onMonthChange={handleMonthChange}
                 recordDates={recordDates}
                 className="p-4"
