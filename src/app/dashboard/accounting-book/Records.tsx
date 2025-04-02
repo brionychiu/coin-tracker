@@ -1,4 +1,5 @@
 import { Pencil, Trash2 } from 'lucide-react';
+import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -60,16 +61,19 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
               </div>
               {record.images && record.images.length > 0 && (
                 <div>
-                  <div className="flex gap-2">
-                    {record.images.map((url, index) => (
-                      <img
-                        key={index}
-                        src={url}
-                        alt="收據"
-                        className="h-16 w-16 rounded object-cover"
-                      />
-                    ))}
-                  </div>
+                  <PhotoProvider>
+                    <div className="flex gap-2">
+                      {record.images.map((url, index) => (
+                        <PhotoView key={index} src={url}>
+                          <img
+                            src={url}
+                            alt="收據"
+                            className="h-16 w-16 rounded object-cover"
+                          />
+                        </PhotoView>
+                      ))}
+                    </div>
+                  </PhotoProvider>
                 </div>
               )}
               <Button
