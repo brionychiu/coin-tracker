@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Search, Trash2 } from 'lucide-react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { toast } from 'sonner';
 
@@ -64,13 +64,23 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                   <PhotoProvider>
                     <div className="flex gap-2">
                       {record.images.map((url, index) => (
-                        <PhotoView key={index} src={url}>
-                          <img
-                            src={url}
-                            alt="收據"
-                            className="h-16 w-16 rounded object-cover"
-                          />
-                        </PhotoView>
+                        <div key={index} className="group relative">
+                          <PhotoView src={url}>
+                            <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded">
+                              {/* 圖片本身 */}
+                              <img
+                                src={url}
+                                alt={`收據照片 ${index + 1}`}
+                                className="object-cover transition-transform duration-200 group-hover:scale-105"
+                              />
+
+                              {/* 遮罩與放大鏡 icon */}
+                              <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                                <Search className="h-6 w-6 text-white" />
+                              </div>
+                            </div>
+                          </PhotoView>
+                        </div>
                       ))}
                     </div>
                   </PhotoProvider>
