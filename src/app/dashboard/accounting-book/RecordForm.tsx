@@ -5,6 +5,7 @@ import { CircleX } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
+import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -257,25 +258,29 @@ export default function RecordForm({
                         上傳圖片
                       </Button>
                       <div className="mt-4 flex flex-row flex-wrap gap-4">
-                        {imageList.map((image, index) => (
-                          <div key={index} className="relative">
-                            <img
-                              src={image.dataURL}
-                              alt=""
-                              width="100"
-                              className="h-24 w-24 rounded border object-cover"
-                            />
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="icon"
-                              onClick={() => onImageRemove(index)}
-                              className="absolute right-0 top-0 flex translate-x-[50%] translate-y-[-50%] items-center justify-center rounded-full bg-red-500 hover:bg-red-600"
-                            >
-                              <CircleX size={16} />
-                            </Button>
-                          </div>
-                        ))}
+                        <PhotoProvider>
+                          {imageList.map((image, index) => (
+                            <div key={index} className="relative">
+                              <PhotoView src={image.dataURL}>
+                                <img
+                                  src={image.dataURL}
+                                  alt=""
+                                  width="100"
+                                  className="h-24 w-24 cursor-pointer rounded border object-cover"
+                                />
+                              </PhotoView>
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon"
+                                onClick={() => onImageRemove(index)}
+                                className="absolute right-0 top-0 flex translate-x-[50%] translate-y-[-50%] items-center justify-center rounded-full bg-red-500 hover:bg-red-600"
+                              >
+                                <CircleX size={16} />
+                              </Button>
+                            </div>
+                          ))}
+                        </PhotoProvider>
                       </div>
                     </div>
                   )}
