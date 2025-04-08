@@ -79,13 +79,16 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
               <Button
                 type="button"
                 variant="ghost"
+                size="icon"
                 onClick={() => onEdit(record)}
+                className="mr-5"
               >
                 <Pencil />
               </Button>
               <Button
                 type="button"
                 variant="ghost"
+                size="icon"
                 onClick={() => handleDelete(record)}
               >
                 <Trash2 />

@@ -107,13 +107,17 @@ export default function RecordForm({
   const { isSubmitting } = form.formState;
 
   const onImageChange = (imageList: ImageListType) => {
-    // 提取 file 屬性並設置給表單
+    if (imageList.length > 5) {
+      toast.error('最多上傳五張照片');
+    }
+
     const files = imageList
+      .slice(0, 5) // 確保最多只保留 5 張圖片
       .map((image) => image.file)
       .filter(Boolean) as File[];
-    console.log(files);
-    setImages(imageList); // 儲存整個 imageList 以便顯示預覽
-    form.setValue('images', files); // 傳遞 file 陣列到表單
+
+    setImages(imageList.slice(0, 5)); // 儲存最多 5 張圖片
+    form.setValue('images', files);
   };
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -235,7 +239,6 @@ export default function RecordForm({
                   multiple
                   value={images}
                   onChange={onImageChange}
-                  maxNumber={5}
                 >
                   {({
                     imageList,
