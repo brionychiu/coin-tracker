@@ -1,7 +1,8 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CircleX } from 'lucide-react';
+import { CircleX, Search } from 'lucide-react';
+import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
@@ -260,21 +261,31 @@ export default function RecordForm({
                       <div className="mt-4 flex flex-row flex-wrap gap-4">
                         <PhotoProvider>
                           {imageList.map((image, index) => (
-                            <div key={index} className="relative">
-                              <PhotoView src={image.dataURL}>
-                                <img
-                                  src={image.dataURL}
-                                  alt=""
-                                  width="100"
-                                  className="h-24 w-24 cursor-pointer rounded border object-cover"
-                                />
+                            <div key={index} className="group relative">
+                              <PhotoView src={image.dataURL || ''}>
+                                <div className="relative h-24 w-24 cursor-pointer overflow-hidden rounded border">
+                                  {/* 圖片本身 */}
+                                  <Image
+                                    src={image.dataURL || ''}
+                                    alt={`收據照片 ${index + 1}`}
+                                    fill
+                                    className="object-cover transition-transform duration-200 group-hover:scale-105"
+                                  />
+
+                                  {/* 遮罩與 icon */}
+                                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                                    <Search className="h-6 w-6 text-white" />
+                                  </div>
+                                </div>
                               </PhotoView>
+
+                              {/* 刪除按鈕 */}
                               <Button
                                 type="button"
                                 variant="destructive"
                                 size="icon"
                                 onClick={() => onImageRemove(index)}
-                                className="absolute right-0 top-0 flex translate-x-[50%] translate-y-[-50%] items-center justify-center rounded-full bg-red-500 hover:bg-red-600"
+                                className="absolute right-0 top-0 z-20 flex translate-x-[50%] translate-y-[-50%] items-center justify-center rounded-full bg-red-500 hover:bg-red-600"
                               >
                                 <CircleX size={16} />
                               </Button>
