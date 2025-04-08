@@ -1,8 +1,10 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMemo } from 'react';
+import { CircleX } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import ImageUploading, { ImageListType } from 'react-images-uploading';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -35,7 +37,6 @@ import {
   getCategoryLabel,
 } from '@/lib/categories';
 import { handleNumericInput } from '@/lib/inputValidators';
-import { extractFileName } from '@/lib/utils';
 import { AccountingRecord } from '@/types/accounting';
 
 interface RecordFormProps {
@@ -81,6 +82,7 @@ export default function RecordForm({
   onSave,
 }: RecordFormProps) {
   const isEditMode = !!record;
+  const [images, setImages] = useState<any[]>([]);
 
   const defaultValues = useMemo(
     () => ({
@@ -103,6 +105,16 @@ export default function RecordForm({
   });
 
   const { isSubmitting } = form.formState;
+
+  const onImageChange = (imageList: ImageListType) => {
+    // 提取 file 屬性並設置給表單
+    const files = imageList
+      .map((image) => image.file)
+      .filter(Boolean) as File[];
+    console.log(files);
+    setImages(imageList); // 儲存整個 imageList 以便顯示預覽
+    form.setValue('images', files); // 傳遞 file 陣列到表單
+  };
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
@@ -219,36 +231,54 @@ export default function RecordForm({
             <FormItem>
               <FormLabel>收據照片（最多五張）：</FormLabel>
               <FormControl>
-                <Input
-                  type="file"
-                  accept="image/*"
+                <ImageUploading
                   multiple
-                  onChange={(e) => {
-                    const files = Array.from(e.target.files || []);
-                    field.onChange(files);
-                  }}
-                />
+                  value={images}
+                  onChange={onImageChange}
+                  maxNumber={5}
+                >
+                  {({
+                    imageList,
+                    onImageUpload,
+                    onImageRemove,
+                    isDragging,
+                    dragProps,
+                  }) => (
+                    <div>
+                      <Button
+                        type="button"
+                        style={isDragging ? { color: 'red' } : undefined}
+                        onClick={onImageUpload}
+                        {...dragProps}
+                      >
+                        上傳圖片
+                      </Button>
+                      <div className="mt-4 flex flex-row flex-wrap gap-4">
+                        {imageList.map((image, index) => (
+                          <div key={index} className="relative">
+                            <img
+                              src={image.dataURL}
+                              alt=""
+                              width="100"
+                              className="h-24 w-24 rounded border object-cover"
+                            />
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="icon"
+                              onClick={() => onImageRemove(index)}
+                              className="absolute right-0 top-0 flex translate-x-[50%] translate-y-[-50%] items-center justify-center rounded-full bg-red-500 hover:bg-red-600"
+                            >
+                              <CircleX size={16} />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </ImageUploading>
               </FormControl>
               <FormMessage />
-              {isEditMode && record?.images.length ? (
-                <div className="mt-2">
-                  <p className="text-sm font-medium">已上傳的圖片：</p>
-                  <ul className="list-disc pl-5 text-sm text-gray-600">
-                    {record.images.map((url, index) => (
-                      <li key={index}>
-                        <a
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 underline"
-                        >
-                          {extractFileName(url)}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
             </FormItem>
           )}
         />
