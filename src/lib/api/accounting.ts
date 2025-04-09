@@ -29,7 +29,7 @@ async function uploadImage(file: File): Promise<string> {
 export async function addAccountingRecord(data: AccountingRecordPayload) {
   try {
     // 上傳所有圖片並獲取下載 URL
-    const imageUrls = data.images ? await Promise.all(data.images.map(uploadImage)) : [];
+    const imageUrls = data.newImages ? await Promise.all(data.newImages.map(uploadImage)) : [];
 
     const docRef = await addDoc(collection(db, 'accounting-records'), {
       date: data.date,
@@ -55,22 +55,25 @@ export async function updateAccountingRecord(id: string, data: AccountingRecordP
   try {
     const recordRef = doc(db, 'accounting-records', id);
     
-    // 檢查是否有新的圖片需要上傳
-    let imageUrls = data.images ? await Promise.all(
-      data.images.map(async (image) => {
-        if (image instanceof File) {
-          return await uploadImage(image); // 上傳並獲取 URL
-        }
-        return image; // 若是已有的 URL，則直接返回
-      })
-    ) : [];
+    let imageUrls: string[] = [];
 
-    // 更新 Firestore
+    if (data.newImages) {
+      const newImageUrls = await Promise.all(
+        data.newImages.map((image) => uploadImage(image))
+      );
+      imageUrls = [...newImageUrls];
+    }
+
+    if (data.oldImages) {
+      imageUrls = [...imageUrls, ...data.oldImages];
+    }
+
+    const { newImages, oldImages, ...cleanData } = data;
+
     await updateDoc(recordRef, {
-      ...data,
-      images: imageUrls, // 確保 images 是 URL 陣列，而非 File
+      ...cleanData,
+      images: imageUrls,
     });
-
   } catch (error) {
     console.error('更新失敗:', error);
     throw error;
