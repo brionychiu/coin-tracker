@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleX, Search } from 'lucide-react';
 import Image from 'next/image';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
@@ -58,23 +58,18 @@ const categoryEnumValues = [
 ] as [string, ...string[]];
 
 const FormSchema = z.object({
-  date: z.date({
-    required_error: '請選擇日期',
-  }),
+  date: z.date({ required_error: '請選擇日期' }),
   amount: z
     .string()
     .min(1, { message: '請輸入金額' })
-    .regex(/^\d+$/, { message: '金額必須是正整數' })
+    .regex(/^[0-9]+$/, { message: '金額必須是正整數' })
     .refine((val) => parseInt(val, 10) > 0, { message: '金額必須大於 0' }),
   category: z.enum(categoryEnumValues),
   account: z.enum(accountEnumValues, {
     errorMap: () => ({ message: '請選擇一個帳戶' }),
   }),
-  images: z
-    .array(z.instanceof(File))
-    .max(5, { message: '最多只能上傳 5 張圖片' })
-    .optional(),
-  note: z.string().max(500, { message: '最多只能輸入 500 個字' }).optional(),
+  images: z.array(z.instanceof(File)).max(5).optional(),
+  note: z.string().max(500).optional(),
 });
 
 export default function RecordForm({
@@ -84,7 +79,10 @@ export default function RecordForm({
   onSave,
 }: RecordFormProps) {
   const isEditMode = !!record;
-  const [images, setImages] = useState<any[]>([]);
+
+  const [imageList, setImageList] = useState<any[]>([]);
+  const [oldImages, setOldImages] = useState<string[]>([]);
+  const [newImages, setNewImages] = useState<File[]>([]);
 
   const defaultValues = useMemo(
     () => ({
@@ -108,58 +106,76 @@ export default function RecordForm({
 
   const { isSubmitting } = form.formState;
 
-  const onImageChange = (imageList: ImageListType) => {
-    if (imageList.length > 5) {
-      toast.error('最多上傳五張照片');
+  useEffect(() => {
+    if (isEditMode && record?.images) {
+      setOldImages(record.images);
+      setImageList(record.images.map((url) => ({ dataURL: url, isOld: true })));
+    }
+  }, [isEditMode, record]);
+
+  const onImageChange = (changedList: ImageListType) => {
+    const files = changedList
+      .filter((img) => !img.isOld && img.file)
+      .map((img) => img.file) as File[];
+
+    // 確保新照片加上舊照片不超過 5 張
+    if (files.length + oldImages.length > 5) {
+      toast.error('最多只能上傳 5 張圖片');
+      return;
     }
 
-    const files = imageList
-      .slice(0, 5) // 確保最多只保留 5 張圖片
-      .map((image) => image.file)
-      .filter(Boolean) as File[];
-
-    setImages(imageList.slice(0, 5)); // 儲存最多 5 張圖片
+    setNewImages(files);
+    setImageList(changedList);
     form.setValue('images', files);
+  };
+
+  const handleImageRemove = (index: number) => {
+    const removed = imageList[index];
+    const newList = [...imageList];
+    newList.splice(index, 1);
+    setImageList(newList);
+
+    if (removed.isOld && removed.dataURL) {
+      setOldImages((prev) => prev.filter((url) => url !== removed.dataURL));
+    }
+
+    if (!removed.isOld && removed.file) {
+      setNewImages((prev) => prev.filter((f) => f !== removed.file));
+      form.setValue(
+        'images',
+        newImages.filter((f) => f !== removed.file),
+      );
+    }
   };
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      console.log(isEditMode ? '更新中...' : '新增中...', data);
-
       const selectedCategory = [
         ...EXPENSE_CATEGORIES,
         ...INCOME_CATEGORIES,
-      ].find((category) => category.label === data.category);
+      ].find((c) => c.label === data.category);
+      if (!selectedCategory) throw new Error('分類錯誤');
 
-      if (!selectedCategory) {
-        throw new Error('選擇的分類無效');
-      }
-
-      // 將選擇的 category label 轉換為對應的 category code
       const recordData = {
         ...data,
         category: selectedCategory.code,
-        images: data.images || [],
+        newImages,
+        oldImages,
       };
 
       if (isEditMode) {
-        if (!record?.id) throw new Error('記錄 ID 缺失，無法更新');
+        if (!record?.id) throw new Error('缺少記錄 ID');
         await updateAccountingRecord(record.id, recordData);
-        toast.success('更新成功！');
-        console.log('更新成功，ID:', record.id);
+        toast.success('更新成功');
       } else {
-        const docId = await addAccountingRecord(recordData);
-        toast.success('新增成功！');
-        console.log('新增成功，文件 ID:', docId);
+        await addAccountingRecord(recordData);
+        toast.success('新增成功');
       }
 
       form.reset();
       onSave();
     } catch (error: any) {
-      console.error(isEditMode ? '更新失敗:' : '新增失敗:', error);
-      toast.warning(
-        `${isEditMode ? '更新' : '新增'}失敗:${error.message}，請稍後再試`,
-      );
+      toast.error(`${isEditMode ? '更新' : '新增'}失敗：${error.message}`);
     }
   }
 
@@ -233,58 +249,43 @@ export default function RecordForm({
         <FormField
           control={form.control}
           name="images"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>收據照片（最多五張）：</FormLabel>
               <FormControl>
                 <ImageUploading
                   multiple
-                  value={images}
+                  value={imageList}
                   onChange={onImageChange}
                 >
-                  {({
-                    imageList,
-                    onImageUpload,
-                    onImageRemove,
-                    isDragging,
-                    dragProps,
-                  }) => (
+                  {({ imageList, onImageUpload }) => (
                     <div>
-                      <Button
-                        type="button"
-                        style={isDragging ? { color: 'red' } : undefined}
-                        onClick={onImageUpload}
-                        {...dragProps}
-                      >
+                      <Button type="button" onClick={onImageUpload}>
                         上傳圖片
                       </Button>
-                      <div className="mt-4 flex flex-row flex-wrap gap-4">
+                      <div className="mt-4 flex flex-wrap gap-4">
                         <PhotoProvider>
                           {imageList.map((image, index) => (
                             <div key={index} className="group relative">
                               <PhotoView src={image.dataURL || ''}>
                                 <div className="relative h-24 w-24 cursor-pointer overflow-hidden rounded border">
-                                  {/* 圖片本身 */}
                                   <Image
                                     src={image.dataURL || ''}
                                     alt={`收據照片 ${index + 1}`}
+                                    sizes="(max-width: 600px) 100vw, 50vw"
                                     fill
                                     className="object-cover transition-transform duration-200 group-hover:scale-105"
                                   />
-
-                                  {/* 遮罩與 icon */}
                                   <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                                     <Search className="h-6 w-6 text-white" />
                                   </div>
                                 </div>
                               </PhotoView>
-
-                              {/* 刪除按鈕 */}
                               <Button
                                 type="button"
                                 variant="destructive"
                                 size="icon"
-                                onClick={() => onImageRemove(index)}
+                                onClick={() => handleImageRemove(index)}
                                 className="absolute right-0 top-0 z-20 flex translate-x-[50%] translate-y-[-50%] items-center justify-center rounded-full bg-red-500 hover:bg-red-600"
                               >
                                 <CircleX size={16} />
@@ -317,7 +318,7 @@ export default function RecordForm({
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
-              <span className="mr-2 animate-spin">⏳</span>{' '}
+              <span className="mr-2 animate-spin">⏳</span>
               {isEditMode ? '更新中...' : '儲存中...'}
             </>
           ) : isEditMode ? (
@@ -326,7 +327,7 @@ export default function RecordForm({
             '確認'
           )}
         </Button>
-        <Button onClick={onCancel} className="ml-3">
+        <Button type="button" onClick={onCancel} className="ml-3">
           取消
         </Button>
       </form>
