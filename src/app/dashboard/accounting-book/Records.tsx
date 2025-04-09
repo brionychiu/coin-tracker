@@ -62,7 +62,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
               {record.images && record.images.length > 0 && (
                 <div>
                   <PhotoProvider>
-                    <div className="flex gap-2">
+                    <div className="mt-4 flex flex-wrap gap-4">
                       {record.images.map((url, index) => (
                         <div key={index} className="group relative">
                           <PhotoView src={url}>
