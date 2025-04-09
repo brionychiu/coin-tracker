@@ -1,4 +1,4 @@
-import { Pencil, Search, Trash2 } from 'lucide-react';
+import { PackageOpen, Pencil, Search, Trash2 } from 'lucide-react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { toast } from 'sonner';
 
@@ -7,6 +7,7 @@ import { useAccountingRecords } from '@/hooks/useAccountingRecords';
 import { useConfirm } from '@/hooks/useConfirmModal';
 import { deleteAccountingRecord } from '@/lib/api/accounting';
 import { getCategoryIcon, getCategoryLabel } from '@/lib/categories';
+import { getAccountLabel } from '@/lib/utils';
 import { AccountingRecord } from '@/types/accounting';
 
 interface RecordsProps {
@@ -39,72 +40,97 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
     <div className="rounded-2xl">
       {loading && <p>Loading...</p>}
 
-      <ul className="mt-4 space-y-2">
+      <ul className="mt-4 space-y-4">
         <h2 className="pb-2 text-center text-xl font-bold">
           {date ? date.toLocaleDateString('zh-TW') : ''} 的記帳項目
         </h2>
-        {filteredRecords.length === 0 ? (
-          <p>⚠ 本日無記帳紀錄</p>
-        ) : (
-          filteredRecords.map((record) => (
-            <li key={record.id} className="rounded-2xl border p-2 shadow-sm">
-              <div className="flex justify-between">
-                <div>
-                  <p>{getCategoryIcon(record.category)}</p>
-                  <p>{getCategoryLabel(record.category)}</p>
-                  {record.note && <p>{record.note}</p>}
-                </div>
-                <div>
-                  <p>{record.amount}</p>
-                  <p>{record.account}</p>
-                </div>
-              </div>
-              {record.images && record.images.length > 0 && (
-                <div>
-                  <PhotoProvider>
-                    <div className="mt-4 flex flex-wrap gap-4">
-                      {record.images.map((url, index) => (
-                        <div key={index} className="group relative">
-                          <PhotoView src={url}>
-                            <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded">
-                              {/* 圖片本身 */}
-                              <img
-                                src={url}
-                                alt={`收據照片 ${index + 1}`}
-                                className="object-cover transition-transform duration-200 group-hover:scale-105"
-                              />
 
-                              {/* 遮罩與放大鏡 icon */}
-                              <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                                <Search className="h-6 w-6 text-white" />
-                              </div>
-                            </div>
-                          </PhotoView>
-                        </div>
-                      ))}
+        {filteredRecords.length === 0 ? (
+          <p className="flex items-center justify-center gap-2 text-muted-foreground">
+            <PackageOpen className="h-5 w-5" />
+            本日無記帳紀錄
+          </p>
+        ) : (
+          <PhotoProvider>
+            {filteredRecords.map((record) => (
+              <li
+                key={record.id}
+                className="group rounded-2xl border p-4 shadow-sm transition-shadow duration-200 hover:shadow-md"
+              >
+                <div className="flex justify-between">
+                  <div className="flex gap-4">
+                    <div className="relative flex h-10 w-10 items-center justify-center">
+                      <span className="absolute h-5 w-5 rounded-full bg-primary-01 opacity-70 shadow-md blur-sm" />
+                      <div className="relative z-10 text-2xl">
+                        {getCategoryIcon(record.category)}
+                      </div>
                     </div>
-                  </PhotoProvider>
+                    <div className="space-y-1">
+                      <p className="font-medium">
+                        {getCategoryLabel(record.category)}
+                      </p>
+                      {record.note && (
+                        <p className="text-sm text-muted-foreground">
+                          {record.note}
+                        </p>
+                      )}
+                      {record.images?.length > 0 && (
+                        <figure className="mt-2 flex flex-wrap gap-4">
+                          {record.images.map((url, index) => (
+                            <div key={index} className="relative">
+                              <PhotoView src={url}>
+                                <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded">
+                                  <img
+                                    src={url}
+                                    alt={`收據照片 ${index + 1}`}
+                                    className="object-cover transition-transform duration-200 hover:scale-105"
+                                  />
+                                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 hover:opacity-100">
+                                    <Search className="h-6 w-6 text-white" />
+                                  </div>
+                                </div>
+                              </PhotoView>
+                            </div>
+                          ))}
+                        </figure>
+                      )}
+                    </div>
+                  </div>
+                  <dl className="space-y-1 text-right text-sm">
+                    <div>
+                      <dt className="sr-only">金額</dt>
+                      <dd className="text-lg font-semibold">{record.amount}</dd>
+                    </div>
+                    <div>
+                      <dt className="sr-only">帳戶</dt>
+                      <dd className="text-muted-foreground">
+                        {getAccountLabel(record.account)}
+                      </dd>
+                    </div>
+                  </dl>
                 </div>
-              )}
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => onEdit(record)}
-                className="mr-5"
-              >
-                <Pencil />
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => handleDelete(record)}
-              >
-                <Trash2 />
-              </Button>
-            </li>
-          ))
+
+                <div className="mt-2 flex justify-end gap-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onEdit(record)}
+                  >
+                    <Pencil />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDelete(record)}
+                  >
+                    <Trash2 />
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </PhotoProvider>
         )}
       </ul>
       {ConfirmModal}
