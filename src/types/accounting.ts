@@ -13,12 +13,13 @@ export interface AccountingRecord {
   images: string[]; // Firestore 存的 `images` 是 URL 陣列
 }
 
-// 新增時使用的型別（含 File 陣列）
+// 新增/編輯時使用的型別（含 File 陣列）
 export interface AccountingRecordPayload {
   date: Date;
   amount: string;
   category: string;
   account: AccountType;
   note?: string;
-  images?: File[]; // 新增時是 File 陣列，Firestore 會轉成 URL 陣列
+  oldImages?: string[]; // 已存在的圖片 URL
+  newImages?: File[]; // 新增時是 File 陣列，Firestore 會轉成 URL 陣列
 }
