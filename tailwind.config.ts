@@ -24,17 +24,17 @@ export default {
   			primary: {
   				DEFAULT: 'hsl(var(--primary))',
   				foreground: 'hsl(var(--primary-foreground))',
-  				'01': '#FFDB52',
-  				'02': '#47B8E0',
-  				'03': '#fe7471'
+  				'01': '#FFDB52', // 亮黃色
+  				'02': '#47B8E0', // 藍綠色
+  				'03': '#fe7471' // 珊瑚紅
   			},
   			secondary: {
   				DEFAULT: 'hsl(var(--secondary))',
   				foreground: 'hsl(var(--secondary-foreground))'
   			},
   			system: {
-  				'01': '#212529',
-  				'02': '#FFEF98'
+  				'01': '#212529', // 灰黑色
+  				'02': '#FFEF98' // 淺黃色
   			},
   			gray: {
 					'01': '#d1d5db',
@@ -43,6 +43,10 @@ export default {
   			},
 				green: {
 					'01': '#05d99a',
+				},
+				blue: {
+					'01': '#A3DDF0',
+					'02': '#7FCFEA',
 				},
   			warning: {
   				'01': '#FFC107'
