@@ -41,6 +41,9 @@ export default {
 					'02': '#9ca3af',
   				'03': '#6b7280',
   			},
+				green: {
+					'01': '#05d99a',
+				},
   			warning: {
   				'01': '#FFC107'
   			},
