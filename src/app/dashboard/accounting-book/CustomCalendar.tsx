@@ -48,7 +48,7 @@ function CustomCalendar({
           'h-10 w-10 p-0 font-normal aria-selected:opacity-100',
         ),
         day_selected:
-          'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
+          'bg-primary-02 text-primary-foreground hover:bg-primary-02 hover:text-primary-foreground focus:bg-primary-02 focus:text-primary-foreground',
         day_today: 'bg-accent text-accent-foreground',
         day_outside:
           'day-outside text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground',
