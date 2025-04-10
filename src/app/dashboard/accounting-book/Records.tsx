@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useAccountingRecords } from '@/hooks/useAccountingRecords';
 import { useConfirm } from '@/hooks/useConfirmModal';
 import { deleteAccountingRecord } from '@/lib/api/accounting';
-import { getCategoryIcon, getCategoryLabel } from '@/lib/categories';
+import { getCategoryIcon, getCategoryInfo } from '@/lib/categories';
 import { getAccountLabel } from '@/lib/utils';
 import { AccountingRecord } from '@/types/accounting';
 
@@ -19,6 +19,16 @@ interface RecordsProps {
 export default function Records({ date, month, onEdit }: RecordsProps) {
   const { filteredRecords, loading } = useAccountingRecords(date, month);
   const { confirm, ConfirmModal } = useConfirm();
+
+  const getRecordStyle = (categoryCode: string) => {
+    const { label, categoryType } = getCategoryInfo(categoryCode);
+    const isIncome = categoryType === 'income';
+
+    return {
+      label,
+      iconBg: isIncome ? 'bg-green-01' : 'bg-primary-01',
+    };
+  };
 
   const handleDelete = async (record: AccountingRecord) => {
     confirm({
@@ -52,84 +62,90 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
           </p>
         ) : (
           <PhotoProvider>
-            {filteredRecords.map((record) => (
-              <li
-                key={record.id}
-                className="group rounded-2xl border p-4 shadow-sm transition-shadow duration-200 hover:shadow-md"
-              >
-                <div className="flex justify-between">
-                  <div className="flex gap-4">
-                    <div className="relative flex h-10 w-10 items-center justify-center">
-                      <span className="absolute h-5 w-5 rounded-full bg-primary-01 opacity-70 shadow-md blur-sm" />
-                      <div className="relative z-10 text-2xl">
-                        {getCategoryIcon(record.category)}
+            {filteredRecords.map((record) => {
+              const { label, iconBg } = getRecordStyle(record.category);
+
+              return (
+                <li
+                  key={record.id}
+                  className="group rounded-2xl border p-4 shadow-sm transition-shadow duration-200 hover:shadow-md"
+                >
+                  <div className="flex justify-between">
+                    <div className="flex gap-4">
+                      <div className="relative flex h-10 w-10 items-center justify-center">
+                        <span
+                          className={`absolute h-5 w-5 rounded-full opacity-70 shadow-md blur-sm ${iconBg}`}
+                        />
+                        <div className="relative z-10 text-2xl">
+                          {getCategoryIcon(record.category)}
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-medium">{label}</p>
+                        {record.note && (
+                          <p className="text-sm text-muted-foreground">
+                            {record.note}
+                          </p>
+                        )}
+                        {record.images?.length > 0 && (
+                          <figure className="mt-2 flex flex-wrap gap-4">
+                            {record.images.map((url, index) => (
+                              <div key={index} className="relative">
+                                <PhotoView src={url}>
+                                  <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded">
+                                    <img
+                                      src={url}
+                                      alt={`收據照片 ${index + 1}`}
+                                      className="object-cover transition-transform duration-200 hover:scale-105"
+                                    />
+                                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 hover:opacity-100">
+                                      <Search className="h-6 w-6 text-white" />
+                                    </div>
+                                  </div>
+                                </PhotoView>
+                              </div>
+                            ))}
+                          </figure>
+                        )}
                       </div>
                     </div>
-                    <div className="space-y-1">
-                      <p className="font-medium">
-                        {getCategoryLabel(record.category)}
-                      </p>
-                      {record.note && (
-                        <p className="text-sm text-muted-foreground">
-                          {record.note}
-                        </p>
-                      )}
-                      {record.images?.length > 0 && (
-                        <figure className="mt-2 flex flex-wrap gap-4">
-                          {record.images.map((url, index) => (
-                            <div key={index} className="relative">
-                              <PhotoView src={url}>
-                                <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded">
-                                  <img
-                                    src={url}
-                                    alt={`收據照片 ${index + 1}`}
-                                    className="object-cover transition-transform duration-200 hover:scale-105"
-                                  />
-                                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 hover:opacity-100">
-                                    <Search className="h-6 w-6 text-white" />
-                                  </div>
-                                </div>
-                              </PhotoView>
-                            </div>
-                          ))}
-                        </figure>
-                      )}
-                    </div>
+                    <dl className="space-y-1 text-right text-sm">
+                      <div>
+                        <dt className="sr-only">金額</dt>
+                        <dd className="text-lg font-semibold">
+                          {record.amount}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="sr-only">帳戶</dt>
+                        <dd className="text-muted-foreground">
+                          {getAccountLabel(record.account)}
+                        </dd>
+                      </div>
+                    </dl>
                   </div>
-                  <dl className="space-y-1 text-right text-sm">
-                    <div>
-                      <dt className="sr-only">金額</dt>
-                      <dd className="text-lg font-semibold">{record.amount}</dd>
-                    </div>
-                    <div>
-                      <dt className="sr-only">帳戶</dt>
-                      <dd className="text-muted-foreground">
-                        {getAccountLabel(record.account)}
-                      </dd>
-                    </div>
-                  </dl>
-                </div>
 
-                <div className="mt-2 flex justify-end gap-2">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onEdit(record)}
-                  >
-                    <Pencil />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(record)}
-                  >
-                    <Trash2 />
-                  </Button>
-                </div>
-              </li>
-            ))}
+                  <div className="mt-2 flex justify-end gap-2">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onEdit(record)}
+                    >
+                      <Pencil />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDelete(record)}
+                    >
+                      <Trash2 />
+                    </Button>
+                  </div>
+                </li>
+              );
+            })}
           </PhotoProvider>
         )}
       </ul>
