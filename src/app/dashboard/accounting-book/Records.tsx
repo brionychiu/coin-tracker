@@ -123,7 +123,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                       <div className="mt-2 flex justify-end gap-2">
                         <Button
                           type="button"
-                          variant="ghost"
+                          variant="iconHover"
                           size="icon"
                           onClick={() => onEdit(record)}
                         >
@@ -131,7 +131,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                         </Button>
                         <Button
                           type="button"
-                          variant="ghost"
+                          variant="iconHover"
                           size="icon"
                           onClick={() => handleDelete(record)}
                         >
