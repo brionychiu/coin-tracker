@@ -72,7 +72,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                 >
                   <div className="flex justify-between">
                     <div className="flex gap-4">
-                      <div className="relative flex h-10 w-10 items-center justify-center">
+                      <div className="relative flex h-8 w-8 items-center justify-center">
                         <span
                           className={`absolute h-5 w-5 rounded-full opacity-70 shadow-md blur-sm ${iconBg}`}
                         />
@@ -80,7 +80,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                           {getCategoryIcon(record.category)}
                         </div>
                       </div>
-                      <div className="space-y-1">
+                      <div className="space-y-2">
                         <p className="font-medium">{label}</p>
                         {record.note && (
                           <p className="text-sm text-muted-foreground">
@@ -88,7 +88,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                           </p>
                         )}
                         {record.images?.length > 0 && (
-                          <figure className="mt-2 flex flex-wrap gap-4">
+                          <figure className="flex flex-wrap gap-4">
                             {record.images.map((url, index) => (
                               <div key={index} className="relative">
                                 <PhotoView src={url}>
@@ -109,39 +109,36 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                         )}
                       </div>
                     </div>
-                    <dl className="space-y-1 text-right text-sm">
+                    <dl className="flex flex-col justify-between text-right text-sm">
                       <div>
                         <dt className="sr-only">金額</dt>
                         <dd className="text-lg font-semibold">
                           {record.amount}
                         </dd>
-                      </div>
-                      <div>
                         <dt className="sr-only">帳戶</dt>
                         <dd className="text-muted-foreground">
                           {getAccountLabel(record.account)}
                         </dd>
                       </div>
+                      <div className="mt-2 flex justify-end gap-2">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onEdit(record)}
+                        >
+                          <Pencil />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(record)}
+                        >
+                          <Trash2 />
+                        </Button>
+                      </div>
                     </dl>
-                  </div>
-
-                  <div className="mt-2 flex justify-end gap-2">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onEdit(record)}
-                    >
-                      <Pencil />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(record)}
-                    >
-                      <Trash2 />
-                    </Button>
                   </div>
                 </li>
               );
