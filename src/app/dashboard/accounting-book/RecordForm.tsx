@@ -330,7 +330,11 @@ export default function RecordForm({
               '確認'
             )}
           </Button>
-          <Button type="button" onClick={onCancel} className="ml-3">
+          <Button
+            type="button"
+            onClick={onCancel}
+            className="ml-3 hover:bg-gray-01"
+          >
             取消
           </Button>
         </div>
