@@ -35,6 +35,7 @@ export async function addAccountingRecord(data: AccountingRecordPayload) {
       date: data.date,
       amount: data.amount,
       category: data.category,
+      categoryType: data.categoryType,
       account: data.account,
       note: data.note,
       images: imageUrls, // 存的是 URL 陣列
