@@ -45,7 +45,7 @@ export default function AuthModal() {
           className="text-base font-normal"
           onClick={handleLogout}
         >
-          登出
+          會員登出
         </Button>
       ) : (
         <Dialog onOpenChange={(open) => open && setIsLoginView(true)}>
