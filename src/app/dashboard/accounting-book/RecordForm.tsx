@@ -36,6 +36,7 @@ import {
 import {
   EXPENSE_CATEGORIES,
   INCOME_CATEGORIES,
+  getCategoryInfo,
   getCategoryLabel,
 } from '@/lib/categories';
 import { handleNumericInput } from '@/lib/inputValidators';
@@ -156,9 +157,12 @@ export default function RecordForm({
       ].find((c) => c.label === data.category);
       if (!selectedCategory) throw new Error('分類錯誤');
 
+      const { categoryType } = getCategoryInfo(selectedCategory.code);
+
       const recordData = {
         ...data,
         category: selectedCategory.code,
+        categoryType,
         newImages,
         oldImages,
       };
