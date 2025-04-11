@@ -127,7 +127,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                           size="icon"
                           onClick={() => onEdit(record)}
                         >
-                          <Pencil />
+                          <Pencil className="size-4" />
                         </Button>
                         <Button
                           type="button"
@@ -135,7 +135,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                           size="icon"
                           onClick={() => handleDelete(record)}
                         >
-                          <Trash2 />
+                          <Trash2 className="size-4" />
                         </Button>
                       </div>
                     </dl>
