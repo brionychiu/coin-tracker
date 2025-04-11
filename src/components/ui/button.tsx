@@ -16,11 +16,12 @@ const buttonVariants = cva(
         outline:
           'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
         secondary:
-          'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
+          'bg-secondary hover:bg-gray-01 text-secondary-foreground shadow-sm hover:bg-secondary/80 border-2 border-system-01',
         ghost: 'hover:bg-blue-01 hover:text-accent-foreground',
         link: 'text-gray-03 underline-offset-4 hover:underline',
         iconHover:
-          'hover:scale-125 hover:bg-gray-200 hover:shadow-lg transition-all duration-200 hover:rounded-full', // 新增 hover grow 的效果
+          'hover:scale-125 hover:bg-gray-200 hover:shadow-lg transition-all duration-200 hover:rounded-full',
+        tabHover: 'hover:scale-110',
       },
       size: {
         default: 'h-9 px-4 py-2',
