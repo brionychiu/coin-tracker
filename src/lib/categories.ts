@@ -63,11 +63,11 @@ export const getCategoryLabel = (code: string): string => {
   const category = [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES].find(
     (category) => category.code === code
   );
-  return category ? category.label : '未知類別'; // 如果找不到對應的 category 返回 '未知類別'
+  return category ? category.label : '未知類別'; 
 };
 
 // 根據 category code 取得對應的 category label 和類別類型
-export const getCategoryInfo = (code: string) => {
+export const getCategoryInfo = (code: string): { label: string; categoryType: 'expense' | 'income' } => {
   const expenseCategory = EXPENSE_CATEGORIES.find((category) => category.code === code);
   if (expenseCategory) {
     return { label: expenseCategory.label, categoryType: 'expense' };
@@ -78,7 +78,7 @@ export const getCategoryInfo = (code: string) => {
     return { label: incomeCategory.label, categoryType: 'income' };
   }
 
-  return { label: '未知類別', categoryType: 'unknown' }; // 如果找不到對應的 category 返回 '未知類別'
+  throw new Error(`未知的 category code：${code}`);
 };
 
 // 根據 category code 取得對應的 category icon
@@ -90,5 +90,5 @@ export const getCategoryIcon = (code: string): React.JSX.Element => {
   // 使用 React.createElement 動態渲染組件
   return category
     ? React.createElement(category.icon, { className: 'h-6 w-6' })
-    : React.createElement(LayoutGrid, { className: 'h-6 w-6' }); // 用 React.createElement 處理 LayoutGrid
+    : React.createElement(LayoutGrid, { className: 'h-6 w-6' });
 };
