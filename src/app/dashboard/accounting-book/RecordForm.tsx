@@ -263,37 +263,39 @@ export default function RecordForm({
                       <Button type="button" onClick={onImageUpload}>
                         上傳圖片
                       </Button>
-                      <div className="mt-4 flex flex-wrap gap-4">
-                        <PhotoProvider>
-                          {imageList.map((image, index) => (
-                            <div key={index} className="group relative">
-                              <PhotoView src={image.dataURL || ''}>
-                                <div className="relative h-24 w-24 cursor-pointer overflow-hidden rounded border">
-                                  <Image
-                                    src={image.dataURL || ''}
-                                    alt={`收據照片 ${index + 1}`}
-                                    sizes="(max-width: 600px) 100vw, 50vw"
-                                    fill
-                                    className="object-cover transition-transform duration-200 group-hover:scale-105"
-                                  />
-                                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                                    <Search className="h-6 w-6 text-white" />
+                      {imageList.length > 0 && (
+                        <div className="mt-4 flex flex-wrap gap-4">
+                          <PhotoProvider>
+                            {imageList.map((image, index) => (
+                              <div key={index} className="group relative">
+                                <PhotoView src={image.dataURL || ''}>
+                                  <div className="relative h-24 w-24 cursor-pointer overflow-hidden rounded border">
+                                    <Image
+                                      src={image.dataURL || ''}
+                                      alt={`收據照片 ${index + 1}`}
+                                      sizes="(max-width: 600px) 100vw, 50vw"
+                                      fill
+                                      className="object-cover transition-transform duration-200 group-hover:scale-105"
+                                    />
+                                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                                      <Search className="h-6 w-6 text-white" />
+                                    </div>
                                   </div>
-                                </div>
-                              </PhotoView>
-                              <Button
-                                type="button"
-                                variant="destructive"
-                                size="icon"
-                                onClick={() => handleImageRemove(index)}
-                                className="absolute right-0 top-0 z-20 flex translate-x-[50%] translate-y-[-50%] items-center justify-center rounded-full bg-red-500 hover:bg-red-600"
-                              >
-                                <CircleX size={16} />
-                              </Button>
-                            </div>
-                          ))}
-                        </PhotoProvider>
-                      </div>
+                                </PhotoView>
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  size="icon"
+                                  onClick={() => handleImageRemove(index)}
+                                  className="absolute right-0 top-0 z-20 flex translate-x-[50%] translate-y-[-50%] items-center justify-center rounded-full bg-red-500 hover:bg-red-600"
+                                >
+                                  <CircleX size={16} />
+                                </Button>
+                              </div>
+                            ))}
+                          </PhotoProvider>
+                        </div>
+                      )}
                     </div>
                   )}
                 </ImageUploading>
@@ -315,21 +317,23 @@ export default function RecordForm({
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? (
-            <>
-              <span className="mr-2 animate-spin">⏳</span>
-              {isEditMode ? '更新中...' : '儲存中...'}
-            </>
-          ) : isEditMode ? (
-            '更新'
-          ) : (
-            '確認'
-          )}
-        </Button>
-        <Button type="button" onClick={onCancel} className="ml-3">
-          取消
-        </Button>
+        <div className="mt-4 flex justify-end">
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <>
+                <span className="mr-2 animate-spin">⏳</span>
+                {isEditMode ? '更新中...' : '儲存中...'}
+              </>
+            ) : isEditMode ? (
+              '更新'
+            ) : (
+              '確認'
+            )}
+          </Button>
+          <Button type="button" onClick={onCancel} className="ml-3">
+            取消
+          </Button>
+        </div>
       </form>
     </Form>
   );
