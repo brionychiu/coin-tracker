@@ -8,6 +8,7 @@ export interface AccountingRecord {
   date: Date;
   amount: string;
   category: string;
+  categoryType: 'expense' | 'income';
   account: AccountType;
   note?: string;
   images: string[]; // Firestore 存的 `images` 是 URL 陣列
@@ -18,6 +19,7 @@ export interface AccountingRecordPayload {
   date: Date;
   amount: string;
   category: string;
+  categoryType: 'expense' | 'income';
   account: AccountType;
   note?: string;
   oldImages?: string[]; // 已存在的圖片 URL
