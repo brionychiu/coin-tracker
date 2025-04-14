@@ -322,24 +322,24 @@ export default function RecordForm({
           )}
         />
         <div className="mt-4 flex justify-end">
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <span className="mr-2 animate-spin">⏳</span>
-                {isEditMode ? '更新中...' : '儲存中...'}
-              </>
-            ) : isEditMode ? (
-              '更新'
-            ) : (
-              '確認'
-            )}
-          </Button>
           <Button
-            type="button"
-            onClick={onCancel}
-            className="ml-3 hover:bg-gray-01"
+              type="button"
+              onClick={onCancel}
+              className="mr-3 hover:bg-gray-01"
           >
             取消
+          </Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? (
+                <>
+                  <span className="animate-spin">⏳</span>
+                  {isEditMode ? '更新中...' : '儲存中...'}
+                </>
+            ) : isEditMode ? (
+                '更新'
+            ) : (
+                '確認'
+            )}
           </Button>
         </div>
       </form>
