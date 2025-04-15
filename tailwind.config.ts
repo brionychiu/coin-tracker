@@ -51,6 +51,9 @@ export default {
   			warning: {
   				'01': '#FFC107'
   			},
+				error: {
+					'01': '#EF4444'
+				},
   			muted: {
   				DEFAULT: 'hsl(var(--muted))',
   				foreground: 'hsl(var(--muted-foreground))'
