@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import FullscreenLoading from '@/components/common/FullscreenLoading';
-import TabsCategory from '@/components/tabs/TabsCategory';
+import CategoryTabs from '@/components/tabs/CategoryTabs';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -250,7 +250,7 @@ export default function RecordForm({
               <FormItem>
                 <FormLabel>類別：</FormLabel>
                 <FormControl>
-                  <TabsCategory value={field.value} onChange={field.onChange} />
+                  <CategoryTabs value={field.value} onChange={field.onChange} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
