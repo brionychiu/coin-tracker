@@ -132,3 +132,33 @@ export function getAccountingRecords(
 
   return unsubscribe;
 }
+
+/**
+ * 監聽日期區間的 Firestore 記帳紀錄
+ */
+export function getAccountingRecordsByRange(
+  startDate: Date,
+  endDate: Date,
+  callback: (data: AccountingRecord[]) => void
+) {
+  const startTimestamp = Timestamp.fromDate(startDate);
+  const endTimestamp = Timestamp.fromDate(endDate);
+
+  const q = query(
+    collection(db, 'accounting-records'),
+    where('date', '>=', startTimestamp),
+    where('date', '<=', endTimestamp)
+  );
+
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const data = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      date: doc.data().date.toDate(), // Timestamp 轉 Date
+    })) as AccountingRecord[];
+
+    callback(data);
+  });
+
+  return unsubscribe;
+}
