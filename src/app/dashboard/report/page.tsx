@@ -4,12 +4,14 @@ import { useState } from 'react';
 
 import { ExpenseChartSwitcher } from '@/components/chart/ExpenseChartSwitcher';
 import { IncomeChartSwitcher } from '@/components/chart/IncomeChartSwitcher';
-import { LineChart } from '@/components/chart/LineChart';
+import { MultiAxisLineChart } from '@/components/chart/MultiAxisLineChart';
+import { FullscreenLoading } from '@/components/common/FullscreenLoading';
 import { DateRangeTabs, type DateRange } from '@/components/tabs/DateRangeTabs';
 import { useAccountingRecordsByRange } from '@/hooks/useAccountingRecords';
 
 export default function ReportPage() {
   const [dateRange, setDateRange] = useState<DateRange | null>(null);
+
   const { records: expenseRecords, loading: expenseLoading } =
     useAccountingRecordsByRange(
       dateRange?.startDate ?? null,
@@ -24,16 +26,25 @@ export default function ReportPage() {
     );
 
   return (
-    <div className="flex w-full flex-row justify-center rounded-md border p-4 shadow">
-      <div className="p-4">
-        <DateRangeTabs value={dateRange} onChange={setDateRange} />
-        <ExpenseChartSwitcher
-          records={expenseRecords}
-          loading={expenseLoading}
-        />
-        <IncomeChartSwitcher records={incomeRecords} loading={incomeLoading} />
-        <LineChart />
-      </div>
-    </div>
+    <>
+      {expenseLoading || incomeLoading ? (
+        <FullscreenLoading gifSrc="/loading-3.gif" />
+      ) : (
+        <div className="mx-auto flex w-full max-w-6xl flex-col items-center">
+          <DateRangeTabs value={dateRange} onChange={setDateRange} />
+          <div className="grid w-full max-w-4xl grid-cols-1 gap-10 md:grid-cols-2 [&>*]:w-full">
+            <ExpenseChartSwitcher records={expenseRecords} />
+            <IncomeChartSwitcher records={incomeRecords} />
+          </div>
+          <div className="mt-10 w-full max-w-4xl">
+            <MultiAxisLineChart
+              expenseRecords={expenseRecords}
+              incomeRecords={incomeRecords}
+              dateRange={dateRange}
+            />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
