@@ -6,9 +6,9 @@ import FullscreenLoading from '@/components/common/FullscreenLoading';
 import { Button } from '@/components/ui/button';
 import { useAccountingRecords } from '@/hooks/useAccountingRecords';
 import { useConfirm } from '@/hooks/useConfirmModal';
+import { getAccountLabel } from '@/lib/account';
 import { deleteAccountingRecord } from '@/lib/api/accounting';
 import { getCategoryIcon, getCategoryInfo } from '@/lib/categories';
-import { getAccountLabel } from '@/lib/utils';
 import { AccountingRecord } from '@/types/accounting';
 
 interface RecordsProps {
