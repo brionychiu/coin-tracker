@@ -1,4 +1,4 @@
-import { accountOptions } from '@/lib/accountOptions';
+import { accountOptions } from '@/lib/account';
 
 export type AccountType = typeof accountOptions[number]['value']; 
 

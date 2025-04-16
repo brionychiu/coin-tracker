@@ -29,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { accountOptions } from '@/lib/accountOptions';
+import { accountOptions } from '@/lib/account';
 import {
   addAccountingRecord,
   updateAccountingRecord,
