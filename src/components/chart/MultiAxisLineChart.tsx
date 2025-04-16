@@ -11,7 +11,7 @@ import {
 import { Line } from 'react-chartjs-2';
 
 import { type DateRange } from '@/components/tabs/DateRangeTabs';
-import { formatKey } from '@/lib/date';
+import { formatKey } from '@/lib/format';
 import { AccountingRecord } from '@/types/accounting';
 
 ChartJS.register(
