@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export default function FullscreenLoading() {
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/70">
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-gray-400/40">
       <Image
         src="/Loading-1.gif"
         alt="Loading..."
