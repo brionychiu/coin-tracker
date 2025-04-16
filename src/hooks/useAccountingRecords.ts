@@ -35,7 +35,11 @@ export function useAccountingRecordsByRange(
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!startDate || !endDate) return;
+    if (!startDate || !endDate) {
+      setRecords([]);
+      setLoading(false); 
+      return;
+    }
 
     setLoading(true);
 
