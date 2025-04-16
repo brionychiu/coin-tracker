@@ -93,7 +93,7 @@ export const DateRangeTabs = ({ value, onChange }: DateRangeTabsProps) => {
         </TabsList>
 
         <TabsContent value="month">
-          <div className="flex items-center justify-center gap-4 pt-4 text-lg font-semibold">
+          <div className="flex items-center justify-center gap-4 py-4 text-lg font-semibold">
             <Button
               size="icon"
               variant="ghost"
