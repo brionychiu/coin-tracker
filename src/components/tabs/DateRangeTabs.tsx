@@ -113,7 +113,7 @@ export const DateRangeTabs = ({ value, onChange }: DateRangeTabsProps) => {
         </TabsContent>
 
         <TabsContent value="year">
-          <div className="flex items-center justify-center gap-4 pt-4 text-lg font-semibold">
+          <div className="flex items-center justify-center gap-4 py-4 text-lg font-semibold">
             <Button
               size="icon"
               variant="ghost"
@@ -133,7 +133,7 @@ export const DateRangeTabs = ({ value, onChange }: DateRangeTabsProps) => {
         </TabsContent>
 
         <TabsContent value="recent">
-          <div className="flex justify-center pt-4 text-lg font-semibold">
+          <div className="flex justify-center py-4 text-lg font-semibold">
             <span>{getRecentRange()}</span>
           </div>
         </TabsContent>
