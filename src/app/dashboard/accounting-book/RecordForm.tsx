@@ -10,7 +10,7 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import FullscreenLoading from '@/components/common/FullscreenLoading';
+import { FullscreenLoading } from '@/components/common/FullscreenLoading';
 import CategoryTabs from '@/components/tabs/CategoryTabs';
 import { Button } from '@/components/ui/button';
 import {

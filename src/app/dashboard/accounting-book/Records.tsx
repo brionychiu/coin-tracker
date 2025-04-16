@@ -2,7 +2,7 @@ import { PackageOpen, Pencil, Search, Trash2 } from 'lucide-react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { toast } from 'sonner';
 
-import FullscreenLoading from '@/components/common/FullscreenLoading';
+import { FullscreenLoading } from '@/components/common/FullscreenLoading';
 import { Button } from '@/components/ui/button';
 import { useAccountingRecords } from '@/hooks/useAccountingRecords';
 import { useConfirm } from '@/hooks/useConfirmModal';
