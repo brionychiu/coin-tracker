@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
 import { AccountingRecord } from '@/types/accounting';
 import { AlignEndHorizontal, ChartPie } from 'lucide-react';
-import { useState } from 'react';
 import { BarChartBase } from './BarChartBase';
 import { PieChartBase } from './PieChartBase';
 
@@ -30,13 +32,16 @@ export const IncomeChartSwitcher = ({
 
   return (
     <div className="relative">
-      <button
+      <Button
+        type="button"
+        variant="iconHover"
+        size="icon"
         onClick={toggleChart}
         className="absolute right-2 top-2 rounded-md p-1 hover:bg-gray-100"
         aria-label="切換圖表"
       >
         {icon}
-      </button>
+      </Button>
 
       {chartType === 'pie' ? (
         <PieChartBase
