@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { accountOptions } from '@/lib/account';
 import {
   addAccountingRecord,
@@ -321,7 +322,7 @@ export default function RecordForm({
               <FormItem>
                 <FormLabel>寫點備註吧：</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="寫點備註吧" {...field} />
+                  <Textarea placeholder="寫點備註吧" rows={3} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
