@@ -10,7 +10,6 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 interface PieChartBaseProps {
   records: AccountingRecord[];
   categoryType: 'expense' | 'income';
-  loading?: boolean;
   title: string;
   emptyMessage: string;
 }
@@ -18,14 +17,9 @@ interface PieChartBaseProps {
 export const PieChartBase = ({
   records,
   categoryType,
-  loading = false,
   title,
   emptyMessage,
 }: PieChartBaseProps) => {
-  if (loading) {
-    return <p className="py-4 text-center">載入中...</p>;
-  }
-
   if (!records || records.length === 0) {
     return <p className="py-4 text-center">{emptyMessage}</p>;
   }

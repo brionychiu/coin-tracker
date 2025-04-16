@@ -8,12 +8,10 @@ import { PieChartBase } from './PieChartBase';
 
 interface ExpenseChartSwitcherProps {
   records: AccountingRecord[];
-  loading?: boolean;
 }
 
 export const ExpenseChartSwitcher = ({
   records,
-  loading = false,
 }: ExpenseChartSwitcherProps) => {
   const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
 
@@ -44,7 +42,6 @@ export const ExpenseChartSwitcher = ({
       {chartType === 'pie' ? (
         <PieChartBase
           records={records}
-          loading={loading}
           categoryType="expense"
           title="支出類別比"
           emptyMessage="沒有支出紀錄"
@@ -52,7 +49,6 @@ export const ExpenseChartSwitcher = ({
       ) : (
         <BarChartBase
           records={records}
-          loading={loading}
           categoryType="expense"
           title="支出類別金額"
           emptyMessage="沒有支出紀錄"

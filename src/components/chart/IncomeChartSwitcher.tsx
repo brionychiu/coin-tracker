@@ -10,13 +10,9 @@ import { PieChartBase } from './PieChartBase';
 
 interface IncomeChartSwitcherProps {
   records: AccountingRecord[];
-  loading?: boolean;
 }
 
-export const IncomeChartSwitcher = ({
-  records,
-  loading = false,
-}: IncomeChartSwitcherProps) => {
+export const IncomeChartSwitcher = ({ records }: IncomeChartSwitcherProps) => {
   const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
 
   const toggleChart = () => {
@@ -47,7 +43,6 @@ export const IncomeChartSwitcher = ({
         <PieChartBase
           records={records}
           categoryType="income"
-          loading={loading}
           title="收入類別比"
           emptyMessage="這段時間沒有收入資料"
         />
@@ -55,7 +50,6 @@ export const IncomeChartSwitcher = ({
         <BarChartBase
           records={records}
           categoryType="income"
-          loading={loading}
           title="收入金額"
           emptyMessage="這段時間沒有收入資料"
         />

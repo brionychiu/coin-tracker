@@ -17,7 +17,6 @@ ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 interface BarChartBaseProps {
   records: AccountingRecord[];
   categoryType: 'expense' | 'income';
-  loading?: boolean;
   title: string;
   emptyMessage: string;
 }
@@ -25,14 +24,9 @@ interface BarChartBaseProps {
 export const BarChartBase = ({
   records,
   categoryType,
-  loading = false,
   title,
   emptyMessage,
 }: BarChartBaseProps) => {
-  if (loading) {
-    return <p className="py-4 text-center">載入中...</p>;
-  }
-
   if (!records || records.length === 0) {
     return <p className="py-4 text-center">{emptyMessage}</p>;
   }
