@@ -7,7 +7,9 @@ import {
 import {
   addDoc,
   collection,
-  deleteDoc, doc, getFirestore, limit,
+  deleteDoc, doc,
+  getDocs,
+  getFirestore, limit,
   onSnapshot,
   orderBy, query, startAfter,
   Timestamp,
@@ -33,5 +35,5 @@ const auth = getAuth(app);
 const subscribeToAuthChanges = (callback: (user: User | null) => void) =>
   onAuthStateChanged(auth, callback);
 
-export { addDoc, auth, collection, db, deleteDoc, doc, getDownloadURL, limit, onAuthStateChanged, onSnapshot, orderBy, query, ref, startAfter, storage, subscribeToAuthChanges, Timestamp, updateDoc, uploadBytes, User, where };
+export { addDoc, auth, collection, db, deleteDoc, doc, getDocs, getDownloadURL, limit, onAuthStateChanged, onSnapshot, orderBy, query, ref, startAfter, storage, subscribeToAuthChanges, Timestamp, updateDoc, uploadBytes, User, where };
 
