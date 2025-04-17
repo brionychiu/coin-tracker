@@ -1,8 +1,7 @@
-import { onAuthStateChanged, User } from 'firebase/auth';
 import Cookies from 'js-cookie';
 import { create } from 'zustand';
 
-import { auth } from '@/lib/firebase';
+import { auth, onAuthStateChanged, User } from '@/lib/firebase';
 
 type AuthState = {
   user: User | null;
