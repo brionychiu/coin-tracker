@@ -9,7 +9,14 @@ export function useAccountingRecords(date: Date | undefined, month: number) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!month || !date) {
+      setRecords([]);
+      setLoading(false); 
+      return;
+    }
+
     setLoading(true);
+
     const unsubscribe = getAccountingRecords(month, (data) => {
       setRecords(data);
 
