@@ -1,0 +1,9 @@
+{
+  "cSpell.words": [
+    "firestore",
+    "sonner"
+  ],
+  "editor.codeActionsOnSave": {
+        "source.organizeImports": true,
+    },
+}
