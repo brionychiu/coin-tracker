@@ -6,10 +6,14 @@ import {
   db,
   deleteDoc,
   doc,
+  getDocs,
   getDownloadURL,
+  limit,
   onSnapshot,
+  orderBy,
   query,
   ref,
+  startAfter,
   storage,
   Timestamp,
   updateDoc,
@@ -165,4 +169,41 @@ export function getAccountingRecordsByRange(
   });
 
   return unsubscribe;
+}
+
+// TODO: 這段要重構，convertToTimestamp 要歸檔，並且需理解 getRecordsBatch 的邏輯
+// 設定從 Firestore 查詢的日期格式
+const convertToTimestamp = (date: Date | null) => {
+  return date ? Timestamp.fromDate(date) : Timestamp.now();
+};
+
+export async function getRecordsBatch(lastDate: Date | null, batchSize: number): Promise<AccountingRecord[]> {
+  const recordsRef = collection(db, 'accounting-records');
+
+  // 構建查詢，依照日期排序，並根據 lastDate 來載入下一批
+  let q = query(
+    recordsRef,
+    orderBy('date', 'desc'), // 降冪排序，最新的記錄排前面
+    limit(batchSize) // 限制每次載入的數量
+  );
+
+  // 如果有提供 lastDate，使用 startAfter 來載入最新的資料
+  if (lastDate) {
+    const lastTimestamp = convertToTimestamp(lastDate);
+    q = query(q, startAfter(lastTimestamp)); // 從最後一條記錄後開始載入
+  }
+
+  try {
+    const querySnapshot = await getDocs(q);
+    const records: AccountingRecord[] = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      date: doc.data().date.toDate(), // Timestamp 轉 Date
+    })) as AccountingRecord[];
+
+    return records;
+  } catch (error) {
+    console.error('載入記帳資料失敗:', error);
+    return [];
+  }
 }
