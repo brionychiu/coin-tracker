@@ -137,7 +137,7 @@ export default function SearchPage() {
         </div>
 
         {/* 內容區塊：每個 group 是一段 Table */}
-        {isEmpty ? (
+        {isEmpty && !loading ? (
           <div className="p-6 text-center text-muted-foreground">
             找不到相關紀錄
           </div>
@@ -152,9 +152,20 @@ export default function SearchPage() {
               <Table>
                 <TableBody>
                   {groupItems.map((record) => (
-                    <TableRow key={record.id}>
+                    <TableRow key={record.id} className="hover:bg-[#FFF3F2]">
                       <TableCell className="flex items-center gap-2">
-                        <span>{getCategoryIcon(record.category)}</span>
+                        <div className="relative flex h-8 w-8 items-center justify-center">
+                          <span
+                            className={`absolute h-5 w-5 rounded-full opacity-70 shadow-md blur-sm ${
+                              record.categoryType === 'income'
+                                ? 'bg-green-01'
+                                : 'bg-primary-01'
+                            }`}
+                          />
+                          <div className="relative z-10 text-2xl">
+                            {getCategoryIcon(record.category)}
+                          </div>
+                        </div>
                         {getCategoryInfo(record.category).label}
                       </TableCell>
                       <TableCell>
