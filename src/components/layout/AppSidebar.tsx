@@ -1,6 +1,5 @@
 import {
   BookOpenText,
-  CalendarCheck2,
   ChartNoAxesCombined,
   Search,
   Settings,
@@ -21,11 +20,6 @@ const items = [
     title: '記帳本',
     url: '/dashboard/accounting-book',
     icon: BookOpenText,
-  },
-  {
-    title: '帳戶',
-    url: '/dashboard/account',
-    icon: CalendarCheck2,
   },
   {
     title: '圖表分析',
