@@ -1,9 +1,10 @@
 'use client';
 
 import { Search } from 'lucide-react';
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
+import { highlightText } from '@/components/ui/highlight-text';
 import { Input } from '@/components/ui/input';
 import {
   Table,
@@ -26,24 +27,6 @@ function useDebouncedValue<T>(value: T, delay: number): T {
     return () => clearTimeout(handler);
   }, [value, delay]);
   return debounced;
-}
-
-// 高亮多關鍵字
-function highlightText(text: string, rawKeyword: string) {
-  const keywords = rawKeyword.trim().split(/\s+/).filter(Boolean);
-  if (keywords.length === 0) return text;
-
-  const regex = new RegExp(`(${keywords.join('|')})`, 'gi');
-  const parts = text.split(regex);
-  return parts.map((part, i) =>
-    keywords.some((kw) => part.toLowerCase() === kw.toLowerCase()) ? (
-      <mark key={i} className="bg-yellow-200 text-black">
-        {part}
-      </mark>
-    ) : (
-      <Fragment key={i}>{part}</Fragment>
-    ),
-  );
 }
 
 export default function SearchPage() {
