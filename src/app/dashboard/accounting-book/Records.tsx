@@ -61,7 +61,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                     className="group rounded-2xl border p-4 shadow-sm transition-shadow duration-200 hover:shadow-md"
                   >
                     <div className="flex justify-between">
-                      <div className="flex gap-4">
+                      <div className="flex items-center gap-4">
                         <div className="relative flex h-8 w-8 items-center justify-center">
                           <span
                             className={`absolute h-5 w-5 rounded-full opacity-80 ${
