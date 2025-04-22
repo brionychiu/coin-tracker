@@ -14,20 +14,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { getAccountLabel } from '@/lib/account';
 import { getRecordsBatch } from '@/lib/api/accounting';
 import { getCategoryIcon, getCategoryInfo } from '@/lib/categories';
 import { formatToShortDay, formatToYearMonthGroup } from '@/lib/format';
 import { AccountingRecord } from '@/types/accounting';
-
-function useDebouncedValue<T>(value: T, delay: number): T {
-  const [debounced, setDebounced] = useState(value);
-  useEffect(() => {
-    const handler = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(handler);
-  }, [value, delay]);
-  return debounced;
-}
 
 export default function SearchPage() {
   const [records, setRecords] = useState<AccountingRecord[]>([]);
