@@ -20,6 +20,7 @@ import {
   uploadBytes,
   where,
 } from '@/lib/firebase';
+import { convertToTimestamp } from '@/lib/utils';
 import { AccountingRecord, AccountingRecordPayload } from '@/types/accounting';
 
 /**
@@ -170,12 +171,6 @@ export function getAccountingRecordsByRange(
 
   return unsubscribe;
 }
-
-// TODO: 這段要重構，convertToTimestamp 要歸檔，並且需理解 getRecordsBatch 的邏輯
-// 設定從 Firestore 查詢的日期格式
-const convertToTimestamp = (date: Date | null) => {
-  return date ? Timestamp.fromDate(date) : Timestamp.now();
-};
 
 export async function getRecordsBatch(lastDate: Date | null, batchSize: number): Promise<AccountingRecord[]> {
   const recordsRef = collection(db, 'accounting-records');
