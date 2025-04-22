@@ -15,37 +15,19 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { usePaginatedRecords } from '@/hooks/usePaginatedRecords';
 import { getAccountLabel } from '@/lib/account';
-import { getRecordsBatch } from '@/lib/api/accounting';
 import { getCategoryIcon, getCategoryInfo } from '@/lib/categories';
 import { formatToShortDay, formatToYearMonthGroup } from '@/lib/format';
 import { AccountingRecord } from '@/types/accounting';
 
 export default function SearchPage() {
-  const [records, setRecords] = useState<AccountingRecord[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
   const [keyword, setKeyword] = useState('');
-  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const debouncedKeyword = useDebouncedValue(keyword, 300);
   const observerRef = useRef<HTMLDivElement | null>(null);
-  const batchSize = 100;
 
-  useEffect(() => {
-    loadMore();
-  }, []);
-
-  const loadMore = async () => {
-    if (loading || !hasMore) return;
-    setLoading(true);
-    const last = records[records.length - 1];
-    const lastDate = last?.date ?? null;
-    const newRecords = await getRecordsBatch(lastDate, batchSize);
-    setRecords((prev) => [...prev, ...newRecords]);
-    setHasMore(newRecords.length === batchSize);
-    setLoading(false);
-    setHasLoadedOnce(true);
-  };
+  const { records, loading, hasMore, hasLoadedOnce, loadMore } =
+    usePaginatedRecords();
 
   useEffect(() => {
     if (!observerRef.current) return;
