@@ -3,6 +3,7 @@
 import { Search } from 'lucide-react';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 
+import { FullscreenLoading } from '@/components/common/FullscreenLoading';
 import { Input } from '@/components/ui/input';
 import {
   Table,
@@ -50,6 +51,7 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [keyword, setKeyword] = useState('');
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const debouncedKeyword = useDebouncedValue(keyword, 300);
   const observerRef = useRef<HTMLDivElement | null>(null);
   const batchSize = 100;
@@ -67,6 +69,7 @@ export default function SearchPage() {
     setRecords((prev) => [...prev, ...newRecords]);
     setHasMore(newRecords.length === batchSize);
     setLoading(false);
+    setHasLoadedOnce(true);
   };
 
   useEffect(() => {
@@ -134,9 +137,10 @@ export default function SearchPage() {
             </TableHeader>
           </Table>
         </div>
-
-        {/* 內容區塊：每個 group 是一段 Table */}
-        {isEmpty && !loading ? (
+        {/* 狀態處理區塊 */}
+        {!hasLoadedOnce || loading ? (
+          <FullscreenLoading gifSrc="/loading-2.gif" />
+        ) : isEmpty ? (
           <div className="p-6 text-center text-muted-foreground">
             找不到相關紀錄
           </div>
@@ -185,7 +189,7 @@ export default function SearchPage() {
           ))
         )}
 
-        {hasMore && !isEmpty && (
+        {hasMore && hasLoadedOnce && (
           <div
             ref={observerRef}
             className="p-4 text-center text-muted-foreground"
