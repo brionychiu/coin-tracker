@@ -11,7 +11,7 @@ import {
 import { Line } from 'react-chartjs-2';
 
 import { type DateRange } from '@/components/tabs/DateRangeTabs';
-import { formatKey } from '@/lib/format';
+import { formatChartTimeKey } from '@/lib/format';
 import { AccountingRecord } from '@/types/accounting';
 
 ChartJS.register(
@@ -55,7 +55,7 @@ export const MultiAxisLineChart = ({
     const grouped: Record<string, { income: number; expense: number }> = {};
 
     records.forEach((record) => {
-      const key = formatKey(record.date, isYearView);
+      const key = formatChartTimeKey(record.date, isYearView);
       const amount = parseFloat(record.amount);
 
       if (!grouped[key]) {
