@@ -28,7 +28,7 @@ export default function TabsCategory({ value, onChange }: TabsCategoryProps) {
               >
                 <span className="relative flex h-10 w-10 items-center justify-center">
                   {value === label && (
-                    <span className="absolute left-0 right-0 top-1 mx-auto h-8 w-8 rounded-full bg-primary-01" />
+                    <span className="absolute left-0 right-0 top-1 mx-auto h-8 w-8 rounded-full bg-primary-03 opacity-80" />
                   )}
                   <Icon className="relative z-10 size-6" />
                 </span>
@@ -50,7 +50,7 @@ export default function TabsCategory({ value, onChange }: TabsCategoryProps) {
               >
                 <span className="relative flex h-10 w-10 items-center justify-center">
                   {value === label && (
-                    <span className="absolute left-0 right-0 top-1 mx-auto h-8 w-8 rounded-full bg-primary-01" />
+                    <span className="bg-green-01 absolute left-0 right-0 top-1 mx-auto h-8 w-8 rounded-full opacity-80" />
                   )}
                   <Icon className="relative z-10 size-6" />
                 </span>

@@ -64,7 +64,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                       <div className="flex gap-4">
                         <div className="relative flex h-8 w-8 items-center justify-center">
                           <span
-                            className={`absolute h-5 w-5 rounded-full opacity-70 shadow-md blur-sm ${
+                            className={`absolute h-5 w-5 rounded-full opacity-80 ${
                               record.categoryType === 'income'
                                 ? 'bg-green-01'
                                 : 'bg-primary-03'
