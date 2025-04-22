@@ -1,7 +1,5 @@
 'use client';
 
-import { format } from 'date-fns';
-import { zhTW } from 'date-fns/locale';
 import { Search } from 'lucide-react';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -17,6 +15,7 @@ import {
 import { getAccountLabel } from '@/lib/account';
 import { getRecordsBatch } from '@/lib/api/accounting';
 import { getCategoryIcon, getCategoryInfo } from '@/lib/categories';
+import { formatToShortDay, formatToYearMonthGroup } from '@/lib/format';
 import { AccountingRecord } from '@/types/accounting';
 
 function useDebouncedValue<T>(value: T, delay: number): T {
@@ -95,7 +94,7 @@ export default function SearchPage() {
   const groupedRecords = useMemo(() => {
     return filteredRecords.reduce(
       (acc, record) => {
-        const group = format(record.date, 'yyyy 年 M 月');
+        const group = formatToYearMonthGroup(record.date); // yyyy 年 M 月
         if (!acc[group]) acc[group] = [];
         acc[group].push(record);
         return acc;
@@ -168,11 +167,7 @@ export default function SearchPage() {
                         </div>
                         {getCategoryInfo(record.category).label}
                       </TableCell>
-                      <TableCell>
-                        {format(record.date, 'M月d日 (EEE)', {
-                          locale: zhTW,
-                        })}
-                      </TableCell>
+                      <TableCell>{formatToShortDay(record.date)}</TableCell>
                       <TableCell className="max-w-[180px] truncate">
                         {record.note
                           ? highlightText(record.note, debouncedKeyword)
