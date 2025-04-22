@@ -112,14 +112,14 @@ export default function SearchPage() {
               <Table>
                 <TableBody>
                   {groupItems.map((record) => (
-                    <TableRow key={record.id} className="hover:bg-red-01">
+                    <TableRow key={record.id} className="hover:bg-system-02">
                       <TableCell className="flex items-center gap-2">
                         <div className="relative flex h-8 w-8 items-center justify-center">
                           <span
                             className={`absolute h-5 w-5 rounded-full opacity-70 shadow-md blur-sm ${
                               record.categoryType === 'income'
                                 ? 'bg-green-01'
-                                : 'bg-primary-01'
+                                : 'bg-primary-03'
                             }`}
                           />
                           <div className="relative z-10 text-2xl">

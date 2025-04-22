@@ -67,7 +67,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                             className={`absolute h-5 w-5 rounded-full opacity-70 shadow-md blur-sm ${
                               record.categoryType === 'income'
                                 ? 'bg-green-01'
-                                : 'bg-primary-01'
+                                : 'bg-primary-03'
                             }`}
                           />
                           <div className="relative z-10 text-2xl">
