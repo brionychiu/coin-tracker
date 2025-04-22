@@ -112,7 +112,7 @@ export default function SearchPage() {
               <Table>
                 <TableBody>
                   {groupItems.map((record) => (
-                    <TableRow key={record.id} className="hover:bg-[#FFF3F2]">
+                    <TableRow key={record.id} className="hover:bg-red-01">
                       <TableCell className="flex items-center gap-2">
                         <div className="relative flex h-8 w-8 items-center justify-center">
                           <span
