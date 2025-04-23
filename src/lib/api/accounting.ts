@@ -1,3 +1,4 @@
+import { auth } from '@/lib/firebase';
 import { endOfMonth, startOfMonth } from 'date-fns';
 
 import {
@@ -27,7 +28,10 @@ import { AccountingRecord, AccountingRecordPayload } from '@/types/accounting';
  * 上傳單張圖片到 Firebase Storage
  */
 async function uploadImage(file: File): Promise<string> {
-  const storageRef = ref(storage, `receipts/${file.name}-${Date.now()}`);
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error('未登入，無法上傳圖片');
+  
+  const storageRef = ref(storage, `receipts/${uid}/${file.name}-${Date.now()}`);
   await uploadBytes(storageRef, file);
   return await getDownloadURL(storageRef);
 }
@@ -89,7 +93,7 @@ export async function updateAccountingRecord(id: string, data: AccountingRecordP
       id,
       ...cleanData,
       images: imageUrls,
-    };
+    }; 
 
   } catch (error) {
     console.error('更新失敗:', error);
