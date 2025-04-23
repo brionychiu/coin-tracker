@@ -1,7 +1,7 @@
 'use client';
 
 import { Pencil, Search, Trash2 } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/table';
 import { useConfirm } from '@/hooks/useConfirmModal';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { usePaginatedRecords } from '@/hooks/usePaginatedRecords';
 import { getAccountLabel } from '@/lib/account';
 import { deleteAccountingRecord } from '@/lib/api/accounting';
@@ -28,11 +29,15 @@ import { AccountingRecord } from '@/types/accounting';
 export default function SearchPage() {
   const [keyword, setKeyword] = useState('');
   const debouncedKeyword = useDebouncedValue(keyword, 300);
-  const observerRef = useRef<HTMLDivElement | null>(null);
 
   const { records, loading, hasMore, hasLoadedOnce, loadMore, removeRecord } =
     usePaginatedRecords();
   const { confirm, ConfirmModal } = useConfirm();
+  const loaderRef = useInfiniteScroll({
+    hasMore,
+    loading,
+    onLoadMore: loadMore,
+  });
 
   const handleDelete = async (record: AccountingRecord) => {
     confirm({
@@ -55,14 +60,6 @@ export default function SearchPage() {
     // TODO: 可以跳 modal 或導向編輯頁
     console.log('Edit record', record);
   };
-  useEffect(() => {
-    if (!observerRef.current) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) loadMore();
-    });
-    observer.observe(observerRef.current);
-    return () => observer.disconnect();
-  }, [observerRef.current, records]);
 
   const filteredRecords = useMemo(() => {
     const keywords = debouncedKeyword
@@ -200,7 +197,7 @@ export default function SearchPage() {
 
         {hasMore && hasLoadedOnce && (
           <div
-            ref={observerRef}
+            ref={loaderRef}
             className="p-4 text-center text-muted-foreground"
           >
             載入中...
