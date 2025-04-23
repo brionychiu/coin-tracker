@@ -79,17 +79,17 @@ export default function SearchPage() {
           />
         </div>
       </div>
-      <div className="relative max-h-[600px] overflow-auto rounded-xl border">
+      <div className="max-h-screen-minus-200 relative overflow-auto rounded-xl border">
         {/* sticky 標題 */}
         <div className="sticky top-0 z-30 bg-white">
-          <Table>
+          <Table className="w-full table-fixed">
             <TableHeader>
               <TableRow>
-                <TableHead>類別</TableHead>
-                <TableHead>日期</TableHead>
-                <TableHead>備註</TableHead>
-                <TableHead className="text-right">金額</TableHead>
-                <TableHead>帳戶</TableHead>
+                <TableHead className="w-1/4">類別</TableHead>
+                <TableHead className="w-1/6">日期</TableHead>
+                <TableHead className="w-1/3">備註</TableHead>
+                <TableHead className="w-1/6 text-right">金額</TableHead>
+                <TableHead className="w-1/6">帳戶</TableHead>
               </TableRow>
             </TableHeader>
           </Table>
@@ -109,35 +109,41 @@ export default function SearchPage() {
                 {group}
               </div>
 
-              <Table>
+              <Table className="w-full table-fixed">
                 <TableBody>
                   {groupItems.map((record) => (
                     <TableRow key={record.id} className="hover:bg-system-02">
-                      <TableCell className="flex items-center gap-2">
-                        <div className="relative flex h-8 w-8 items-center justify-center">
-                          <span
-                            className={`absolute h-5 w-5 rounded-full opacity-80 ${
-                              record.categoryType === 'income'
-                                ? 'bg-green-01'
-                                : 'bg-primary-03'
-                            }`}
-                          />
-                          <div className="relative z-10 text-2xl">
-                            {getCategoryIcon(record.category)}
+                      <TableCell className="w-1/4">
+                        <div className="flex items-center">
+                          <div className="relative flex h-8 w-8 items-center justify-center">
+                            <span
+                              className={`absolute h-5 w-5 rounded-full opacity-80 ${
+                                record.categoryType === 'income'
+                                  ? 'bg-green-01'
+                                  : 'bg-primary-03'
+                              }`}
+                            />
+                            <div className="relative z-10 text-2xl">
+                              {getCategoryIcon(record.category)}
+                            </div>
                           </div>
+                          <span>{getCategoryInfo(record.category).label}</span>
                         </div>
-                        {getCategoryInfo(record.category).label}
                       </TableCell>
-                      <TableCell>{formatToShortDay(record.date)}</TableCell>
-                      <TableCell className="max-w-[180px] truncate">
+                      <TableCell className="w-1/6">
+                        {formatToShortDay(record.date)}
+                      </TableCell>
+                      <TableCell className="w-1/3 truncate">
                         {record.note
                           ? highlightText(record.note, debouncedKeyword)
                           : '-'}
                       </TableCell>
-                      <TableCell className="text-right font-semibold">
+                      <TableCell className="w-1/6 text-right font-semibold">
                         {record.amount}
                       </TableCell>
-                      <TableCell>{getAccountLabel(record.account)}</TableCell>
+                      <TableCell className="w-1/6">
+                        {getAccountLabel(record.account)}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
