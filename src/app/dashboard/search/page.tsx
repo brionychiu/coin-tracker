@@ -88,8 +88,8 @@ export default function SearchPage() {
                 <TableHead className="w-1/4">類別</TableHead>
                 <TableHead className="w-1/6">日期</TableHead>
                 <TableHead className="w-1/3">備註</TableHead>
-                <TableHead className="w-1/6 text-right">金額</TableHead>
-                <TableHead className="w-1/6">帳戶</TableHead>
+                <TableHead className="w-1/6 text-right">帳戶</TableHead>
+                <TableHead className="w-1/6">金額</TableHead>
               </TableRow>
             </TableHeader>
           </Table>
@@ -138,11 +138,11 @@ export default function SearchPage() {
                           ? highlightText(record.note, debouncedKeyword)
                           : '-'}
                       </TableCell>
-                      <TableCell className="w-1/6 text-right font-semibold">
-                        {record.amount}
-                      </TableCell>
-                      <TableCell className="w-1/6">
+                      <TableCell className="w-1/6 text-right">
                         {getAccountLabel(record.account)}
+                      </TableCell>
+                      <TableCell className="w-1/6 font-semibold">
+                        {record.amount}
                       </TableCell>
                     </TableRow>
                   ))}
