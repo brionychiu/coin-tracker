@@ -1,9 +1,11 @@
 'use client';
 
-import { Search } from 'lucide-react';
+import { Pencil, Search, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
+import { Button } from '@/components/ui/button';
 import { highlightText } from '@/components/ui/highlight-text';
 import { Input } from '@/components/ui/input';
 import {
@@ -14,9 +16,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useConfirm } from '@/hooks/useConfirmModal';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { usePaginatedRecords } from '@/hooks/usePaginatedRecords';
 import { getAccountLabel } from '@/lib/account';
+import { deleteAccountingRecord } from '@/lib/api/accounting';
 import { getCategoryIcon, getCategoryInfo } from '@/lib/categories';
 import { formatToShortDay, formatToYearMonthGroup } from '@/lib/format';
 import { AccountingRecord } from '@/types/accounting';
@@ -26,9 +30,31 @@ export default function SearchPage() {
   const debouncedKeyword = useDebouncedValue(keyword, 300);
   const observerRef = useRef<HTMLDivElement | null>(null);
 
-  const { records, loading, hasMore, hasLoadedOnce, loadMore } =
+  const { records, loading, hasMore, hasLoadedOnce, loadMore, removeRecord } =
     usePaginatedRecords();
+  const { confirm, ConfirmModal } = useConfirm();
 
+  const handleDelete = async (record: AccountingRecord) => {
+    confirm({
+      title: '確認刪除',
+      message: '確定要刪除此記錄嗎？此操作無法復原。',
+      onConfirm: async () => {
+        try {
+          await deleteAccountingRecord(record.id);
+          removeRecord(record.id);
+          toast.success('刪除成功');
+        } catch (error) {
+          toast.error('刪除失敗，請稍後再試');
+          console.error(error);
+        }
+      },
+    });
+  };
+
+  const handleEdit = (record: AccountingRecord) => {
+    // TODO: 可以跳 modal 或導向編輯頁
+    console.log('Edit record', record);
+  };
   useEffect(() => {
     if (!observerRef.current) return;
     const observer = new IntersectionObserver(([entry]) => {
@@ -85,7 +111,7 @@ export default function SearchPage() {
           <Table className="w-full table-fixed">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-1/4">類別</TableHead>
+                <TableHead className="w-1/6">類別</TableHead>
                 <TableHead className="w-1/6">日期</TableHead>
                 <TableHead className="w-1/3">備註</TableHead>
                 <TableHead className="w-1/6 text-right">帳戶</TableHead>
@@ -113,7 +139,7 @@ export default function SearchPage() {
                 <TableBody>
                   {groupItems.map((record) => (
                     <TableRow key={record.id} className="hover:bg-system-02">
-                      <TableCell className="w-1/4">
+                      <TableCell className="w-1/6">
                         <div className="flex items-center">
                           <div className="relative flex h-8 w-8 items-center justify-center">
                             <span
@@ -142,7 +168,27 @@ export default function SearchPage() {
                         {getAccountLabel(record.account)}
                       </TableCell>
                       <TableCell className="w-1/6 font-semibold">
-                        {record.amount}
+                        <div className="flex justify-between">
+                          <span>{record.amount}</span>
+                          <div className="mt-1 flex gap-2">
+                            <Button
+                              type="button"
+                              variant="iconHover"
+                              size="icon"
+                              onClick={() => handleEdit(record)}
+                            >
+                              <Pencil className="size-4" />
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="iconHover"
+                              size="icon"
+                              onClick={() => handleDelete(record)}
+                            >
+                              <Trash2 className="size-4" />
+                            </Button>
+                          </div>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -161,6 +207,7 @@ export default function SearchPage() {
           </div>
         )}
       </div>
+      {ConfirmModal}
     </>
   );
 }
