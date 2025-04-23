@@ -26,11 +26,16 @@ export function usePaginatedRecords(batchSize = 100) {
     loadMore();
   }, []);
 
+  const removeRecord = (id: string) => {
+    setRecords((prev) => prev.filter((record) => record.id !== id));
+  };
+
   return {
     records,
     loading,
     hasMore,
     hasLoadedOnce,
     loadMore,
+    removeRecord,
   };
 }
