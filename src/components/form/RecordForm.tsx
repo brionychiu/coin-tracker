@@ -48,7 +48,7 @@ interface RecordFormProps {
   date: Date | undefined;
   record: AccountingRecord | null;
   onCancel: () => void;
-  onSave: () => void;
+  onSave: (updatedRecord?: AccountingRecord) => void;
 }
 
 const accountEnumValues = accountOptions.map((option) => option.value) as [
@@ -171,15 +171,16 @@ export default function RecordForm({
 
       if (isEditMode) {
         if (!record?.id) throw new Error('缺少記錄 ID');
-        await updateAccountingRecord(record.id, recordData);
+        const updated = await updateAccountingRecord(record.id, recordData);
         toast.success('更新成功');
+        onSave(updated);
       } else {
         await addAccountingRecord(recordData);
         toast.success('新增成功');
+        onSave();
       }
 
       form.reset();
-      onSave();
     } catch (error: any) {
       toast.error(`${isEditMode ? '更新' : '新增'}失敗：${error.message}`);
     }
