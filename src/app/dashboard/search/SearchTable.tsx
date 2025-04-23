@@ -111,7 +111,11 @@ export default function SearchTable({
           <FullscreenLoading gifSrc="/loading-2.gif" />
         ) : isEmpty ? (
           <div className="p-6 text-center text-muted-foreground">
-            找不到相關紀錄
+            找不到符合{' '}
+            <span className="font-semibold text-foreground">
+              {debouncedKeyword}
+            </span>{' '}
+            的紀錄
           </div>
         ) : (
           Object.entries(groupedRecords).map(([group, groupItems]) => (
