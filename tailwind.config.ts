@@ -102,6 +102,9 @@ export default {
       width: {
         '350': '350px',
       },
+      maxHeight: {
+        'screen-minus-200': 'calc(100vh - 200px)',
+      },
     },
     screens: {
       mobile: '360px',
