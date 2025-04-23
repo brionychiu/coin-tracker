@@ -53,7 +53,7 @@ export default {
           '01':'#FFF3F2',
           '02': '#FFE0DF',
           '03': '#FFC7C5',
-          '04': '#FFB1AE',
+          '04': '#ffb5c3',
         },
         warning: {
           '01': '#FFC107',
