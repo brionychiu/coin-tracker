@@ -84,6 +84,13 @@ export async function updateAccountingRecord(id: string, data: AccountingRecordP
       ...cleanData,
       images: imageUrls,
     });
+
+    return {
+      id,
+      ...cleanData,
+      images: imageUrls,
+    };
+
   } catch (error) {
     console.error('更新失敗:', error);
     throw error;
