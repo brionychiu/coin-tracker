@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import RecordForm from '@/components/form/RecordForm';
@@ -10,8 +11,19 @@ import { AccountingRecord } from '@/types/accounting';
 import SearchTable from './SearchTable';
 
 export default function SearchPage() {
-  const { records, loading, hasMore, hasLoadedOnce, loadMore, removeRecord } =
-    usePaginatedRecords();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editRecord, setEditRecord] = useState<any | null>(null);
+  const [date, setDate] = useState<Date | undefined>(new Date());
+
+  const {
+    records,
+    loading,
+    hasMore,
+    hasLoadedOnce,
+    updateRecord,
+    loadMore,
+    removeRecord,
+  } = usePaginatedRecords();
   const { confirm, ConfirmModal } = useConfirm();
 
   const handleDelete = async (record: AccountingRecord) => {
@@ -32,22 +44,50 @@ export default function SearchPage() {
   };
 
   const handleEdit = (record: AccountingRecord) => {
-    // TODO: 可以跳 modal 或導向編輯頁
-    console.log('Edit record', record);
+    setIsEditing(true);
+    setEditRecord(record);
+
+    if (record?.date) {
+      const recordDate = new Date(record.date);
+      setDate(recordDate);
+    }
+  };
+
+  const handleSaveEdit = (updated?: AccountingRecord) => {
+    if (!updated) return;
+    updateRecord(updated);
+    setIsEditing(false);
+    setEditRecord(null);
+  };
+
+  const handleCloseEdit = () => {
+    setIsEditing(false);
+    setEditRecord(null);
   };
 
   return (
-    <div className="p-6">
-      <SearchTable
-        records={records}
-        loading={loading}
-        hasMore={hasMore}
-        hasLoadedOnce={hasLoadedOnce}
-        loadMore={loadMore}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+    <>
+      {isEditing ? (
+        <div className="flex w-full items-center justify-center">
+          <RecordForm
+            date={editRecord?.date || date}
+            record={editRecord}
+            onCancel={handleCloseEdit}
+            onSave={handleSaveEdit}
+          />
+        </div>
+      ) : (
+        <SearchTable
+          records={records}
+          loading={loading}
+          hasMore={hasMore}
+          hasLoadedOnce={hasLoadedOnce}
+          loadMore={loadMore}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      )}
       {ConfirmModal}
-    </div>
+    </>
   );
 }
