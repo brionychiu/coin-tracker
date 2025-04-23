@@ -2,6 +2,7 @@
 
 import { toast } from 'sonner';
 
+import RecordForm from '@/components/form/RecordForm';
 import { useConfirm } from '@/hooks/useConfirmModal';
 import { usePaginatedRecords } from '@/hooks/usePaginatedRecords';
 import { deleteAccountingRecord } from '@/lib/api/accounting';

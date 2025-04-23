@@ -4,8 +4,8 @@ import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
 import { CustomCalendar } from '@/app/dashboard/accounting-book/CustomCalendar';
-import RecordForm from '@/app/dashboard/accounting-book/RecordForm';
 import Records from '@/app/dashboard/accounting-book/Records';
+import RecordForm from '@/components/form/RecordForm';
 import { Button } from '@/components/ui/button';
 import { useAccountingRecords } from '@/hooks/useAccountingRecords';
 import { AccountingRecord } from '@/types/accounting';
@@ -13,7 +13,6 @@ import { AccountingRecord } from '@/types/accounting';
 export default function AccountingBookPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editRecord, setEditRecord] = useState<any | null>(null);
-
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [month, setMonth] = useState<number>(
     date?.getMonth() ?? new Date().getMonth(),
