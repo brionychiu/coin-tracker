@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react';
+
 import { getRecordsBatch } from '@/lib/api/accounting';
 import { AccountingRecord } from '@/types/accounting';
-import { useEffect, useState } from 'react';
 
 export function usePaginatedRecords(batchSize = 100) {
   const [records, setRecords] = useState<AccountingRecord[]>([]);
