@@ -27,6 +27,12 @@ export function usePaginatedRecords(batchSize = 100) {
     loadMore();
   }, []);
 
+  const updateRecord = (updated: AccountingRecord) => {
+    setRecords((prev) =>
+      prev.map((r) => (r.id === updated.id ? { ...r, ...updated } : r)),
+    );
+  };
+
   const removeRecord = (id: string) => {
     setRecords((prev) => prev.filter((record) => record.id !== id));
   };
@@ -38,5 +44,6 @@ export function usePaginatedRecords(batchSize = 100) {
     hasLoadedOnce,
     loadMore,
     removeRecord,
+    updateRecord,
   };
 }
