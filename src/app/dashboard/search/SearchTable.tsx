@@ -1,6 +1,6 @@
 'use client';
 
-import { Pencil, Search, Trash2 } from 'lucide-react';
+import { Image as ImageIcon, Pencil, Search, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
@@ -42,6 +42,7 @@ export default function SearchTable({
   onDelete,
 }: RecordsProps) {
   const [keyword, setKeyword] = useState('');
+  const [previewImages, setPreviewImages] = useState<string[] | null>(null);
   const debouncedKeyword = useDebouncedValue(keyword, 300);
 
   const loaderRef = useInfiniteScroll({
@@ -66,7 +67,7 @@ export default function SearchTable({
   const groupedRecords = useMemo(() => {
     return filteredRecords.reduce(
       (acc, record) => {
-        const group = formatToYearMonthGroup(record.date); // yyyy 年 M 月
+        const group = formatToYearMonthGroup(record.date);
         if (!acc[group]) acc[group] = [];
         acc[group].push(record);
         return acc;
@@ -91,8 +92,8 @@ export default function SearchTable({
           />
         </div>
       </div>
+
       <div className="max-h-screen-minus-200 relative overflow-auto rounded-xl border">
-        {/* sticky 標題 */}
         <div className="sticky top-0 z-30 bg-white">
           <Table className="w-full table-fixed">
             <TableHeader>
@@ -106,7 +107,7 @@ export default function SearchTable({
             </TableHeader>
           </Table>
         </div>
-        {/* 狀態處理區塊 */}
+
         {!hasLoadedOnce || loading ? (
           <FullscreenLoading gifSrc="/loading-2.gif" />
         ) : isEmpty ? (
@@ -120,11 +121,9 @@ export default function SearchTable({
         ) : (
           Object.entries(groupedRecords).map(([group, groupItems]) => (
             <div key={group}>
-              {/* sticky 的 group 標題 */}
               <div className="sticky top-[40px] z-20 bg-muted px-4 py-2 text-lg font-bold">
                 {group}
               </div>
-
               <Table className="w-full table-fixed">
                 <TableBody>
                   {groupItems.map((record) => (
@@ -161,6 +160,19 @@ export default function SearchTable({
                         <div className="flex justify-between">
                           <span>{record.amount}</span>
                           <div className="mt-1 flex gap-2">
+                            {record.images && record.images.length > 0 && (
+                              <Button
+                                type="button"
+                                variant="iconHover"
+                                size="icon"
+                                title="預覽圖片"
+                                onClick={() => {
+                                  setPreviewImages(record.images);
+                                }}
+                              >
+                                <ImageIcon className="size-4" />
+                              </Button>
+                            )}
                             <Button
                               type="button"
                               variant="iconHover"
@@ -197,6 +209,28 @@ export default function SearchTable({
           </div>
         )}
       </div>
+
+      {/* 預覽圖片（僅在點 icon 時顯示） */}
+      {previewImages && (
+        <div
+          className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80"
+          onClick={() => setPreviewImages(null)}
+        >
+          <div
+            className="flex max-h-[90vh] max-w-[90vw] gap-4 overflow-auto p-4"
+            onClick={(e) => e.stopPropagation()} // 避免點圖片就關閉
+          >
+            {previewImages.map((src, index) => (
+              <img
+                key={index}
+                src={src}
+                alt={`預覽圖片 ${index + 1}`}
+                className="max-h-[80vh] max-w-full rounded shadow-lg"
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 }
