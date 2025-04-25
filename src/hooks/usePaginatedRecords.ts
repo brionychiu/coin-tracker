@@ -17,7 +17,12 @@ export function usePaginatedRecords(batchSize = 100) {
     const lastDate = last?.date ?? null;
     const newRecords = await getRecordsBatch(lastDate, batchSize);
 
-    setRecords((prev) => [...prev, ...newRecords]);
+    setRecords((prev) => {
+      const existingIds = new Set(prev.map((r) => r.id));
+      const filtered = newRecords.filter((r) => !existingIds.has(r.id));
+      return [...prev, ...filtered];
+    });
+    
     setHasMore(newRecords.length === batchSize);
     setLoading(false);
     setHasLoadedOnce(true);
