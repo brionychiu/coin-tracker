@@ -11,6 +11,8 @@ import { useAccountingRecordsByRange } from '@/hooks/useAccountingRecords';
 
 export default function ReportPage() {
   const [dateRange, setDateRange] = useState<DateRange | null>(null);
+  const [tab, setTab] = useState<'month' | 'year' | 'recent'>('month');
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const { records: expenseRecords, loading: expenseLoading } =
     useAccountingRecordsByRange(
@@ -31,7 +33,13 @@ export default function ReportPage() {
         <FullscreenLoading gifSrc="/loading-3.gif" />
       ) : (
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center">
-          <DateRangeTabs value={dateRange} onChange={setDateRange} />
+          <DateRangeTabs
+            tab={tab}
+            currentDate={currentDate}
+            onTabChange={setTab}
+            onDateChange={setCurrentDate}
+            onRangeChange={setDateRange}
+          />
           <div className="grid w-full max-w-4xl grid-cols-1 gap-10 md:grid-cols-2 [&>*]:w-full">
             <ExpenseChartSwitcher records={expenseRecords} />
             <IncomeChartSwitcher records={incomeRecords} />
