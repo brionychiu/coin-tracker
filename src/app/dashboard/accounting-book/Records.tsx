@@ -54,7 +54,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                 本日無記帳紀錄
               </p>
             ) : (
-              <PhotoProvider>
+              <>
                 {filteredRecords.map((record) => (
                   <li
                     key={record.id}
@@ -83,26 +83,28 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                               {record.note}
                             </p>
                           )}
-                          {record.images?.length > 0 && (
-                            <figure className="flex flex-wrap gap-4">
-                              {record.images.map((url, index) => (
-                                <div key={index} className="relative">
-                                  <PhotoView src={url}>
-                                    <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded">
-                                      <img
-                                        src={url}
-                                        alt={`收據照片 ${index + 1}`}
-                                        className="object-cover transition-transform duration-200 hover:scale-105"
-                                      />
-                                      <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 hover:opacity-100">
-                                        <Search className="h-6 w-6 text-white" />
+                          <PhotoProvider>
+                            {record.images?.length > 0 && (
+                              <figure className="flex flex-wrap gap-4">
+                                {record.images.map((url, index) => (
+                                  <div key={index} className="relative">
+                                    <PhotoView src={url}>
+                                      <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded">
+                                        <img
+                                          src={url}
+                                          alt={`收據照片 ${index + 1}`}
+                                          className="object-cover transition-transform duration-200 hover:scale-105"
+                                        />
+                                        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 hover:opacity-100">
+                                          <Search className="h-6 w-6 text-white" />
+                                        </div>
                                       </div>
-                                    </div>
-                                  </PhotoView>
-                                </div>
-                              ))}
-                            </figure>
-                          )}
+                                    </PhotoView>
+                                  </div>
+                                ))}
+                              </figure>
+                            )}
+                          </PhotoProvider>
                         </div>
                       </div>
                       <dl className="flex flex-col justify-between text-right text-sm">
@@ -138,7 +140,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                     </div>
                   </li>
                 ))}
-              </PhotoProvider>
+              </>
             )}
           </ul>
           {ConfirmModal}
