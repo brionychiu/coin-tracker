@@ -80,7 +80,7 @@ export default function SearchTable({
 
   return (
     <>
-      <div className="flex w-full justify-center p-4">
+      <div className="mb-10 flex w-full justify-center">
         <div className="relative w-full max-w-md">
           <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -93,7 +93,7 @@ export default function SearchTable({
         </div>
       </div>
 
-      <div className="max-h-screen-minus-200 relative overflow-auto rounded-xl border">
+      <div className="max-h-screen-minus-200 relative mb-8 overflow-auto rounded-xl border">
         <div className="sticky top-0 z-30 bg-white">
           <Table className="w-full table-fixed">
             <TableHeader>
