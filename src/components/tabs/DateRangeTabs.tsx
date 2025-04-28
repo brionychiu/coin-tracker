@@ -91,7 +91,7 @@ export const DateRangeTabs = ({
           onTabChange(value as 'month' | 'year' | 'recent');
           onDateChange(new Date());
         }}
-        className="w-full"
+        className="mx-4 mb-4 w-full"
       >
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="month">月</TabsTrigger>
