@@ -83,24 +83,31 @@ export const MultiAxisLineChart = ({
     (key) => groupedIncomeData[key]?.income || 0,
   );
 
+  const datasets = [];
+
+  if (incomeRecords.length > 0) {
+    datasets.push({
+      label: '收入',
+      data: incomeData,
+      borderColor: 'rgb(75, 192, 192)',
+      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      yAxisID: 'y1',
+    });
+  }
+
+  if (expenseRecords.length > 0) {
+    datasets.push({
+      label: '支出',
+      data: expenseData,
+      borderColor: 'rgb(255, 99, 132)',
+      backgroundColor: 'rgba(255, 99, 132, 0.2)',
+      yAxisID: 'y2',
+    });
+  }
+
   const data = {
     labels,
-    datasets: [
-      {
-        label: '收入',
-        data: incomeData,
-        borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        yAxisID: 'y1',
-      },
-      {
-        label: '支出',
-        data: expenseData,
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        yAxisID: 'y2',
-      },
-    ],
+    datasets,
   };
 
   const options = {
