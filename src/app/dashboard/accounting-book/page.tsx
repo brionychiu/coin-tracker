@@ -46,7 +46,7 @@ export default function AccountingBookPage() {
   };
 
   return (
-    <div className="mx-auto h-full w-full rounded-2xl border bg-white shadow 2xl:max-w-6xl">
+    <div className="mx-auto h-full w-full rounded-2xl bg-white 2xl:max-w-6xl">
       <div className="flex flex-row gap-6 p-6">
         {isEditing ? (
           <div className="flex w-full items-center justify-center">
