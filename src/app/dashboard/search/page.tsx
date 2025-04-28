@@ -66,9 +66,9 @@ export default function SearchPage() {
   };
 
   return (
-    <>
+    <div className="mx-auto h-full w-full bg-white pt-10 2xl:max-w-6xl">
       {isEditing ? (
-        <div className="flex w-full items-center justify-center">
+        <div className="flex w-full max-w-6xl items-center justify-center">
           <RecordForm
             date={editRecord?.date || date}
             record={editRecord}
@@ -88,6 +88,6 @@ export default function SearchPage() {
         />
       )}
       {ConfirmModal}
-    </>
+    </div>
   );
 }
