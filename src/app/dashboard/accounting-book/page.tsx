@@ -8,22 +8,22 @@ import Records from '@/app/dashboard/accounting-book/Records';
 import RecordForm from '@/components/form/RecordForm';
 import { Button } from '@/components/ui/button';
 import { useAccountingRecords } from '@/hooks/useAccountingRecords';
+import { useDateStore } from '@/stores/dateStore';
 import { AccountingRecord } from '@/types/accounting';
 
 export default function AccountingBookPage() {
+  const { date, setDate } = useDateStore();
+  const month = date ? date.getMonth() : new Date().getMonth();
+
   const [isEditing, setIsEditing] = useState(false);
   const [editRecord, setEditRecord] = useState<any | null>(null);
-  const [date, setDate] = useState<Date | undefined>(new Date());
-  const [month, setMonth] = useState<number>(
-    date?.getMonth() ?? new Date().getMonth(),
-  );
 
   // TODO: 可以考慮是否將 Records.tsx 的 useAccountingRecords 部分也放在這裡
   const { records } = useAccountingRecords(date, month);
   const recordDates = records.map((record) => new Date(record.date));
 
   const handleMonthChange = (newDate: Date) => {
-    setMonth(newDate.getMonth());
+    setDate(newDate);
   };
 
   const handleEdit = (record: AccountingRecord) => {
@@ -33,7 +33,6 @@ export default function AccountingBookPage() {
     if (record?.date) {
       const recordDate = new Date(record.date);
       setDate(recordDate);
-      setMonth(recordDate.getMonth());
     }
   };
 
@@ -41,7 +40,7 @@ export default function AccountingBookPage() {
     setIsEditing(false);
     setEditRecord(null);
     if (date) {
-      setMonth(date.getMonth());
+      setDate(date);
     }
   };
 
@@ -63,7 +62,7 @@ export default function AccountingBookPage() {
               <CustomCalendar
                 mode="single"
                 selected={date}
-                onSelect={setDate}
+                onSelect={(newDate) => newDate && setDate(newDate)}
                 month={new Date(new Date().getFullYear(), month)}
                 onMonthChange={handleMonthChange}
                 recordDates={recordDates}
