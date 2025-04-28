@@ -192,7 +192,7 @@ export default function RecordForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-2/3 space-y-6"
+          className="mt-10 w-2/3 space-y-6"
         >
           <h2 className="pb-2 text-center text-xl font-bold">
             {isEditMode ? '編輯' : '新增'}{' '}
