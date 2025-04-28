@@ -11,19 +11,13 @@ interface PieChartBaseProps {
   records: AccountingRecord[];
   categoryType: 'expense' | 'income';
   title: string;
-  emptyMessage: string;
 }
 
 export const PieChartBase = ({
   records,
   categoryType,
   title,
-  emptyMessage,
 }: PieChartBaseProps) => {
-  if (!records || records.length === 0) {
-    return <p className="py-4 text-center">{emptyMessage}</p>;
-  }
-
   const { labels, data, percentages, total, colors } = getCategoryChartData(
     records,
     categoryType,

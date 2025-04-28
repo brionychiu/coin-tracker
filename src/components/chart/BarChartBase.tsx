@@ -18,19 +18,13 @@ interface BarChartBaseProps {
   records: AccountingRecord[];
   categoryType: 'expense' | 'income';
   title: string;
-  emptyMessage: string;
 }
 
 export const BarChartBase = ({
   records,
   categoryType,
   title,
-  emptyMessage,
 }: BarChartBaseProps) => {
-  if (!records || records.length === 0) {
-    return <p className="py-4 text-center">{emptyMessage}</p>;
-  }
-
   const { labels, data, percentages, total, colors } = getCategoryChartData(
     records,
     categoryType,
