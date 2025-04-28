@@ -45,7 +45,7 @@ export default function ReportPage() {
       {expenseLoading || incomeLoading ? (
         <FullscreenLoading gifSrc="/loading-3.gif" />
       ) : (
-        <div className="mx-auto flex w-full max-w-6xl flex-col items-center">
+        <div className="mx-auto mt-10 flex w-full max-w-6xl flex-col items-center">
           <DateRangeTabs
             tab={tab}
             currentDate={currentDate}
@@ -58,23 +58,21 @@ export default function ReportPage() {
               {getNoDataMessage()}
             </div>
           )}
-          <div className="grid w-full max-w-4xl grid-cols-1 gap-10 md:grid-cols-2 [&>*]:w-full">
+          <div className="grid w-full gap-10 sm:grid-cols-1 md:grid-cols-3 [&>*]:w-full">
             {expenseRecords.length > 0 && (
               <ExpenseChartSwitcher records={expenseRecords} />
             )}
             {incomeRecords.length > 0 && (
               <IncomeChartSwitcher records={incomeRecords} />
             )}
-          </div>
-          {(expenseRecords.length > 0 || incomeRecords.length > 0) && (
-            <div className="mt-10 w-full max-w-4xl">
+            {(expenseRecords.length > 0 || incomeRecords.length > 0) && (
               <MultiAxisLineChart
                 expenseRecords={expenseRecords}
                 incomeRecords={incomeRecords}
                 dateRange={dateRange}
               />
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
     </>
