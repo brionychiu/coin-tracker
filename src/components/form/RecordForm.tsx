@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
 import CategoryTabs from '@/components/tabs/CategoryTabs';
 import { Button } from '@/components/ui/button';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Form,
   FormControl,
@@ -192,12 +193,28 @@ export default function RecordForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="mt-10 w-2/3 space-y-6"
+          className="w-2/3 space-y-6"
         >
           <h2 className="pb-2 text-center text-xl font-bold">
             {isEditMode ? '編輯' : '新增'}{' '}
-            {date ? date.toLocaleDateString('zh-TW') : ''} 的記帳項目
+            {form.watch('date')?.toLocaleDateString('zh-TW') ?? ''} 的記帳項目
           </h2>
+          <FormField
+            control={form.control}
+            name="date"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>日期：</FormLabel>
+                <FormControl>
+                  <DatePicker
+                    value={field.value}
+                    onChange={(date) => field.onChange(date)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <div className="flex gap-4">
             <FormField
               control={form.control}
