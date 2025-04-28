@@ -45,7 +45,7 @@ export default function ReportPage() {
       {expenseLoading || incomeLoading ? (
         <FullscreenLoading gifSrc="/loading-3.gif" />
       ) : (
-        <div className="mx-auto mt-10 flex w-full max-w-6xl flex-col items-center">
+        <div className="mx-auto flex w-full max-w-6xl flex-col items-center">
           <DateRangeTabs
             tab={tab}
             currentDate={currentDate}
@@ -54,7 +54,7 @@ export default function ReportPage() {
             onRangeChange={setDateRange}
           />
           {getNoDataMessage() && (
-            <div className="my-4 text-center text-gray-500">
+            <div className="mb-8 text-center text-gray-500">
               {getNoDataMessage()}
             </div>
           )}
