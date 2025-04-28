@@ -27,6 +27,19 @@ export default function ReportPage() {
       'income',
     );
 
+  const getNoDataMessage = () => {
+    if (expenseRecords.length === 0 && incomeRecords.length === 0) {
+      return '這段時間沒有收支紀錄';
+    }
+    if (expenseRecords.length === 0) {
+      return '這段時間沒有支出紀錄';
+    }
+    if (incomeRecords.length === 0) {
+      return '這段時間沒有收入紀錄';
+    }
+    return null;
+  };
+
   return (
     <>
       {expenseLoading || incomeLoading ? (
@@ -40,17 +53,28 @@ export default function ReportPage() {
             onDateChange={setCurrentDate}
             onRangeChange={setDateRange}
           />
+          {getNoDataMessage() && (
+            <div className="my-4 text-center text-gray-500">
+              {getNoDataMessage()}
+            </div>
+          )}
           <div className="grid w-full max-w-4xl grid-cols-1 gap-10 md:grid-cols-2 [&>*]:w-full">
-            <ExpenseChartSwitcher records={expenseRecords} />
-            <IncomeChartSwitcher records={incomeRecords} />
+            {expenseRecords.length > 0 && (
+              <ExpenseChartSwitcher records={expenseRecords} />
+            )}
+            {incomeRecords.length > 0 && (
+              <IncomeChartSwitcher records={incomeRecords} />
+            )}
           </div>
-          <div className="mt-10 w-full max-w-4xl">
-            <MultiAxisLineChart
-              expenseRecords={expenseRecords}
-              incomeRecords={incomeRecords}
-              dateRange={dateRange}
-            />
-          </div>
+          {(expenseRecords.length > 0 || incomeRecords.length > 0) && (
+            <div className="mt-10 w-full max-w-4xl">
+              <MultiAxisLineChart
+                expenseRecords={expenseRecords}
+                incomeRecords={incomeRecords}
+                dateRange={dateRange}
+              />
+            </div>
+          )}
         </div>
       )}
     </>
