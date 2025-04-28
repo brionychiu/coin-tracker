@@ -43,6 +43,7 @@ import {
   getCategoryLabel,
 } from '@/lib/categories';
 import { handleNumericInput } from '@/lib/inputValidators';
+import { useDateStore } from '@/stores/dateStore';
 import { AccountingRecord } from '@/types/accounting';
 
 interface RecordFormProps {
@@ -83,6 +84,7 @@ export default function RecordForm({
   onSave,
 }: RecordFormProps) {
   const isEditMode = !!record;
+  const { setDate } = useDateStore();
 
   const [imageList, setImageList] = useState<any[]>([]);
   const [oldImages, setOldImages] = useState<string[]>([]);
@@ -175,10 +177,12 @@ export default function RecordForm({
         const updated = await updateAccountingRecord(record.id, recordData);
         toast.success('更新成功');
         onSave(updated);
+        setDate(new Date(data.date));
       } else {
         await addAccountingRecord(recordData);
         toast.success('新增成功');
         onSave();
+        setDate(new Date(data.date));
       }
 
       form.reset();
