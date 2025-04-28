@@ -34,14 +34,6 @@ export const MultiAxisLineChart = ({
   incomeRecords,
   dateRange,
 }: MultiAxisLineChartProps) => {
-  if (
-    !expenseRecords ||
-    !incomeRecords ||
-    expenseRecords.length === 0 ||
-    incomeRecords.length === 0
-  ) {
-    return <p className="py-4 text-center">這段時間沒有收支紀錄</p>;
-  }
   if (!dateRange) {
     return <p className="py-4 text-center">日期範圍未提供</p>;
   }

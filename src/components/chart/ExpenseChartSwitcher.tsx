@@ -44,14 +44,12 @@ export const ExpenseChartSwitcher = ({
           records={records}
           categoryType="expense"
           title="支出類別比"
-          emptyMessage="這段時間沒有支出紀錄"
         />
       ) : (
         <BarChartBase
           records={records}
           categoryType="expense"
           title="支出類別金額"
-          emptyMessage="這段時間沒有支出紀錄"
         />
       )}
     </div>
