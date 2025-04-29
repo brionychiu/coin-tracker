@@ -49,7 +49,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
             </h2>
 
             {filteredRecords.length === 0 ? (
-              <p className="flex items-center justify-center gap-2 text-muted-foreground">
+              <p className="mt-5 flex items-center justify-center gap-2 text-muted-foreground">
                 <PackageOpen className="h-5 w-5" />
                 本日無記帳紀錄
               </p>
