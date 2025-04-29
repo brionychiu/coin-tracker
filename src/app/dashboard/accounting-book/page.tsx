@@ -14,7 +14,6 @@ import { AccountingRecord } from '@/types/accounting';
 export default function AccountingBookPage() {
   const { date, setDate } = useDateStore();
   const month = date ? date.getMonth() : new Date().getMonth();
-
   const [isEditing, setIsEditing] = useState(false);
   const [editRecord, setEditRecord] = useState<any | null>(null);
 
@@ -68,7 +67,7 @@ export default function AccountingBookPage() {
                 recordDates={recordDates}
                 className="p-4"
               />
-              <Button onClick={() => setIsEditing(true)}>
+              <Button onClick={() => setIsEditing(true)} className="mt-5">
                 <Plus />
                 新增記帳
               </Button>
