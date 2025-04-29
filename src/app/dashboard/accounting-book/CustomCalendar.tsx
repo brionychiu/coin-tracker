@@ -1,5 +1,6 @@
 'use client';
 
+import { zhTW } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import * as React from 'react';
 import { DayPicker } from 'react-day-picker';
@@ -23,6 +24,7 @@ function CustomCalendar({
 
   return (
     <DayPicker
+      locale={zhTW}
       showOutsideDays={showOutsideDays}
       className={cn('p-3', className)}
       classNames={{
