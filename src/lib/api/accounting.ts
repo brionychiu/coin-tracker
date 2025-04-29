@@ -145,7 +145,8 @@ export function getAccountingRecords(
     collection(db, 'accounting-records'),
     where('uid', '==', uid),
     where('date', '>=', startTimestamp),
-    where('date', '<=', endTimestamp)
+    where('date', '<=', endTimestamp),
+    orderBy('date') 
   );
 
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
