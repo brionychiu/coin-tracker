@@ -6,7 +6,6 @@ import {
   Menu,
   Search,
   Settings,
-  X,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -16,6 +15,7 @@ import { useState } from 'react';
 import icon from '@/assets/images/icon.png';
 import AuthModal from '@/components/modal/Auth';
 import { Button } from '@/components/ui/button';
+import { DialogTitle } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const navItems = [
@@ -98,16 +98,9 @@ export default function Navbar() {
                 <Menu />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64">
+            <SheetContent side="right" className="w-64">
               <div className="mb-4 flex items-center justify-between">
-                <div className="text-lg font-bold">選單</div>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => setOpen(false)}
-                >
-                  <X />
-                </Button>
+                <DialogTitle className="text-lg font-bold">選單</DialogTitle>
               </div>
               <nav className="flex flex-col space-y-2">
                 {navItems.map((item) => {
