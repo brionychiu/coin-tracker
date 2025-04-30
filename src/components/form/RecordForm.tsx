@@ -197,7 +197,7 @@ export default function RecordForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-2/3 space-y-6"
+          className="space-y-6 md:w-2/3"
         >
           <h2 className="pb-2 text-center text-xl font-bold">
             {isEditMode ? '編輯' : '新增'}{' '}
@@ -350,7 +350,7 @@ export default function RecordForm({
               </FormItem>
             )}
           />
-          <div className="mt-4 flex justify-end">
+          <div className="flex justify-center md:justify-end">
             <Button
               type="button"
               onClick={onCancel}
