@@ -45,7 +45,7 @@ export default function AccountingBookPage() {
 
   return (
     <div className="mx-auto h-full w-full max-w-6xl bg-white">
-      <div className="flex flex-row gap-6">
+      <div className="flex-row gap-6 md:flex">
         {isEditing ? (
           <div className="flex w-full items-center justify-center">
             <RecordForm
@@ -57,7 +57,7 @@ export default function AccountingBookPage() {
           </div>
         ) : (
           <>
-            <div className="flex w-96 flex-col items-center">
+            <div className="flex flex-col items-center justify-self-center md:w-96 md:justify-self-start">
               <CustomCalendar
                 mode="single"
                 selected={date}
@@ -65,14 +65,14 @@ export default function AccountingBookPage() {
                 month={new Date(new Date().getFullYear(), month)}
                 onMonthChange={handleMonthChange}
                 recordDates={recordDates}
-                className="p-4"
+                className="md:p-4"
               />
-              <Button onClick={() => setIsEditing(true)} className="mt-5">
+              <Button onClick={() => setIsEditing(true)} className="my-5">
                 <Plus />
                 新增記帳
               </Button>
             </div>
-            <div className="flex-1">
+            <div className="md:flex-1">
               <Records date={date} month={month} onEdit={handleEdit} />
             </div>
           </>
