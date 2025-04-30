@@ -26,24 +26,26 @@ export function useConfirm() {
     ConfirmModal: options
       ? createPortal(
           <Dialog open={!!options} onOpenChange={close}>
-            <DialogContent>
+            <DialogContent className="justify-center justify-items-center">
               <DialogHeader>
                 <DialogTitle>{options.title}</DialogTitle>
               </DialogHeader>
               <p>{options.message}</p>
               <DialogFooter>
-                <Button variant="outline" onClick={close}>
-                  取消
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={() => {
-                    options.onConfirm();
-                    close();
-                  }}
-                >
-                  確認
-                </Button>
+                <div className="flex justify-center gap-4">
+                  <Button variant="outline" onClick={close}>
+                    取消
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      options.onConfirm();
+                      close();
+                    }}
+                  >
+                    確認
+                  </Button>
+                </div>
               </DialogFooter>
             </DialogContent>
           </Dialog>,
