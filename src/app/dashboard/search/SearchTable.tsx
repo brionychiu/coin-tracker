@@ -1,27 +1,17 @@
 'use client';
 
-import { Image as ImageIcon, Pencil, Search, Trash2 } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { PhotoProvider, PhotoView } from 'react-photo-view';
 
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
-import { Button } from '@/components/ui/button';
-import { highlightText } from '@/components/ui/highlight-text';
 import { Input } from '@/components/ui/input';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Table, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
-import { getAccountLabel } from '@/lib/account';
-import { getCategoryIcon, getCategoryInfo } from '@/lib/categories';
-import { formatToShortDay, formatToYearMonthGroup } from '@/lib/format';
+import { formatToYearMonthGroup } from '@/lib/format';
 import { AccountingRecord } from '@/types/accounting';
+import { GroupCardSection } from './GroupCardSection';
+import { GroupTableSection } from './GroupTableSection';
 
 interface RecordsProps {
   records: AccountingRecord[];
@@ -38,8 +28,8 @@ export default function SearchTable({
   loading,
   hasMore,
   loadMore,
-  onEdit,
   hasLoadedOnce,
+  onEdit,
   onDelete,
 }: RecordsProps) {
   const [keyword, setKeyword] = useState('');
@@ -54,11 +44,12 @@ export default function SearchTable({
   const filteredRecords = useMemo(() => {
     const keywords = debouncedKeyword
       .trim()
+      .toLowerCase()
       .split(/\s+/)
-      .filter(Boolean)
-      .map((k) => k.toLowerCase());
+      .filter(Boolean);
 
-    if (keywords.length === 0) return records;
+    if (!keywords.length) return records;
+
     return records.filter((record) =>
       keywords.every((kw) => record.note?.toLowerCase().includes(kw)),
     );
@@ -68,8 +59,7 @@ export default function SearchTable({
     return filteredRecords.reduce(
       (acc, record) => {
         const group = formatToYearMonthGroup(record.date);
-        if (!acc[group]) acc[group] = [];
-        acc[group].push(record);
+        (acc[group] ||= []).push(record);
         return acc;
       },
       {} as Record<string, AccountingRecord[]>,
@@ -77,6 +67,14 @@ export default function SearchTable({
   }, [filteredRecords]);
 
   const isEmpty = Object.keys(groupedRecords).length === 0;
+
+  const renderEmptyState = () => (
+    <div className="p-6 text-center text-muted-foreground">
+      找不到符合{' '}
+      <span className="font-semibold text-foreground">{debouncedKeyword}</span>{' '}
+      的紀錄
+    </div>
+  );
 
   return (
     <>
@@ -93,7 +91,7 @@ export default function SearchTable({
         </div>
       </div>
 
-      <div className="max-h-screen-minus-200 relative mb-8 overflow-auto rounded-xl border">
+      <div className="relative mb-8 hidden max-h-screen-minus-200 overflow-auto rounded-xl border md:block">
         <div className="sticky top-0 z-30 bg-white">
           <Table className="w-full table-fixed">
             <TableHeader>
@@ -109,103 +107,19 @@ export default function SearchTable({
         </div>
 
         {!hasLoadedOnce || loading ? (
-          <FullscreenLoading gifSrc="/loading-2.gif" />
+          <FullscreenLoading />
         ) : isEmpty ? (
-          <div className="p-6 text-center text-muted-foreground">
-            找不到符合{' '}
-            <span className="font-semibold text-foreground">
-              {debouncedKeyword}
-            </span>{' '}
-            的紀錄
-          </div>
+          renderEmptyState()
         ) : (
           Object.entries(groupedRecords).map(([group, groupItems]) => (
-            <div key={group}>
-              <div className="sticky top-[40px] z-20 bg-muted px-4 py-2 text-lg font-bold">
-                {group}
-              </div>
-              <Table className="w-full table-fixed">
-                <TableBody>
-                  {groupItems.map((record) => (
-                    <TableRow key={record.id} className="hover:bg-system-02">
-                      <TableCell className="w-1/6">
-                        <div className="flex items-center">
-                          <div className="relative flex h-8 w-8 items-center justify-center">
-                            <span
-                              className={`absolute h-5 w-5 rounded-full opacity-80 ${
-                                record.categoryType === 'income'
-                                  ? 'bg-green-01'
-                                  : 'bg-red-04'
-                              }`}
-                            />
-                            <div className="relative z-10 text-2xl">
-                              {getCategoryIcon(record.category)}
-                            </div>
-                          </div>
-                          <span>{getCategoryInfo(record.category).label}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="w-1/6">
-                        {formatToShortDay(record.date)}
-                      </TableCell>
-                      <TableCell className="w-1/3 truncate">
-                        {record.note
-                          ? highlightText(record.note, debouncedKeyword)
-                          : '-'}
-                      </TableCell>
-                      <TableCell className="w-1/6 text-right">
-                        {getAccountLabel(record.account)}
-                      </TableCell>
-                      <TableCell className="w-1/6 font-semibold">
-                        <div className="flex justify-between">
-                          <span>{record.amount}</span>
-                          <div className="mt-1 flex gap-2">
-                            {record.images.length > 0 && (
-                              <PhotoProvider>
-                                {record.images.map((url, index) => (
-                                  <PhotoView key={index} src={url}>
-                                    {index === 0 ? (
-                                      <Button
-                                        type="button"
-                                        variant="iconHover"
-                                        size="icon"
-                                        title="預覽圖片"
-                                      >
-                                        <ImageIcon className="size-4" />
-                                      </Button>
-                                    ) : (
-                                      // 給 PhotoView 一個不可見但合法的 children（避免 false/null）
-                                      <span className="hidden" />
-                                    )}
-                                  </PhotoView>
-                                ))}
-                              </PhotoProvider>
-                            )}
-
-                            <Button
-                              type="button"
-                              variant="iconHover"
-                              size="icon"
-                              onClick={() => onEdit(record)}
-                            >
-                              <Pencil className="size-4" />
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="iconHover"
-                              size="icon"
-                              onClick={() => onDelete(record)}
-                            >
-                              <Trash2 className="size-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            <GroupTableSection
+              key={group}
+              group={group}
+              groupItems={groupItems}
+              debouncedKeyword={debouncedKeyword}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
           ))
         )}
 
@@ -216,6 +130,25 @@ export default function SearchTable({
           >
             載入中...
           </div>
+        )}
+      </div>
+
+      <div className="block md:hidden">
+        {!hasLoadedOnce || loading ? (
+          <FullscreenLoading />
+        ) : isEmpty ? (
+          renderEmptyState()
+        ) : (
+          Object.entries(groupedRecords).map(([group, groupItems]) => (
+            <GroupCardSection
+              key={group}
+              group={group}
+              groupItems={groupItems}
+              debouncedKeyword={debouncedKeyword}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          ))
         )}
       </div>
     </>
