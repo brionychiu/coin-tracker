@@ -25,7 +25,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <>
       <Navbar />
       <div className="flex w-full overflow-hidden pt-16">
-        <main className="mx-6 my-10 w-full">{children}</main>
+        <main className="mx-3 my-10 w-full md:mx-6">{children}</main>
       </div>
     </>
   );
