@@ -49,6 +49,12 @@ export default {
           '01': '#A3DDF0',
           '02': '#7FCFEA',
         },
+        red: {
+          '01':'#FFF3F2',
+          '02': '#FFE0DF',
+          '03': '#FFC7C5',
+          '04': '#ffb5c3',
+        },
         warning: {
           '01': '#FFC107',
         },
@@ -95,6 +101,9 @@ export default {
       },
       width: {
         '350': '350px',
+      },
+      maxHeight: {
+        'screen-minus-200': 'calc(100vh - 200px)',
       },
     },
     screens: {

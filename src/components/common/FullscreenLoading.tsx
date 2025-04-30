@@ -21,6 +21,7 @@ export const FullscreenLoading = ({
           width={160}
           height={160}
           className="animate-pulse drop-shadow-[0_0_10px_white]"
+          unoptimized
         />
       </div>
     </div>

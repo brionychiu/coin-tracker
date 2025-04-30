@@ -1,4 +1,5 @@
 'use client';
+
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -8,10 +9,11 @@ import {
   PointElement,
   Tooltip,
 } from 'chart.js';
+import { useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 
 import { type DateRange } from '@/components/tabs/DateRangeTabs';
-import { formatKey } from '@/lib/format';
+import { formatChartTimeKey } from '@/lib/format';
 import { AccountingRecord } from '@/types/accounting';
 
 ChartJS.register(
@@ -34,14 +36,6 @@ export const MultiAxisLineChart = ({
   incomeRecords,
   dateRange,
 }: MultiAxisLineChartProps) => {
-  if (
-    !expenseRecords ||
-    !incomeRecords ||
-    expenseRecords.length === 0 ||
-    incomeRecords.length === 0
-  ) {
-    return <p className="py-4 text-center">沒有資料</p>;
-  }
   if (!dateRange) {
     return <p className="py-4 text-center">日期範圍未提供</p>;
   }
@@ -55,7 +49,7 @@ export const MultiAxisLineChart = ({
     const grouped: Record<string, { income: number; expense: number }> = {};
 
     records.forEach((record) => {
-      const key = formatKey(record.date, isYearView);
+      const key = formatChartTimeKey(record.date, isYearView);
       const amount = parseFloat(record.amount);
 
       if (!grouped[key]) {
@@ -91,24 +85,31 @@ export const MultiAxisLineChart = ({
     (key) => groupedIncomeData[key]?.income || 0,
   );
 
+  const datasets = [];
+
+  if (incomeRecords.length > 0) {
+    datasets.push({
+      label: '收入',
+      data: incomeData,
+      borderColor: 'rgb(75, 192, 192)',
+      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      yAxisID: 'y1',
+    });
+  }
+
+  if (expenseRecords.length > 0) {
+    datasets.push({
+      label: '支出',
+      data: expenseData,
+      borderColor: 'rgb(255, 99, 132)',
+      backgroundColor: 'rgba(255, 99, 132, 0.2)',
+      yAxisID: 'y2',
+    });
+  }
+
   const data = {
     labels,
-    datasets: [
-      {
-        label: '收入',
-        data: incomeData,
-        borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        yAxisID: 'y1',
-      },
-      {
-        label: '支出',
-        data: expenseData,
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        yAxisID: 'y2',
-      },
-    ],
+    datasets,
   };
 
   const options = {
@@ -145,6 +146,13 @@ export const MultiAxisLineChart = ({
       },
     },
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="rounded-md border p-4 shadow">

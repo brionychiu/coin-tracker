@@ -4,8 +4,19 @@ import {
   getAuth,
   onAuthStateChanged,
 } from 'firebase/auth';
-import { deleteDoc, doc, getFirestore, updateDoc } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import {
+  addDoc,
+  collection,
+  deleteDoc, doc,
+  getDocs,
+  getFirestore, limit,
+  onSnapshot,
+  orderBy, query, startAfter,
+  Timestamp,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -24,5 +35,5 @@ const auth = getAuth(app);
 const subscribeToAuthChanges = (callback: (user: User | null) => void) =>
   onAuthStateChanged(auth, callback);
 
-export { auth, db, deleteDoc, doc, storage, subscribeToAuthChanges, updateDoc };
+export { addDoc, auth, collection, db, deleteDoc, doc, getDocs, getDownloadURL, limit, onAuthStateChanged, onSnapshot, orderBy, query, ref, startAfter, storage, subscribeToAuthChanges, Timestamp, updateDoc, uploadBytes, User, where };
 

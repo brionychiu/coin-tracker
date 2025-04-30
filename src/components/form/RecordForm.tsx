@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
 import CategoryTabs from '@/components/tabs/CategoryTabs';
 import { Button } from '@/components/ui/button';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Form,
   FormControl,
@@ -42,13 +43,14 @@ import {
   getCategoryLabel,
 } from '@/lib/categories';
 import { handleNumericInput } from '@/lib/inputValidators';
+import { useDateStore } from '@/stores/dateStore';
 import { AccountingRecord } from '@/types/accounting';
 
 interface RecordFormProps {
   date: Date | undefined;
   record: AccountingRecord | null;
   onCancel: () => void;
-  onSave: () => void;
+  onSave: (updatedRecord?: AccountingRecord) => void;
 }
 
 const accountEnumValues = accountOptions.map((option) => option.value) as [
@@ -82,6 +84,7 @@ export default function RecordForm({
   onSave,
 }: RecordFormProps) {
   const isEditMode = !!record;
+  const { setDate } = useDateStore();
 
   const [imageList, setImageList] = useState<any[]>([]);
   const [oldImages, setOldImages] = useState<string[]>([]);
@@ -171,15 +174,18 @@ export default function RecordForm({
 
       if (isEditMode) {
         if (!record?.id) throw new Error('缺少記錄 ID');
-        await updateAccountingRecord(record.id, recordData);
+        const updated = await updateAccountingRecord(record.id, recordData);
         toast.success('更新成功');
+        onSave(updated);
+        setDate(new Date(data.date));
       } else {
         await addAccountingRecord(recordData);
         toast.success('新增成功');
+        onSave();
+        setDate(new Date(data.date));
       }
 
       form.reset();
-      onSave();
     } catch (error: any) {
       toast.error(`${isEditMode ? '更新' : '新增'}失敗：${error.message}`);
     }
@@ -191,12 +197,28 @@ export default function RecordForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-2/3 space-y-6"
+          className="space-y-6 md:w-2/3"
         >
           <h2 className="pb-2 text-center text-xl font-bold">
             {isEditMode ? '編輯' : '新增'}{' '}
-            {date ? date.toLocaleDateString('zh-TW') : ''} 的記帳項目
+            {form.watch('date')?.toLocaleDateString('zh-TW') ?? ''} 的記帳項目
           </h2>
+          <FormField
+            control={form.control}
+            name="date"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>日期：</FormLabel>
+                <FormControl>
+                  <DatePicker
+                    value={field.value}
+                    onChange={(date) => field.onChange(date)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <div className="flex gap-4">
             <FormField
               control={form.control}
@@ -328,7 +350,7 @@ export default function RecordForm({
               </FormItem>
             )}
           />
-          <div className="mt-4 flex justify-end">
+          <div className="flex justify-center md:justify-end">
             <Button
               type="button"
               onClick={onCancel}

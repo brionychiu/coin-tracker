@@ -1,7 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   addMonths,
   addYears,
@@ -15,7 +13,10 @@ import {
   subYears,
 } from 'date-fns';
 import { zhTW } from 'date-fns/locale';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export type DateRange = {
   startDate: Date;
@@ -23,17 +24,20 @@ export type DateRange = {
 };
 
 interface DateRangeTabsProps {
-  value?: DateRange | null;
-  onChange?: (range: DateRange) => void;
+  tab: 'month' | 'year' | 'recent';
+  currentDate: Date;
+  onTabChange: (tab: 'month' | 'year' | 'recent') => void;
+  onDateChange: (date: Date) => void;
+  onRangeChange: (range: DateRange) => void;
 }
-// TODO: value prop 目前沒有使用到，未來可以考慮加入
-// 這個 prop 可以用來控制當前選中的日期範圍
-// 例如可以用來顯示當前選中的月份或年份
-export const DateRangeTabs = ({ value, onChange }: DateRangeTabsProps) => {
-  const [tab, setTab] = useState<'month' | 'year' | 'recent'>('month');
-  const [currentDate, setCurrentDate] = useState(new Date());
 
-  //計算日期區間並通知父層
+export const DateRangeTabs = ({
+  tab,
+  currentDate,
+  onTabChange,
+  onDateChange,
+  onRangeChange,
+}: DateRangeTabsProps) => {
   useEffect(() => {
     let startDate: Date;
     let endDate: Date;
@@ -50,25 +54,28 @@ export const DateRangeTabs = ({ value, onChange }: DateRangeTabsProps) => {
       startDate.setDate(endDate.getDate() - 6);
     }
 
-    onChange?.({ startDate, endDate });
-  }, [tab, currentDate, onChange]);
+    onRangeChange({ startDate, endDate });
+  }, [tab, currentDate, onRangeChange]);
 
   const handleMonthChange = (direction: 'prev' | 'next') => {
-    setCurrentDate((prev) =>
-      direction === 'prev' ? subMonths(prev, 1) : addMonths(prev, 1),
-    );
+    const newDate =
+      direction === 'prev'
+        ? subMonths(currentDate, 1)
+        : addMonths(currentDate, 1);
+    onDateChange(newDate);
   };
 
   const handleYearChange = (direction: 'prev' | 'next') => {
-    setCurrentDate((prev) =>
-      direction === 'prev' ? subYears(prev, 1) : addYears(prev, 1),
-    );
+    const newDate =
+      direction === 'prev'
+        ? subYears(currentDate, 1)
+        : addYears(currentDate, 1);
+    onDateChange(newDate);
   };
 
   const getMonthTitle = () =>
     format(currentDate, 'yyyy 年 M 月', { locale: zhTW });
   const getYearTitle = () => format(currentDate, 'yyyy 年', { locale: zhTW });
-
   const getRecentRange = () => {
     const end = startOfDay(new Date());
     const start = new Date(end);
@@ -81,10 +88,10 @@ export const DateRangeTabs = ({ value, onChange }: DateRangeTabsProps) => {
       <Tabs
         value={tab}
         onValueChange={(value) => {
-          setTab(value as 'month' | 'year' | 'recent');
-          setCurrentDate(new Date()); // 切換 tab 時重設日期
+          onTabChange(value as 'month' | 'year' | 'recent');
+          onDateChange(new Date());
         }}
-        className="w-full"
+        className="mx-4 mb-4 w-full"
       >
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="month">月</TabsTrigger>
@@ -96,7 +103,7 @@ export const DateRangeTabs = ({ value, onChange }: DateRangeTabsProps) => {
           <div className="flex items-center justify-center gap-4 py-4 text-lg font-semibold">
             <Button
               size="icon"
-              variant="ghost"
+              variant="iconHover"
               onClick={() => handleMonthChange('prev')}
             >
               &lt;
@@ -104,7 +111,7 @@ export const DateRangeTabs = ({ value, onChange }: DateRangeTabsProps) => {
             <span>{getMonthTitle()}</span>
             <Button
               size="icon"
-              variant="ghost"
+              variant="iconHover"
               onClick={() => handleMonthChange('next')}
             >
               &gt;
@@ -116,7 +123,7 @@ export const DateRangeTabs = ({ value, onChange }: DateRangeTabsProps) => {
           <div className="flex items-center justify-center gap-4 py-4 text-lg font-semibold">
             <Button
               size="icon"
-              variant="ghost"
+              variant="iconHover"
               onClick={() => handleYearChange('prev')}
             >
               &lt;
@@ -124,7 +131,7 @@ export const DateRangeTabs = ({ value, onChange }: DateRangeTabsProps) => {
             <span>{getYearTitle()}</span>
             <Button
               size="icon"
-              variant="ghost"
+              variant="iconHover"
               onClick={() => handleYearChange('next')}
             >
               &gt;

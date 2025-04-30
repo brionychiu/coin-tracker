@@ -3,7 +3,7 @@ import {
 } from '@/lib/categories';
 import { AccountingRecord } from '@/types/accounting';
 
-const graphColors = [
+const graphBgColors = [
   'rgba(255, 99, 132, 0.5)',   // 粉紅紅
   'rgba(54, 162, 235, 0.5)',   // 柔藍
   'rgba(255, 206, 86, 0.5)',   // 柔黃
@@ -49,7 +49,7 @@ export function getCategoryChartData(
   const percentages = data.map((val) =>
     total > 0 ? parseFloat(((val / total) * 100).toFixed(2)) : 0
   );
-  const colors = entries.map((_, idx) => graphColors[idx % graphColors.length]);
+  const colors = entries.map((_, idx) => graphBgColors[idx % graphBgColors.length]);
 
   return {
     labels,

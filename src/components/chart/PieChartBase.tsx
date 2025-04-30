@@ -1,9 +1,11 @@
 'use client';
 
+import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
+import { useEffect } from 'react';
+import { Pie } from 'react-chartjs-2';
+
 import { getCategoryChartData } from '@/lib/chart';
 import { AccountingRecord } from '@/types/accounting';
-import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
-import { Pie } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -11,19 +13,13 @@ interface PieChartBaseProps {
   records: AccountingRecord[];
   categoryType: 'expense' | 'income';
   title: string;
-  emptyMessage: string;
 }
 
 export const PieChartBase = ({
   records,
   categoryType,
   title,
-  emptyMessage,
 }: PieChartBaseProps) => {
-  if (!records || records.length === 0) {
-    return <p className="py-4 text-center">{emptyMessage}</p>;
-  }
-
   const { labels, data, percentages, total, colors } = getCategoryChartData(
     records,
     categoryType,
@@ -42,6 +38,7 @@ export const PieChartBase = ({
   };
 
   const options = {
+    responsive: true,
     plugins: {
       legend: {
         align: 'start' as const,
@@ -49,10 +46,17 @@ export const PieChartBase = ({
     },
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="rounded-md border p-4 shadow">
       <h2 className="text-lg font-semibold">{title}</h2>
-      <h3 className="text-gray-02 mb-1 text-lg font-normal">${total}</h3>
+      <h3 className="mb-1 text-lg font-normal text-gray-02">${total}</h3>
       <Pie data={chartData} options={options} />
       <div className="mt-4">
         <ul>

@@ -9,7 +9,7 @@ interface TabsCategoryProps {
 
 export default function TabsCategory({ value, onChange }: TabsCategoryProps) {
   return (
-    <div className="rounded-md border p-4 shadow">
+    <div className="rounded-md border p-2 shadow md:p-4">
       <Tabs defaultValue="expenses" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="expenses">支出</TabsTrigger>
@@ -17,7 +17,7 @@ export default function TabsCategory({ value, onChange }: TabsCategoryProps) {
         </TabsList>
 
         <TabsContent value="expenses">
-          <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
+          <div className="grid grid-cols-3 gap-5 sm:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
             {EXPENSE_CATEGORIES.map(({ icon: Icon, label }, index) => (
               <Button
                 key={index}
@@ -28,7 +28,7 @@ export default function TabsCategory({ value, onChange }: TabsCategoryProps) {
               >
                 <span className="relative flex h-10 w-10 items-center justify-center">
                   {value === label && (
-                    <span className="absolute left-0 right-0 top-1 mx-auto h-8 w-8 rounded-full bg-primary-01" />
+                    <span className="absolute left-0 right-0 top-1 mx-auto h-8 w-8 rounded-full bg-red-04 opacity-80" />
                   )}
                   <Icon className="relative z-10 size-6" />
                 </span>
@@ -39,7 +39,7 @@ export default function TabsCategory({ value, onChange }: TabsCategoryProps) {
         </TabsContent>
 
         <TabsContent value="income">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-7">
+          <div className="grid grid-cols-3 gap-5 sm:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
             {INCOME_CATEGORIES.map(({ icon: Icon, label }, index) => (
               <Button
                 key={index}
@@ -50,7 +50,7 @@ export default function TabsCategory({ value, onChange }: TabsCategoryProps) {
               >
                 <span className="relative flex h-10 w-10 items-center justify-center">
                   {value === label && (
-                    <span className="absolute left-0 right-0 top-1 mx-auto h-8 w-8 rounded-full bg-primary-01" />
+                    <span className="absolute left-0 right-0 top-1 mx-auto h-8 w-8 rounded-full bg-green-01 opacity-80" />
                   )}
                   <Icon className="relative z-10 size-6" />
                 </span>

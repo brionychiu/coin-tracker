@@ -1,7 +1,5 @@
 'use client';
 
-import { getCategoryChartData } from '@/lib/chart';
-import { AccountingRecord } from '@/types/accounting';
 import {
   BarElement,
   CategoryScale,
@@ -10,7 +8,11 @@ import {
   LinearScale,
   Tooltip,
 } from 'chart.js';
+import { useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
+
+import { getCategoryChartData } from '@/lib/chart';
+import { AccountingRecord } from '@/types/accounting';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -18,19 +20,13 @@ interface BarChartBaseProps {
   records: AccountingRecord[];
   categoryType: 'expense' | 'income';
   title: string;
-  emptyMessage: string;
 }
 
 export const BarChartBase = ({
   records,
   categoryType,
   title,
-  emptyMessage,
 }: BarChartBaseProps) => {
-  if (!records || records.length === 0) {
-    return <p className="py-4 text-center">{emptyMessage}</p>;
-  }
-
   const { labels, data, percentages, total, colors } = getCategoryChartData(
     records,
     categoryType,
@@ -48,16 +44,25 @@ export const BarChartBase = ({
     ],
   };
   const chartOptions = {
+    responsive: true,
     plugins: {
       legend: {
         display: false, // 隱藏圖例
       },
     },
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="rounded-md border p-4 shadow">
       <h2 className="text-lg font-semibold">{title}</h2>
-      <h3 className="text-gray-02 mb-3 text-lg font-normal">${total}</h3>
+      <h3 className="mb-3 text-lg font-normal text-gray-02">${total}</h3>
       <Bar data={chartData} options={chartOptions} />
       <div className="mt-4">
         <ul>

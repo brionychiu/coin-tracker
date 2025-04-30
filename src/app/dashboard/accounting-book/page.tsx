@@ -4,27 +4,25 @@ import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
 import { CustomCalendar } from '@/app/dashboard/accounting-book/CustomCalendar';
-import RecordForm from '@/app/dashboard/accounting-book/RecordForm';
 import Records from '@/app/dashboard/accounting-book/Records';
+import RecordForm from '@/components/form/RecordForm';
 import { Button } from '@/components/ui/button';
 import { useAccountingRecords } from '@/hooks/useAccountingRecords';
+import { useDateStore } from '@/stores/dateStore';
 import { AccountingRecord } from '@/types/accounting';
 
 export default function AccountingBookPage() {
+  const { date, setDate } = useDateStore();
+  const month = date ? date.getMonth() : new Date().getMonth();
   const [isEditing, setIsEditing] = useState(false);
   const [editRecord, setEditRecord] = useState<any | null>(null);
-
-  const [date, setDate] = useState<Date | undefined>(new Date());
-  const [month, setMonth] = useState<number>(
-    date?.getMonth() ?? new Date().getMonth(),
-  );
 
   // TODO: 可以考慮是否將 Records.tsx 的 useAccountingRecords 部分也放在這裡
   const { records } = useAccountingRecords(date, month);
   const recordDates = records.map((record) => new Date(record.date));
 
   const handleMonthChange = (newDate: Date) => {
-    setMonth(newDate.getMonth());
+    setDate(newDate);
   };
 
   const handleEdit = (record: AccountingRecord) => {
@@ -34,7 +32,6 @@ export default function AccountingBookPage() {
     if (record?.date) {
       const recordDate = new Date(record.date);
       setDate(recordDate);
-      setMonth(recordDate.getMonth());
     }
   };
 
@@ -42,13 +39,13 @@ export default function AccountingBookPage() {
     setIsEditing(false);
     setEditRecord(null);
     if (date) {
-      setMonth(date.getMonth());
+      setDate(date);
     }
   };
 
   return (
-    <div className="mx-auto h-full w-full rounded-2xl border bg-white shadow 2xl:max-w-6xl">
-      <div className="flex flex-row gap-6 p-6">
+    <div className="mx-auto h-full w-full max-w-6xl bg-white">
+      <div className="flex-row gap-6 md:flex">
         {isEditing ? (
           <div className="flex w-full items-center justify-center">
             <RecordForm
@@ -60,22 +57,22 @@ export default function AccountingBookPage() {
           </div>
         ) : (
           <>
-            <div className="flex w-96 flex-col items-center">
+            <div className="flex flex-col items-center justify-self-center md:w-96 md:justify-self-start">
               <CustomCalendar
                 mode="single"
                 selected={date}
-                onSelect={setDate}
+                onSelect={(newDate) => newDate && setDate(newDate)}
                 month={new Date(new Date().getFullYear(), month)}
                 onMonthChange={handleMonthChange}
                 recordDates={recordDates}
-                className="p-4"
+                className="md:p-4"
               />
-              <Button onClick={() => setIsEditing(true)}>
+              <Button onClick={() => setIsEditing(true)} className="my-5">
                 <Plus />
                 新增記帳
               </Button>
             </div>
-            <div className="flex-1">
+            <div className="md:flex-1">
               <Records date={date} month={month} onEdit={handleEdit} />
             </div>
           </>

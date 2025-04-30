@@ -1,24 +1,37 @@
-import { db, storage } from '@/lib/firebase';
-import { AccountingRecord, AccountingRecordPayload } from '@/types/accounting';
+import { auth } from '@/lib/firebase';
 import { endOfMonth, startOfMonth } from 'date-fns';
+
 import {
   addDoc,
   collection,
+  db,
   deleteDoc,
   doc,
+  getDocs,
+  getDownloadURL,
+  limit,
   onSnapshot,
+  orderBy,
   query,
+  ref,
+  startAfter,
+  storage,
   Timestamp,
   updateDoc,
+  uploadBytes,
   where,
-} from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+} from '@/lib/firebase';
+import { convertToTimestamp } from '@/lib/utils';
+import { AccountingRecord, AccountingRecordPayload } from '@/types/accounting';
 
 /**
  * 上傳單張圖片到 Firebase Storage
  */
 async function uploadImage(file: File): Promise<string> {
-  const storageRef = ref(storage, `receipts/${file.name}-${Date.now()}`);
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error('未登入，無法上傳圖片');
+  
+  const storageRef = ref(storage, `receipts/${uid}/${file.name}-${Date.now()}`);
   await uploadBytes(storageRef, file);
   return await getDownloadURL(storageRef);
 }
@@ -27,11 +40,15 @@ async function uploadImage(file: File): Promise<string> {
  * 新增一筆記帳紀錄到 Firestore
  */
 export async function addAccountingRecord(data: AccountingRecordPayload) {
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error('未登入');
+
   try {
     // 上傳所有圖片並獲取下載 URL
     const imageUrls = data.newImages ? await Promise.all(data.newImages.map(uploadImage)) : [];
 
     const docRef = await addDoc(collection(db, 'accounting-records'), {
+      uid,
       date: data.date,
       amount: data.amount,
       category: data.category,
@@ -75,6 +92,13 @@ export async function updateAccountingRecord(id: string, data: AccountingRecordP
       ...cleanData,
       images: imageUrls,
     });
+
+    return {
+      id,
+      ...cleanData,
+      images: imageUrls,
+    }; 
+
   } catch (error) {
     console.error('更新失敗:', error);
     throw error;
@@ -105,6 +129,9 @@ export function getAccountingRecords(
   month: number,
   callback: (data: AccountingRecord[]) => void
 ) {
+  const uid = auth.currentUser?.uid;
+  if (!uid) return () => {};
+
   const now = new Date();
   const startOfMonthDate = new Date(now.getFullYear(), month, 1);
   const startTimestamp = Timestamp.fromDate(
@@ -116,8 +143,10 @@ export function getAccountingRecords(
 
   const q = query(
     collection(db, 'accounting-records'),
+    where('uid', '==', uid),
     where('date', '>=', startTimestamp),
-    where('date', '<=', endTimestamp)
+    where('date', '<=', endTimestamp),
+    orderBy('date') 
   );
 
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -141,11 +170,15 @@ export function getAccountingRecordsByRange(
   endDate: Date,
   callback: (data: AccountingRecord[]) => void
 ) {
+  const uid = auth.currentUser?.uid;
+  if (!uid) return () => {};
+
   const startTimestamp = Timestamp.fromDate(startDate);
   const endTimestamp = Timestamp.fromDate(endDate);
 
   const q = query(
     collection(db, 'accounting-records'),
+    where('uid', '==', uid),
     where('date', '>=', startTimestamp),
     where('date', '<=', endTimestamp)
   );
@@ -161,4 +194,37 @@ export function getAccountingRecordsByRange(
   });
 
   return unsubscribe;
+}
+
+export async function getRecordsBatch(lastDate: Date | null, batchSize: number): Promise<AccountingRecord[]> {
+  const uid = auth.currentUser?.uid;
+  if (!uid) return [];
+
+  const recordsRef = collection(db, 'accounting-records');
+
+  let q = query(
+    recordsRef,
+    where('uid', '==', uid),
+    orderBy('date', 'desc'), // 降冪排序，最新的記錄排前面
+    limit(batchSize) 
+  );
+
+  if (lastDate) {
+    const lastTimestamp = convertToTimestamp(lastDate);
+    q = query(q, startAfter(lastTimestamp));
+  }
+
+  try {
+    const querySnapshot = await getDocs(q);
+    const records: AccountingRecord[] = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      date: doc.data().date.toDate(), // Timestamp 轉 Date
+    })) as AccountingRecord[];
+
+    return records;
+  } catch (error) {
+    console.error('載入記帳資料失敗:', error);
+    return [];
+  }
 }

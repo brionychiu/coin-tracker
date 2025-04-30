@@ -49,25 +49,25 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
             </h2>
 
             {filteredRecords.length === 0 ? (
-              <p className="flex items-center justify-center gap-2 text-muted-foreground">
+              <p className="mt-5 flex items-center justify-center gap-2 text-muted-foreground">
                 <PackageOpen className="h-5 w-5" />
                 本日無記帳紀錄
               </p>
             ) : (
-              <PhotoProvider>
+              <>
                 {filteredRecords.map((record) => (
                   <li
                     key={record.id}
                     className="group rounded-2xl border p-4 shadow-sm transition-shadow duration-200 hover:shadow-md"
                   >
                     <div className="flex justify-between">
-                      <div className="flex gap-4">
+                      <div className="flex items-center gap-4">
                         <div className="relative flex h-8 w-8 items-center justify-center">
                           <span
-                            className={`absolute h-5 w-5 rounded-full opacity-70 shadow-md blur-sm ${
+                            className={`absolute h-5 w-5 rounded-full opacity-80 ${
                               record.categoryType === 'income'
                                 ? 'bg-green-01'
-                                : 'bg-primary-01'
+                                : 'bg-red-04'
                             }`}
                           />
                           <div className="relative z-10 text-2xl">
@@ -83,26 +83,28 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                               {record.note}
                             </p>
                           )}
-                          {record.images?.length > 0 && (
-                            <figure className="flex flex-wrap gap-4">
-                              {record.images.map((url, index) => (
-                                <div key={index} className="relative">
-                                  <PhotoView src={url}>
-                                    <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded">
-                                      <img
-                                        src={url}
-                                        alt={`收據照片 ${index + 1}`}
-                                        className="object-cover transition-transform duration-200 hover:scale-105"
-                                      />
-                                      <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 hover:opacity-100">
-                                        <Search className="h-6 w-6 text-white" />
+                          <PhotoProvider>
+                            {record.images?.length > 0 && (
+                              <figure className="flex flex-wrap gap-4">
+                                {record.images.map((url, index) => (
+                                  <div key={index} className="relative">
+                                    <PhotoView src={url}>
+                                      <div className="relative h-10 w-10 cursor-pointer overflow-hidden rounded sm:h-16 sm:w-16">
+                                        <img
+                                          src={url}
+                                          alt={`收據照片 ${index + 1}`}
+                                          className="object-cover transition-transform duration-200 hover:scale-105"
+                                        />
+                                        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 hover:opacity-100">
+                                          <Search className="h-6 w-6 text-white" />
+                                        </div>
                                       </div>
-                                    </div>
-                                  </PhotoView>
-                                </div>
-                              ))}
-                            </figure>
-                          )}
+                                    </PhotoView>
+                                  </div>
+                                ))}
+                              </figure>
+                            )}
+                          </PhotoProvider>
                         </div>
                       </div>
                       <dl className="flex flex-col justify-between text-right text-sm">
@@ -138,7 +140,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                     </div>
                   </li>
                 ))}
-              </PhotoProvider>
+              </>
             )}
           </ul>
           {ConfirmModal}

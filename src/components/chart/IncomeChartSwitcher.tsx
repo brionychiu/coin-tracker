@@ -44,14 +44,12 @@ export const IncomeChartSwitcher = ({ records }: IncomeChartSwitcherProps) => {
           records={records}
           categoryType="income"
           title="收入類別比"
-          emptyMessage="這段時間沒有收入資料"
         />
       ) : (
         <BarChartBase
           records={records}
           categoryType="income"
           title="收入金額"
-          emptyMessage="這段時間沒有收入資料"
         />
       )}
     </div>
