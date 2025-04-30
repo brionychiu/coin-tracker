@@ -1,4 +1,5 @@
 'use client';
+
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -8,6 +9,7 @@ import {
   PointElement,
   Tooltip,
 } from 'chart.js';
+import { useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 
 import { type DateRange } from '@/components/tabs/DateRangeTabs';
@@ -144,6 +146,13 @@ export const MultiAxisLineChart = ({
       },
     },
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="rounded-md border p-4 shadow">
