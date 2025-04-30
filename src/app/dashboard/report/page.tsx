@@ -43,7 +43,7 @@ export default function ReportPage() {
   return (
     <>
       {expenseLoading || incomeLoading ? (
-        <FullscreenLoading gifSrc="/loading-3.gif" />
+        <FullscreenLoading />
       ) : (
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center">
           <DateRangeTabs
