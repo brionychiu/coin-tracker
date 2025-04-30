@@ -50,55 +50,14 @@ export default function Navbar() {
   return (
     <nav className="fixed left-0 top-0 z-50 w-full bg-muted shadow-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-        {/* Logo 區 */}
-        <Link href="/" className="flex items-center">
-          <div className="px-2">
-            <Image
-              className="rounded-md"
-              src={icon}
-              alt="Logo Icon"
-              width={32}
-              height={40}
-              priority
-            />
-          </div>
-          <div className="ml-2 hidden flex-col sm:flex">
-            <span className="text-base font-bold">開心記帳</span>
-            <span className="text-xs">輕鬆掌握生活收支</span>
-          </div>
-        </Link>
-
-        {/* Desktop 導覽列 */}
-        <div className="hidden gap-4 sm:flex">
-          {navItems.map((item) => {
-            const ActiveIcon = item.icon;
-            return (
-              <Link
-                key={item.title}
-                href={item.url}
-                className={`flex items-center gap-1 px-3 py-2 text-sm font-medium hover:text-primary ${
-                  isActive(item.url)
-                    ? 'font-semibold text-primary'
-                    : 'text-muted-foreground'
-                }`}
-              >
-                <ActiveIcon size={18} />
-                {item.title}
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* RWD 漢堡選單 + 登入 */}
-        <div className="flex items-center gap-3 sm:gap-4">
-          <AuthModal />
+        <div className="flex items-center gap-3">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="sm:hidden">
+              <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-64">
+            <SheetContent side="left" className="w-64">
               <div className="mb-4 flex items-center justify-between">
                 <DialogTitle className="text-lg font-bold">選單</DialogTitle>
               </div>
@@ -124,6 +83,47 @@ export default function Navbar() {
               </nav>
             </SheetContent>
           </Sheet>
+
+          <Link href="/" className="flex items-center">
+            <div className="px-2">
+              <Image
+                className="rounded-md"
+                src={icon}
+                alt="Logo Icon"
+                width={32}
+                height={40}
+                priority
+              />
+            </div>
+            <div className="ml-2 hidden flex-col md:flex">
+              <span className="text-base font-bold">開心記帳</span>
+              <span className="text-xs">輕鬆掌握生活收支</span>
+            </div>
+          </Link>
+        </div>
+
+        <div className="hidden gap-4 md:flex">
+          {navItems.map((item) => {
+            const ActiveIcon = item.icon;
+            return (
+              <Link
+                key={item.title}
+                href={item.url}
+                className={`flex items-center gap-1 px-3 py-2 text-sm font-medium hover:text-primary ${
+                  isActive(item.url)
+                    ? 'font-semibold text-primary'
+                    : 'text-muted-foreground'
+                }`}
+              >
+                <ActiveIcon size={18} />
+                {item.title}
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="flex items-center gap-3 md:gap-4">
+          <AuthModal />
         </div>
       </div>
     </nav>
