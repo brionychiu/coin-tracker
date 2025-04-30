@@ -89,7 +89,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                                 {record.images.map((url, index) => (
                                   <div key={index} className="relative">
                                     <PhotoView src={url}>
-                                      <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded">
+                                      <div className="relative h-10 w-10 cursor-pointer overflow-hidden rounded sm:h-16 sm:w-16">
                                         <img
                                           src={url}
                                           alt={`收據照片 ${index + 1}`}
