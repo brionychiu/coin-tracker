@@ -1,4 +1,4 @@
-import { getAccountingRecords, getAccountingRecordsByRange } from '@/lib/api/accounting';
+import { getAccountingRecordById, getAccountingRecords, getAccountingRecordsByRange } from '@/lib/api/accounting';
 import { AccountingRecord } from '@/types/accounting';
 import { isSameDay } from 'date-fns';
 import { useEffect, useState } from 'react';
@@ -25,7 +25,7 @@ export function useAccountingRecords(date: Date | undefined, month: number) {
       }
     });
 
-    setLoading(false);
+    setLoading(false); 
 
     return () => unsubscribe();
   }, [month, date]); 
@@ -63,4 +63,28 @@ export function useAccountingRecordsByRange(
   }, [startDate, endDate, categoryType]);
 
   return { records, loading };
+}
+
+export function useAccountingRecordById(id: string | null) {
+  const [record, setRecord] = useState<AccountingRecord | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id || id === 'new') {
+      setRecord(null);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    getAccountingRecordById(id)
+      .then((res) => setRecord(res))
+      .catch((err) => {
+        console.error('載入記帳紀錄失敗:', err);
+        setRecord(null);
+      })
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  return { record, loading };
 }
