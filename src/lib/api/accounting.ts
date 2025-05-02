@@ -7,6 +7,7 @@ import {
   db,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   getDownloadURL,
   limit,
@@ -226,5 +227,33 @@ export async function getRecordsBatch(lastDate: Date | null, batchSize: number):
   } catch (error) {
     console.error('載入記帳資料失敗:', error);
     return [];
+  }
+}
+
+/**
+ * 根據 ID 取得單筆記帳紀錄
+ */
+export async function getAccountingRecordById(id: string): Promise<AccountingRecord | null> {
+  const uid = auth.currentUser?.uid;
+  if (!uid) return null;
+
+  try {
+    const recordRef = doc(db, 'accounting-records', id);
+    const recordSnap = await getDoc(recordRef);
+
+    if (!recordSnap.exists()) return null;
+
+    const data = recordSnap.data();
+
+    if (data.uid !== uid) return null;
+
+    return {
+      id: recordSnap.id,
+      ...data,
+      date: data.date.toDate(), // Timestamp 轉 Date
+    } as AccountingRecord;
+  } catch (error) {
+    console.error('取得單筆記帳資料失敗:', error);
+    return null;
   }
 }
