@@ -1,5 +1,6 @@
-import { addDoc, collection, db } from '@/lib/firebase';
+import { addDoc, auth, collection, db } from '@/lib/firebase';
 
+// TODO: 上線後要刪除
 const EXPENSE_CATEGORIES = [
   { icon: 'Utensils', label: '食物', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:00:00' },
   { icon: 'CupSoda', label: '飲品', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:01:00' },
@@ -27,6 +28,7 @@ const INCOME_CATEGORIES = [
   { icon: 'LayoutGrid', label: '其他', type: 'income', createdBy: 'system', createTime: '2020-10-10T00:05:00' }
 ];
 
+// TODO: 上線後要刪除
 // 新增 base item 時，會將 createdBy 設為 'system'，
 // 之後使用者刪除時，會將 deletedBy 設為使用者的 uid 陣列
 export const uploadCategories = async () => {
@@ -48,3 +50,30 @@ export const uploadCategories = async () => {
   console.log('🎉 所有類別上傳完成');
 };
 
+export interface AddCategoryPayload {
+  label: string;
+  icon: string; 
+  type: 'income' | 'expenses';
+}
+
+export async function addCategory(payload: AddCategoryPayload) {
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error('使用者未登入');
+
+  const { label, icon, type } = payload;
+
+  try {
+    const docRef = await addDoc(collection(db, 'categories'), {
+      label,
+      icon,
+      type,
+      createTime: new Date().toISOString(),
+      createdBy: uid,
+    });
+
+    return docRef.id;
+  } catch (error) {
+    console.error('新增類別錯誤:', error);
+    throw error;
+  }
+}
