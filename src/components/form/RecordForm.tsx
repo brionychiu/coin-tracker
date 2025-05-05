@@ -273,7 +273,11 @@ export default function RecordForm({
               <FormItem>
                 <FormLabel>類別：</FormLabel>
                 <FormControl>
-                  <CategoryTabs value={field.value} onChange={field.onChange} />
+                  <CategoryTabs
+                    isEdit={false}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
