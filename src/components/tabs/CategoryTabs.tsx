@@ -1,10 +1,14 @@
+import { auth } from '@/lib/firebase';
 import { CirclePlus, Trash2 } from 'lucide-react';
-import { useState } from 'react';
 
+import { useEffect, useState } from 'react';
+
+import { getVisibleCategories } from '@/app/api/categories/route';
 import AddCategoryDialog from '@/components/modal/AddCategory';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/categories';
+import { iconMap } from '@/lib/iconMap';
+import { Category } from '@/types/category';
 
 interface TabsCategoryProps {
   isEdit: boolean;
@@ -22,24 +26,22 @@ const TabButton = ({
   const bgColor = activeTab === 'expenses' ? 'bg-red-04' : 'bg-green-01';
 
   return (
-    <div className="relative">
-      <Button
-        variant="tabHover"
-        className="flex flex-col items-center gap-1"
-        type="button"
-        onClick={onClick}
-      >
-        <span className="relative flex h-10 w-10 items-center justify-center">
-          {isSelected && (
-            <span
-              className={`absolute left-0 right-0 top-1 mx-auto h-8 w-8 rounded-full ${bgColor} opacity-80`}
-            />
-          )}
-          <Icon className="relative z-10 size-6" />
-        </span>
-        <p className="z-10 text-xs font-normal">{label}</p>
-      </Button>
-    </div>
+    <Button
+      variant="tabHover"
+      className="flex flex-col items-center gap-1"
+      type="button"
+      onClick={onClick}
+    >
+      <span className="relative flex h-10 w-10 items-center justify-center">
+        {isSelected && (
+          <span
+            className={`absolute left-0 right-0 top-1 mx-auto h-8 w-8 rounded-full ${bgColor} opacity-80`}
+          />
+        )}
+        <Icon className="relative z-10 size-6" />
+      </span>
+      <p className="z-10 text-xs font-normal">{label}</p>
+    </Button>
   );
 };
 
@@ -50,15 +52,28 @@ export default function CategoryTabs({
 }: TabsCategoryProps) {
   const [activeTab, setActiveTab] = useState<'expenses' | 'income'>('expenses');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
 
-  const categories =
-    activeTab === 'expenses' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
+  const uid = auth.currentUser?.uid;
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      const result = await getVisibleCategories(uid, activeTab);
+
+      if (Array.isArray(result)) {
+        setCategories(result);
+      } else {
+        console.error('無法取得類別', result);
+        setCategories([]);
+      }
+    };
+
+    loadCategories();
+  }, [activeTab, uid]);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab as 'expenses' | 'income');
-    const firstCategory = (
-      tab === 'expenses' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES
-    )[0];
+    const firstCategory = (tab === 'expenses' ? categories : categories)[0]; // 取得第一個類別
     onChange?.(firstCategory.label);
   };
 
@@ -87,17 +102,20 @@ export default function CategoryTabs({
         {['expenses', 'income'].map((tab) => (
           <TabsContent key={tab} value={tab}>
             <div className="grid grid-cols-3 gap-5 sm:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
-              {categories.map(({ icon: Icon, label }, index) => (
-                <TabButton
-                  key={index}
-                  label={label}
-                  icon={Icon}
-                  isSelected={value === label}
-                  activeTab={activeTab}
-                  onClick={() => onChange?.(label)}
-                  isEdit={isEdit}
-                />
-              ))}
+              {categories.map(({ icon, label }, index) => {
+                const Icon = iconMap[icon] || iconMap['LayoutGrid'];
+                return (
+                  <TabButton
+                    key={index}
+                    label={label}
+                    icon={Icon}
+                    isSelected={value === label}
+                    activeTab={activeTab}
+                    onClick={() => onChange?.(label)}
+                    isEdit={isEdit}
+                  />
+                );
+              })}
             </div>
           </TabsContent>
         ))}
