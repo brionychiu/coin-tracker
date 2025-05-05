@@ -4,7 +4,6 @@ import {
   BriefcaseConveyorBelt,
   Car,
   CircleDollarSign,
-  CirclePlus,
   Coins,
   CupSoda,
   Flower,
@@ -45,7 +44,6 @@ export const EXPENSE_CATEGORIES: Category[] = [
   { icon: Gift, label: '禮物', code: 'gifts' },
   { icon: Umbrella, label: '保險', code: 'insurance' },
   { icon: LayoutGrid, label: '其他', code: 'other' },
-  { icon: CirclePlus, label: '新增', code: 'add' },
 ];
 
 export const INCOME_CATEGORIES: Category[] = [
@@ -55,7 +53,6 @@ export const INCOME_CATEGORIES: Category[] = [
   { icon: CircleDollarSign, label: '股利', code: 'dividends' },
   { icon: PiggyBank, label: '存款', code: 'savings' },
   { icon: LayoutGrid, label: '其他', code: 'other' },
-  { icon: CirclePlus, label: '新增', code: 'add' },
 ];
 
 // 根據 category code 取得對應的 category label
