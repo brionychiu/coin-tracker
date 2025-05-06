@@ -1,13 +1,13 @@
 import { accountOptions } from '@/lib/account';
 
-export type AccountType = typeof accountOptions[number]['value']; 
+export type AccountType = (typeof accountOptions)[number]['value'];
 
 // Firestore 存的記帳紀錄（Firestore 內的格式）
 export interface AccountingRecord {
   id: string;
   date: Date;
   amount: string;
-  category: string;
+  categoryId: string;
   categoryType: 'expense' | 'income';
   account: AccountType;
   note?: string;
@@ -18,7 +18,7 @@ export interface AccountingRecord {
 export interface AccountingRecordPayload {
   date: Date;
   amount: string;
-  category: string;
+  categoryId: string;
   categoryType: 'expense' | 'income';
   account: AccountType;
   note?: string;
