@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 
 export async function getVisibleCategories(
   uid: string | undefined,
-  type: 'income' | 'expenses',
+  type: 'income' | 'expense',
 ) {
   if (!uid) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
