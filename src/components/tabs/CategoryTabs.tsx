@@ -7,6 +7,7 @@ import { getVisibleCategories } from '@/app/api/categories/route';
 import AddCategoryDialog from '@/components/modal/AddCategory';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useConfirm } from '@/hooks/useConfirmModal';
 import { deleteCategory } from '@/lib/api/categories';
 import { iconMap } from '@/lib/iconMap';
 import { Category } from '@/types/category';
@@ -51,6 +52,8 @@ export default function CategoryTabs({
   value,
   onChange,
 }: TabsCategoryProps) {
+  const { confirm, ConfirmModal } = useConfirm();
+
   const [activeTab, setActiveTab] = useState<'expenses' | 'income'>('expenses');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -84,16 +87,20 @@ export default function CategoryTabs({
     const selectedCategory = categories.find((c) => c.label === value);
     if (!selectedCategory) return;
 
-    try {
-      await deleteCategory({
-        categoryId: selectedCategory.id,
-      });
-      await loadCategories();
-      toast.success('刪除成功！');
-    } catch (error) {
-      console.error('刪除類別失敗', error);
-      toast.error('刪除失敗，請稍後再試');
-    }
+    confirm({
+      title: '確認刪除',
+      message: `確定要刪除「${selectedCategory.label}」類別嗎？此操作無法復原。`,
+      onConfirm: async () => {
+        try {
+          await deleteCategory({ categoryId: selectedCategory.id });
+          await loadCategories();
+          toast.success('刪除成功！');
+        } catch (error) {
+          console.error('刪除類別失敗', error);
+          toast.error('刪除失敗，請稍後再試');
+        }
+      },
+    });
   };
 
   return (
@@ -162,6 +169,7 @@ export default function CategoryTabs({
           onAddSuccess={loadCategories}
         />
       )}
+      {ConfirmModal}
     </div>
   );
 }
