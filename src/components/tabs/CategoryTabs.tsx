@@ -60,6 +60,9 @@ export default function CategoryTabs({
 
     if (Array.isArray(result)) {
       setCategories(result);
+      if (result.length > 0) {
+        onChange?.(result[0].label);
+      }
     } else {
       console.error('無法取得類別', result);
       setCategories([]);
@@ -72,8 +75,6 @@ export default function CategoryTabs({
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab as 'expenses' | 'income');
-    const firstCategory = (tab === 'expenses' ? categories : categories)[0]; // 取得第一個類別
-    onChange?.(firstCategory.label);
   };
 
   const handleDelete = () => {
@@ -86,7 +87,6 @@ export default function CategoryTabs({
     <div className="rounded-md border p-2 shadow md:p-4">
       <Tabs
         value={activeTab}
-        defaultValue={activeTab}
         onValueChange={handleTabChange}
         className="w-full"
       >
