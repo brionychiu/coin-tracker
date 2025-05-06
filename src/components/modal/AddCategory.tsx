@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,14 +19,16 @@ const ICON_OPTIONS: IconName[] = Object.keys(iconMap) as IconName[];
 
 interface AddCategoryDialogProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
   type: 'expenses' | 'income';
+  onOpenChange: (open: boolean) => void;
+  onAddSuccess?: () => void;
 }
 
 export default function AddCategoryDialog({
   open,
-  onOpenChange,
   type,
+  onOpenChange,
+  onAddSuccess,
 }: AddCategoryDialogProps) {
   const [label, setLabel] = useState('');
   const [selectedIconName, setSelectedIconName] = useState<IconName | null>(
@@ -42,10 +45,13 @@ export default function AddCategoryDialog({
         icon: selectedIconName,
         type,
       });
-      console.log('新增類別成功，ID:', id);
+      toast.success('新增成功');
+
       onOpenChange(false);
+      onAddSuccess?.();
     } catch (error) {
       console.error('新增類別失敗:', error);
+      toast.error('新增失敗，請稍後再試');
     }
   };
 
@@ -70,6 +76,7 @@ export default function AddCategoryDialog({
             placeholder="輸入類別名稱"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
+            maxLength={10}
           />
 
           <div className="grid max-h-[200px] grid-cols-6 gap-4 overflow-y-auto overflow-x-hidden">
