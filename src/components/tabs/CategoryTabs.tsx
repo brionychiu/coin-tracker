@@ -1,12 +1,13 @@
 import { auth } from '@/lib/firebase';
 import { CirclePlus, Trash2 } from 'lucide-react';
-
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { getVisibleCategories } from '@/app/api/categories/route';
 import AddCategoryDialog from '@/components/modal/AddCategory';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { deleteCategory } from '@/lib/api/categories';
 import { iconMap } from '@/lib/iconMap';
 import { Category } from '@/types/category';
 
@@ -77,9 +78,21 @@ export default function CategoryTabs({
     setActiveTab(tab as 'expenses' | 'income');
   };
 
-  const handleDelete = () => {
-    if (value && value !== 'add') {
-      console.log('刪除項目:', value);
+  const handleDelete = async () => {
+    if (!value || value === 'add') return;
+
+    const selectedCategory = categories.find((c) => c.label === value);
+    if (!selectedCategory) return;
+
+    try {
+      await deleteCategory({
+        categoryId: selectedCategory.id,
+      });
+      await loadCategories();
+      toast.success('刪除成功！');
+    } catch (error) {
+      console.error('刪除類別失敗', error);
+      toast.error('刪除失敗，請稍後再試');
     }
   };
 
