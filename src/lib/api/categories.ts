@@ -4,10 +4,12 @@ import {
   auth,
   collection,
   db,
-  deleteDoc,
   doc,
   getDoc,
+  getDocs,
+  query,
   updateDoc,
+  where,
 } from '@/lib/firebase';
 import { Category } from '@/types/category';
 
@@ -233,17 +235,37 @@ export const deleteCategory = async ({
     throw new Error('找不到該類別');
   }
 
-  const categoryData = categorySnap.data() as Category;
+  // 不分 createdBy 是誰，都走軟刪除
+  await updateDoc(categoryRef, {
+    deletedBy: arrayUnion(uid),
+  });
+};
 
-  if (categoryData.createdBy === 'system') {
-    // 軟刪除：加入 deletedBy 陣列
-    await updateDoc(categoryRef, {
-      deletedBy: arrayUnion(uid),
-    });
-  } else if (categoryData.createdBy === uid) {
-    // 硬刪除
-    await deleteDoc(categoryRef);
-  } else {
-    throw new Error('你無權限刪除此類別');
-  }
+export const getCategoryMap = async (): Promise<Record<string, Category>> => {
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error('使用者未登入');
+
+  const categoryRef = collection(db, 'categories');
+
+  const q = query(
+    categoryRef,
+    where('deletedBy', 'not-in', [uid]), // 避免讀取已刪除的 base item
+  );
+
+  const snapshot = await getDocs(q);
+
+  const map: Record<string, Category> = {};
+  snapshot.forEach((doc) => {
+    const data = doc.data() as Category;
+
+    // 排除被刪除的類別（保險做法）
+    if (!data.deletedBy || !data.deletedBy.includes(uid)) {
+      map[doc.id] = {
+        ...data,
+        id: doc.id,
+      };
+    }
+  });
+
+  return map;
 };
