@@ -55,19 +55,18 @@ export default function CategoryTabs({
   const [categories, setCategories] = useState<Category[]>([]);
 
   const uid = auth.currentUser?.uid;
+  const loadCategories = async () => {
+    const result = await getVisibleCategories(uid, activeTab);
+
+    if (Array.isArray(result)) {
+      setCategories(result);
+    } else {
+      console.error('無法取得類別', result);
+      setCategories([]);
+    }
+  };
 
   useEffect(() => {
-    const loadCategories = async () => {
-      const result = await getVisibleCategories(uid, activeTab);
-
-      if (Array.isArray(result)) {
-        setCategories(result);
-      } else {
-        console.error('無法取得類別', result);
-        setCategories([]);
-      }
-    };
-
     loadCategories();
   }, [activeTab, uid]);
 
@@ -147,6 +146,7 @@ export default function CategoryTabs({
           open={isDialogOpen}
           onOpenChange={setIsDialogOpen}
           type={activeTab}
+          onAddSuccess={loadCategories}
         />
       )}
     </div>
