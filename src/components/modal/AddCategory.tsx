@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -42,15 +42,19 @@ export default function AddCategoryDialog({
         icon: selectedIconName,
         type,
       });
-
       console.log('新增類別成功，ID:', id);
-      setLabel('');
-      setSelectedIconName(null);
       onOpenChange(false);
     } catch (error) {
       console.error('新增類別失敗:', error);
     }
   };
+
+  useEffect(() => {
+    if (!open) {
+      setLabel('');
+      setSelectedIconName(null);
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
