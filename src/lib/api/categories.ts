@@ -1,31 +1,168 @@
-import { addDoc, auth, collection, db } from '@/lib/firebase';
+import {
+  addDoc,
+  arrayUnion,
+  auth,
+  collection,
+  db,
+  deleteDoc,
+  doc,
+  getDoc,
+  updateDoc,
+} from '@/lib/firebase';
+import { Category } from '@/types/category';
 
 // TODO: 上線後要刪除
 const EXPENSE_CATEGORIES = [
-  { icon: 'Utensils', label: '食物', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:00:00' },
-  { icon: 'CupSoda', label: '飲品', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:01:00' },
-  { icon: 'ShoppingCart', label: '生活雜貨', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:02:00' },
-  { icon: 'Flower', label: '保持美麗', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:03:00' },
-  { icon: 'Car', label: '汽車', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:04:00' },
-  { icon: 'House', label: '房子', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:05:00' },
-  { icon: 'Gamepad2', label: '遊戲', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:06:00' },
-  { icon: 'Pill', label: '醫療保健', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:07:00' },
-  { icon: 'ShoppingBag', label: '購物', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:08:00' },
-  { icon: 'BriefcaseConveyorBelt', label: '交通', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:09:00' },
-  { icon: 'Beer', label: '社交', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:10:00' },
-  { icon: 'Phone', label: '通訊', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:11:00' },
-  { icon: 'Gift', label: '禮物', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:12:00' },
-  { icon: 'Umbrella', label: '保險', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:13:00' },
-  { icon: 'LayoutGrid', label: '其他', type: 'expenses', createdBy: 'system', createTime: '2020-10-10T00:14:00' },
+  {
+    icon: 'Utensils',
+    label: '食物',
+    type: 'expenses',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:00:00',
+  },
+  {
+    icon: 'CupSoda',
+    label: '飲品',
+    type: 'expenses',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:01:00',
+  },
+  {
+    icon: 'ShoppingCart',
+    label: '生活雜貨',
+    type: 'expenses',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:02:00',
+  },
+  {
+    icon: 'Flower',
+    label: '保持美麗',
+    type: 'expenses',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:03:00',
+  },
+  {
+    icon: 'Car',
+    label: '汽車',
+    type: 'expenses',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:04:00',
+  },
+  {
+    icon: 'House',
+    label: '房子',
+    type: 'expenses',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:05:00',
+  },
+  {
+    icon: 'Gamepad2',
+    label: '遊戲',
+    type: 'expenses',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:06:00',
+  },
+  {
+    icon: 'Pill',
+    label: '醫療保健',
+    type: 'expenses',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:07:00',
+  },
+  {
+    icon: 'ShoppingBag',
+    label: '購物',
+    type: 'expenses',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:08:00',
+  },
+  {
+    icon: 'BriefcaseConveyorBelt',
+    label: '交通',
+    type: 'expenses',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:09:00',
+  },
+  {
+    icon: 'Beer',
+    label: '社交',
+    type: 'expenses',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:10:00',
+  },
+  {
+    icon: 'Phone',
+    label: '通訊',
+    type: 'expenses',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:11:00',
+  },
+  {
+    icon: 'Gift',
+    label: '禮物',
+    type: 'expenses',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:12:00',
+  },
+  {
+    icon: 'Umbrella',
+    label: '保險',
+    type: 'expenses',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:13:00',
+  },
+  {
+    icon: 'LayoutGrid',
+    label: '其他',
+    type: 'expenses',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:14:00',
+  },
 ];
 
 const INCOME_CATEGORIES = [
-  { icon: 'Wallet', label: '薪水', type: 'income', createdBy: 'system', createTime: '2020-10-10T00:00:00' },
-  { icon: 'Award', label: '獎金', type: 'income', createdBy: 'system', createTime: '2020-10-10T00:01:00' },
-  { icon: 'Coins', label: '投資', type: 'income', createdBy: 'system', createTime: '2020-10-10T00:02:00' },
-  { icon: 'CircleDollarSign', label: '股利', type: 'income', createdBy: 'system', createTime: '2020-10-10T00:03:00' },
-  { icon: 'PiggyBank', label: '存款', type: 'income', createdBy: 'system', createTime: '2020-10-10T00:04:00' },
-  { icon: 'LayoutGrid', label: '其他', type: 'income', createdBy: 'system', createTime: '2020-10-10T00:05:00' }
+  {
+    icon: 'Wallet',
+    label: '薪水',
+    type: 'income',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:00:00',
+  },
+  {
+    icon: 'Award',
+    label: '獎金',
+    type: 'income',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:01:00',
+  },
+  {
+    icon: 'Coins',
+    label: '投資',
+    type: 'income',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:02:00',
+  },
+  {
+    icon: 'CircleDollarSign',
+    label: '股利',
+    type: 'income',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:03:00',
+  },
+  {
+    icon: 'PiggyBank',
+    label: '存款',
+    type: 'income',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:04:00',
+  },
+  {
+    icon: 'LayoutGrid',
+    label: '其他',
+    type: 'income',
+    createdBy: 'system',
+    createTime: '2020-10-10T00:05:00',
+  },
 ];
 
 // TODO: 上線後要刪除
@@ -34,7 +171,10 @@ const INCOME_CATEGORIES = [
 export const uploadCategories = async () => {
   const categoriesRef = collection(db, 'categories');
 
-  const upload = async (items: typeof EXPENSE_CATEGORIES, type: 'income' | 'expenses') => {
+  const upload = async (
+    items: typeof EXPENSE_CATEGORIES,
+    type: 'income' | 'expenses',
+  ) => {
     for (const item of items) {
       await addDoc(categoriesRef, {
         ...item,
@@ -52,11 +192,11 @@ export const uploadCategories = async () => {
 
 export interface AddCategoryPayload {
   label: string;
-  icon: string; 
+  icon: string;
   type: 'income' | 'expenses';
 }
 
-export async function addCategory(payload: AddCategoryPayload) {
+export const addCategory = async (payload: AddCategoryPayload) => {
   const uid = auth.currentUser?.uid;
   if (!uid) throw new Error('使用者未登入');
 
@@ -76,4 +216,34 @@ export async function addCategory(payload: AddCategoryPayload) {
     console.error('新增類別錯誤:', error);
     throw error;
   }
-}
+};
+
+export const deleteCategory = async ({
+  categoryId,
+}: {
+  categoryId: string;
+}) => {
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error('使用者未登入');
+
+  const categoryRef = doc(db, 'categories', categoryId);
+  const categorySnap = await getDoc(categoryRef);
+
+  if (!categorySnap.exists()) {
+    throw new Error('找不到該類別');
+  }
+
+  const categoryData = categorySnap.data() as Category;
+
+  if (categoryData.createdBy === 'system') {
+    // 軟刪除：加入 deletedBy 陣列
+    await updateDoc(categoryRef, {
+      deletedBy: arrayUnion(uid),
+    });
+  } else if (categoryData.createdBy === uid) {
+    // 硬刪除
+    await deleteDoc(categoryRef);
+  } else {
+    throw new Error('你無權限刪除此類別');
+  }
+};
