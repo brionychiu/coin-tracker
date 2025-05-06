@@ -19,7 +19,7 @@ const ICON_OPTIONS: IconName[] = Object.keys(iconMap) as IconName[];
 
 interface AddCategoryDialogProps {
   open: boolean;
-  type: 'expenses' | 'income';
+  type: 'expense' | 'income';
   onOpenChange: (open: boolean) => void;
   onAddSuccess?: () => void;
 }
@@ -34,7 +34,7 @@ export default function AddCategoryDialog({
   const [selectedIconName, setSelectedIconName] = useState<IconName | null>(
     null,
   );
-  const bgColor = type === 'expenses' ? 'bg-red-04' : 'bg-green-01';
+  const bgColor = type === 'expense' ? 'bg-red-04' : 'bg-green-01';
 
   const handleSubmit = async () => {
     if (!label || !selectedIconName) return;
