@@ -25,8 +25,7 @@ const TabButton = ({
   onClick,
   activeTab,
 }: any) => {
-  const bgColor = activeTab === 'expenses' ? 'bg-red-04' : 'bg-green-01';
-
+  const bgColor = activeTab === 'expense' ? 'bg-red-04' : 'bg-green-01';
   return (
     <Button
       variant="tabHover"
@@ -54,7 +53,7 @@ export default function CategoryTabs({
 }: TabsCategoryProps) {
   const { confirm, ConfirmModal } = useConfirm();
 
-  const [activeTab, setActiveTab] = useState<'expenses' | 'income'>('expenses');
+  const [activeTab, setActiveTab] = useState<'expense' | 'income'>('expense');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
 
@@ -78,7 +77,7 @@ export default function CategoryTabs({
   }, [activeTab, uid]);
 
   const handleTabChange = (tab: string) => {
-    setActiveTab(tab as 'expenses' | 'income');
+    setActiveTab(tab as 'expense' | 'income');
   };
 
   const handleDelete = async () => {
@@ -111,14 +110,14 @@ export default function CategoryTabs({
         className="w-full"
       >
         <TabsList className="grid w-full grid-cols-2">
-          {['expenses', 'income'].map((tab) => (
+          {['expense', 'income'].map((tab) => (
             <TabsTrigger key={tab} value={tab}>
-              {tab === 'expenses' ? '支出' : '收入'}
+              {tab === 'expense' ? '支出' : '收入'}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        {['expenses', 'income'].map((tab) => (
+        {['expense', 'income'].map((tab) => (
           <TabsContent key={tab} value={tab}>
             <div className="grid grid-cols-3 gap-5 sm:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
               {categories.map(({ icon, label }, index) => {
