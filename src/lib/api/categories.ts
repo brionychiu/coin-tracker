@@ -18,105 +18,105 @@ const EXPENSE_CATEGORIES = [
   {
     icon: 'Utensils',
     label: '食物',
-    type: 'expenses',
+    type: 'expense',
     createdBy: 'system',
     createTime: '2020-10-10T00:00:00',
   },
   {
     icon: 'CupSoda',
     label: '飲品',
-    type: 'expenses',
+    type: 'expense',
     createdBy: 'system',
     createTime: '2020-10-10T00:01:00',
   },
   {
     icon: 'ShoppingCart',
     label: '生活雜貨',
-    type: 'expenses',
+    type: 'expense',
     createdBy: 'system',
     createTime: '2020-10-10T00:02:00',
   },
   {
     icon: 'Flower',
     label: '保持美麗',
-    type: 'expenses',
+    type: 'expense',
     createdBy: 'system',
     createTime: '2020-10-10T00:03:00',
   },
   {
     icon: 'Car',
     label: '汽車',
-    type: 'expenses',
+    type: 'expense',
     createdBy: 'system',
     createTime: '2020-10-10T00:04:00',
   },
   {
     icon: 'House',
     label: '房子',
-    type: 'expenses',
+    type: 'expense',
     createdBy: 'system',
     createTime: '2020-10-10T00:05:00',
   },
   {
     icon: 'Gamepad2',
     label: '遊戲',
-    type: 'expenses',
+    type: 'expense',
     createdBy: 'system',
     createTime: '2020-10-10T00:06:00',
   },
   {
     icon: 'Pill',
     label: '醫療保健',
-    type: 'expenses',
+    type: 'expense',
     createdBy: 'system',
     createTime: '2020-10-10T00:07:00',
   },
   {
     icon: 'ShoppingBag',
     label: '購物',
-    type: 'expenses',
+    type: 'expense',
     createdBy: 'system',
     createTime: '2020-10-10T00:08:00',
   },
   {
     icon: 'BriefcaseConveyorBelt',
     label: '交通',
-    type: 'expenses',
+    type: 'expense',
     createdBy: 'system',
     createTime: '2020-10-10T00:09:00',
   },
   {
     icon: 'Beer',
     label: '社交',
-    type: 'expenses',
+    type: 'expense',
     createdBy: 'system',
     createTime: '2020-10-10T00:10:00',
   },
   {
     icon: 'Phone',
     label: '通訊',
-    type: 'expenses',
+    type: 'expense',
     createdBy: 'system',
     createTime: '2020-10-10T00:11:00',
   },
   {
     icon: 'Gift',
     label: '禮物',
-    type: 'expenses',
+    type: 'expense',
     createdBy: 'system',
     createTime: '2020-10-10T00:12:00',
   },
   {
     icon: 'Umbrella',
     label: '保險',
-    type: 'expenses',
+    type: 'expense',
     createdBy: 'system',
     createTime: '2020-10-10T00:13:00',
   },
   {
     icon: 'LayoutGrid',
     label: '其他',
-    type: 'expenses',
+    type: 'expense',
     createdBy: 'system',
     createTime: '2020-10-10T00:14:00',
   },
@@ -175,7 +175,7 @@ export const uploadCategories = async () => {
 
   const upload = async (
     items: typeof EXPENSE_CATEGORIES,
-    type: 'income' | 'expenses',
+    type: 'income' | 'expense',
   ) => {
     for (const item of items) {
       await addDoc(categoriesRef, {
@@ -187,7 +187,7 @@ export const uploadCategories = async () => {
     console.log(`✅ ${type} 類別上傳成功`);
   };
 
-  await upload(EXPENSE_CATEGORIES, 'expenses');
+  await upload(EXPENSE_CATEGORIES, 'expense');
   await upload(INCOME_CATEGORIES, 'income');
   console.log('🎉 所有類別上傳完成');
 };
@@ -195,7 +195,7 @@ export const uploadCategories = async () => {
 export interface AddCategoryPayload {
   label: string;
   icon: string;
-  type: 'income' | 'expenses';
+  type: 'income' | 'expense';
 }
 
 export const addCategory = async (payload: AddCategoryPayload) => {
