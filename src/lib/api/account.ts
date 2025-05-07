@@ -33,3 +33,24 @@ export const uploadAccounts = async () => {
   await upload(ACCOUNTS_CATEGORIES);
   console.log('🎉 所有類別上傳完成');
 };
+
+export const addAccount = async ({
+  label,
+  uid,
+}: {
+  label: string;
+  uid: string;
+}): Promise<string> => {
+  try {
+    const docRef = await addDoc(collection(db, 'accounts'), {
+      label: label.trim(),
+      createTime: new Date().toISOString(),
+      createdBy: uid,
+    });
+
+    return docRef.id;
+  } catch (error) {
+    console.error('新增帳戶錯誤:', error);
+    throw error;
+  }
+};
