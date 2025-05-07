@@ -31,17 +31,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { accountOptions } from '@/lib/account';
 import {
   addAccountingRecord,
   updateAccountingRecord,
 } from '@/lib/api/accounting';
-import {
-  EXPENSE_CATEGORIES,
-  INCOME_CATEGORIES,
-  getCategoryInfo,
-  getCategoryLabel,
-} from '@/lib/categories';
 import { handleNumericInput } from '@/lib/inputValidators';
 import { useDateStore } from '@/stores/dateStore';
 import { AccountingRecord } from '@/types/accounting';
@@ -57,10 +52,6 @@ const accountEnumValues = accountOptions.map((option) => option.value) as [
   string,
   ...string[],
 ];
-const categoryEnumValues = [
-  ...EXPENSE_CATEGORIES.map((c) => c.label),
-  ...INCOME_CATEGORIES.map((c) => c.label),
-] as [string, ...string[]];
 
 const FormSchema = z.object({
   date: z.date({ required_error: '請選擇日期' }),
@@ -69,7 +60,7 @@ const FormSchema = z.object({
     .min(1, { message: '請輸入金額' })
     .regex(/^[0-9]+$/, { message: '金額必須是正整數' })
     .refine((val) => parseInt(val, 10) > 0, { message: '金額必須大於 0' }),
-  category: z.enum(categoryEnumValues),
+  categoryId: z.string().min(1, { message: '請選擇類別' }),
   account: z.enum(accountEnumValues, {
     errorMap: () => ({ message: '請選擇一個帳戶' }),
   }),
@@ -85,6 +76,7 @@ export default function RecordForm({
 }: RecordFormProps) {
   const isEditMode = !!record;
   const { setDate } = useDateStore();
+  const { categoryMap, loading } = useCategoryMap();
 
   const [imageList, setImageList] = useState<any[]>([]);
   const [oldImages, setOldImages] = useState<string[]>([]);
@@ -94,9 +86,7 @@ export default function RecordForm({
     () => ({
       date: record ? new Date(record.date) : date || new Date(),
       amount: record?.amount ?? '',
-      category: record
-        ? getCategoryLabel(record.category)
-        : (EXPENSE_CATEGORIES[0]?.label ?? ''),
+      categoryId: record?.categoryId ?? '',
       account: record?.account || 'cash',
       images: [],
       note: record?.note || '',
@@ -125,14 +115,16 @@ export default function RecordForm({
       .map((img) => img.file) as File[];
 
     // 確保新照片加上舊照片不超過 5 張
-    if (files.length + oldImages.length > 5) {
+    if (changedList.length > 5) {
       toast.error('最多只能上傳 5 張圖片');
       return;
     }
 
     setNewImages(files);
     setImageList(changedList);
-    form.setValue('images', files);
+    form.setValue('images', [
+      ...imageList.filter((img) => !img.isOld).map((img) => img.file),
+    ]);
   };
 
   const handleImageRemove = (index: number) => {
@@ -156,18 +148,10 @@ export default function RecordForm({
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      const selectedCategory = [
-        ...EXPENSE_CATEGORIES,
-        ...INCOME_CATEGORIES,
-      ].find((c) => c.label === data.category);
-      if (!selectedCategory) throw new Error('分類錯誤');
-
-      const { categoryType } = getCategoryInfo(selectedCategory.code);
-
       const recordData = {
         ...data,
-        category: selectedCategory.code,
-        categoryType,
+        categoryId: data.categoryId,
+        categoryType: categoryMap[data.categoryId].type,
         newImages,
         oldImages,
       };
@@ -185,7 +169,7 @@ export default function RecordForm({
         setDate(new Date(data.date));
       }
 
-      form.reset();
+      form.reset(defaultValues);
     } catch (error: any) {
       toast.error(`${isEditMode ? '更新' : '新增'}失敗：${error.message}`);
     }
@@ -193,7 +177,7 @@ export default function RecordForm({
 
   return (
     <>
-      {isSubmitting && <FullscreenLoading />}
+      {(isSubmitting || loading) && <FullscreenLoading />}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -268,7 +252,7 @@ export default function RecordForm({
           </div>
           <FormField
             control={form.control}
-            name="category"
+            name="categoryId"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>類別：</FormLabel>
