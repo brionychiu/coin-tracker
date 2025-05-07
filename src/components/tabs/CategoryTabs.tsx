@@ -1,4 +1,3 @@
-import { auth } from '@/lib/firebase';
 import { CirclePlus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -7,6 +6,7 @@ import { getVisibleCategories } from '@/app/api/categories/route';
 import AddCategoryDialog from '@/components/modal/AddCategory';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAuth } from '@/hooks/useAuth';
 import { useConfirm } from '@/hooks/useConfirmModal';
 import { deleteCategory } from '@/lib/api/categories';
 import { iconMap } from '@/lib/iconMap';
@@ -51,14 +51,15 @@ export default function CategoryTabs({
   value,
   onChange,
 }: TabsCategoryProps) {
+  const { uid } = useAuth();
   const { confirm, ConfirmModal } = useConfirm();
 
   const [activeTab, setActiveTab] = useState<'expense' | 'income'>('expense');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
 
-  const uid = auth.currentUser?.uid;
   const loadCategories = async () => {
+    if (!uid) return;
     const result = await getVisibleCategories(uid, activeTab);
 
     if (Array.isArray(result)) {
