@@ -1,4 +1,12 @@
-import { addDoc, collection, db } from '@/lib/firebase';
+import {
+  addDoc,
+  arrayUnion,
+  collection,
+  db,
+  doc,
+  getDoc,
+  updateDoc,
+} from '@/lib/firebase';
 
 const ACCOUNTS_CATEGORIES = [
   {
@@ -53,4 +61,24 @@ export const addAccount = async ({
     console.error('新增帳戶錯誤:', error);
     throw error;
   }
+};
+
+export const deleteAccount = async ({
+  accountId,
+  uid,
+}: {
+  accountId: string;
+  uid: string;
+}) => {
+  const accountRef = doc(db, 'accounts', accountId);
+  const accountSnap = await getDoc(accountRef);
+
+  if (!accountSnap.exists()) {
+    throw new Error('找不到該類別');
+  }
+
+  // 軟刪除
+  await updateDoc(accountRef, {
+    deletedBy: arrayUnion(uid),
+  });
 };
