@@ -1,17 +1,20 @@
+import { ImageIcon, Pencil, Trash2 } from 'lucide-react';
+import { PhotoProvider, PhotoView } from 'react-photo-view';
+
 import { Button } from '@/components/ui/button';
 import { highlightText } from '@/components/ui/highlight-text';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { getAccountLabel } from '@/lib/account';
-import { getCategoryIcon, getCategoryInfo } from '@/lib/categories';
+import { getCategoryIconById, getCategoryLabelById } from '@/lib/categories';
 import { formatToShortDay } from '@/lib/format';
 import { AccountingRecord } from '@/types/accounting';
-import { ImageIcon, Pencil, Trash2 } from 'lucide-react';
-import { PhotoProvider, PhotoView } from 'react-photo-view';
+import { Category } from '@/types/category';
 
 interface GroupTableSectionProps {
   group: string;
   groupItems: AccountingRecord[];
   debouncedKeyword: string;
+  categoryMap: Record<string, Category>;
   onEdit: (record: AccountingRecord) => void;
   onDelete: (record: AccountingRecord) => void;
 }
@@ -20,6 +23,7 @@ export const GroupTableSection = ({
   group,
   groupItems,
   debouncedKeyword,
+  categoryMap,
   onEdit,
   onDelete,
 }: GroupTableSectionProps) => (
@@ -42,10 +46,12 @@ export const GroupTableSection = ({
                     }`}
                   />
                   <div className="relative z-10 text-2xl">
-                    {getCategoryIcon(record.category)}
+                    {getCategoryIconById(record.categoryId, categoryMap)}
                   </div>
                 </div>
-                <span>{getCategoryInfo(record.category).label}</span>
+                <span>
+                  {getCategoryLabelById(record.categoryId, categoryMap)}
+                </span>
               </div>
             </TableCell>
             <TableCell className="w-1/6">

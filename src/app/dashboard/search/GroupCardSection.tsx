@@ -1,16 +1,19 @@
+import { Pencil, Search, Trash2 } from 'lucide-react';
+import { PhotoProvider, PhotoView } from 'react-photo-view';
+
 import { Button } from '@/components/ui/button';
 import { highlightText } from '@/components/ui/highlight-text';
 import { getAccountLabel } from '@/lib/account';
-import { getCategoryIcon, getCategoryInfo } from '@/lib/categories';
+import { getCategoryIconById, getCategoryLabelById } from '@/lib/categories';
 import { formatToShortDay } from '@/lib/format';
 import { AccountingRecord } from '@/types/accounting';
-import { Pencil, Search, Trash2 } from 'lucide-react';
-import { PhotoProvider, PhotoView } from 'react-photo-view';
+import { Category } from '@/types/category';
 
 interface GroupSectionProps {
   group: string;
   groupItems: AccountingRecord[];
   debouncedKeyword: string;
+  categoryMap: Record<string, Category>;
   onEdit: (record: AccountingRecord) => void;
   onDelete: (record: AccountingRecord) => void;
 }
@@ -19,6 +22,7 @@ export const GroupCardSection = ({
   group,
   groupItems,
   debouncedKeyword,
+  categoryMap,
   onEdit,
   onDelete,
 }: GroupSectionProps) => (
@@ -41,12 +45,12 @@ export const GroupCardSection = ({
                   }`}
                 />
                 <div className="relative z-10 text-2xl">
-                  {getCategoryIcon(record.category)}
+                  {getCategoryIconById(record.categoryId, categoryMap)}
                 </div>
               </div>
               <div className="space-y-1">
                 <p className="font-medium">
-                  {getCategoryInfo(record.category).label}
+                  {getCategoryLabelById(record.categoryId, categoryMap)}
                 </p>
                 {record.note && (
                   <p className="text-sm text-muted-foreground">
