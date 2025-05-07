@@ -7,6 +7,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  or,
   query,
   updateDoc,
   where,
@@ -235,7 +236,7 @@ export const deleteCategory = async ({
     throw new Error('找不到該類別');
   }
 
-  // 不分 createdBy 是誰，都走軟刪除
+  // 軟刪除
   await updateDoc(categoryRef, {
     deletedBy: arrayUnion(uid),
   });
@@ -249,7 +250,7 @@ export const getCategoryMap = async (): Promise<Record<string, Category>> => {
 
   const q = query(
     categoryRef,
-    where('deletedBy', 'not-in', [uid]), // 避免讀取已刪除的 base item
+    or(where('createdBy', '==', 'system'), where('createdBy', '==', uid)),
   );
 
   const snapshot = await getDocs(q);
@@ -257,14 +258,7 @@ export const getCategoryMap = async (): Promise<Record<string, Category>> => {
   const map: Record<string, Category> = {};
   snapshot.forEach((doc) => {
     const data = doc.data() as Category;
-
-    // 排除被刪除的類別（保險做法）
-    if (!data.deletedBy || !data.deletedBy.includes(uid)) {
-      map[doc.id] = {
-        ...data,
-        id: doc.id,
-      };
-    }
+    map[doc.id] = { ...data, id: doc.id };
   });
 
   return map;
