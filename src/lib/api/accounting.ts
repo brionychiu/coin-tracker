@@ -31,7 +31,7 @@ import { AccountingRecord, AccountingRecordPayload } from '@/types/accounting';
 async function uploadImage(file: File): Promise<string> {
   const uid = auth.currentUser?.uid;
   if (!uid) throw new Error('未登入，無法上傳圖片');
-  
+
   const storageRef = ref(storage, `receipts/${uid}/${file.name}-${Date.now()}`);
   await uploadBytes(storageRef, file);
   return await getDownloadURL(storageRef);
@@ -46,13 +46,15 @@ export async function addAccountingRecord(data: AccountingRecordPayload) {
 
   try {
     // 上傳所有圖片並獲取下載 URL
-    const imageUrls = data.newImages ? await Promise.all(data.newImages.map(uploadImage)) : [];
+    const imageUrls = data.newImages
+      ? await Promise.all(data.newImages.map(uploadImage))
+      : [];
 
     const docRef = await addDoc(collection(db, 'accounting-records'), {
       uid,
       date: data.date,
       amount: data.amount,
-      category: data.category,
+      categoryId: data.categoryId,
       categoryType: data.categoryType,
       account: data.account,
       note: data.note,
@@ -70,15 +72,18 @@ export async function addAccountingRecord(data: AccountingRecordPayload) {
 /**
  * 更新一筆記帳紀錄到 Firestore
  */
-export async function updateAccountingRecord(id: string, data: AccountingRecordPayload) {
+export async function updateAccountingRecord(
+  id: string,
+  data: AccountingRecordPayload,
+) {
   try {
     const recordRef = doc(db, 'accounting-records', id);
-    
+
     let imageUrls: string[] = [];
 
     if (data.newImages) {
       const newImageUrls = await Promise.all(
-        data.newImages.map((image) => uploadImage(image))
+        data.newImages.map((image) => uploadImage(image)),
       );
       imageUrls = [...newImageUrls];
     }
@@ -98,8 +103,7 @@ export async function updateAccountingRecord(id: string, data: AccountingRecordP
       id,
       ...cleanData,
       images: imageUrls,
-    }; 
-
+    };
   } catch (error) {
     console.error('更新失敗:', error);
     throw error;
@@ -128,26 +132,22 @@ export async function deleteAccountingRecord(id: string) {
  */
 export function getAccountingRecords(
   month: number,
-  callback: (data: AccountingRecord[]) => void
+  callback: (data: AccountingRecord[]) => void,
 ) {
   const uid = auth.currentUser?.uid;
   if (!uid) return () => {};
 
   const now = new Date();
   const startOfMonthDate = new Date(now.getFullYear(), month, 1);
-  const startTimestamp = Timestamp.fromDate(
-    startOfMonth(startOfMonthDate)
-  );
-  const endTimestamp = Timestamp.fromDate(
-    endOfMonth(startOfMonthDate)
-  );
+  const startTimestamp = Timestamp.fromDate(startOfMonth(startOfMonthDate));
+  const endTimestamp = Timestamp.fromDate(endOfMonth(startOfMonthDate));
 
   const q = query(
     collection(db, 'accounting-records'),
     where('uid', '==', uid),
     where('date', '>=', startTimestamp),
     where('date', '<=', endTimestamp),
-    orderBy('date') 
+    orderBy('date'),
   );
 
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -169,7 +169,7 @@ export function getAccountingRecords(
 export function getAccountingRecordsByRange(
   startDate: Date,
   endDate: Date,
-  callback: (data: AccountingRecord[]) => void
+  callback: (data: AccountingRecord[]) => void,
 ) {
   const uid = auth.currentUser?.uid;
   if (!uid) return () => {};
@@ -181,7 +181,7 @@ export function getAccountingRecordsByRange(
     collection(db, 'accounting-records'),
     where('uid', '==', uid),
     where('date', '>=', startTimestamp),
-    where('date', '<=', endTimestamp)
+    where('date', '<=', endTimestamp),
   );
 
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -197,7 +197,10 @@ export function getAccountingRecordsByRange(
   return unsubscribe;
 }
 
-export async function getRecordsBatch(lastDate: Date | null, batchSize: number): Promise<AccountingRecord[]> {
+export async function getRecordsBatch(
+  lastDate: Date | null,
+  batchSize: number,
+): Promise<AccountingRecord[]> {
   const uid = auth.currentUser?.uid;
   if (!uid) return [];
 
@@ -207,7 +210,7 @@ export async function getRecordsBatch(lastDate: Date | null, batchSize: number):
     recordsRef,
     where('uid', '==', uid),
     orderBy('date', 'desc'), // 降冪排序，最新的記錄排前面
-    limit(batchSize) 
+    limit(batchSize),
   );
 
   if (lastDate) {
@@ -233,7 +236,9 @@ export async function getRecordsBatch(lastDate: Date | null, batchSize: number):
 /**
  * 根據 ID 取得單筆記帳紀錄
  */
-export async function getAccountingRecordById(id: string): Promise<AccountingRecord | null> {
+export async function getAccountingRecordById(
+  id: string,
+): Promise<AccountingRecord | null> {
   const uid = auth.currentUser?.uid;
   if (!uid) return null;
 
