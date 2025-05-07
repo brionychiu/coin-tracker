@@ -64,7 +64,7 @@ export default function CategoryTabs({
     if (Array.isArray(result)) {
       setCategories(result);
       if (result.length > 0) {
-        onChange?.(result[0].label);
+        onChange?.(result[0].id);
       }
     } else {
       console.error('無法取得類別', result);
@@ -81,9 +81,9 @@ export default function CategoryTabs({
   };
 
   const handleDelete = async () => {
-    if (!value || value === 'add') return;
+    if (!value) return;
 
-    const selectedCategory = categories.find((c) => c.label === value);
+    const selectedCategory = categories.find((c) => c.id === value);
     if (!selectedCategory) return;
 
     confirm({
@@ -120,16 +120,16 @@ export default function CategoryTabs({
         {['expense', 'income'].map((tab) => (
           <TabsContent key={tab} value={tab}>
             <div className="grid grid-cols-3 gap-5 sm:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
-              {categories.map(({ icon, label }, index) => {
+              {categories.map(({ id, icon, label }, index) => {
                 const Icon = iconMap[icon] || iconMap['LayoutGrid'];
                 return (
                   <TabButton
                     key={index}
                     label={label}
                     icon={Icon}
-                    isSelected={value === label}
+                    isSelected={value === id}
                     activeTab={activeTab}
-                    onClick={() => onChange?.(label)}
+                    onClick={() => onChange?.(id)}
                     isEdit={isEdit}
                   />
                 );
