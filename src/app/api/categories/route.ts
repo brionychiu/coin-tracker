@@ -41,7 +41,7 @@ export async function getVisibleCategories(
       createdBy: doc.data().createdBy,
       deletedBy: doc.data().deletedBy,
     }))
-    .filter((cat: any) => !cat.deletedBy?.includes(uid));
+    .filter((cat: Category) => !cat.deletedBy?.includes(uid));
 
   const userCategories = userSnap.docs
     .map((doc) => ({
@@ -53,7 +53,7 @@ export async function getVisibleCategories(
       createdBy: doc.data().createdBy,
       deletedBy: doc.data().deletedBy,
     }))
-    .filter((cat: any) => !cat.deletedBy?.includes(uid)); // 🟢 新增這行
+    .filter((cat: Category) => !cat.deletedBy?.includes(uid));
 
   const categories: Category[] = [...systemCategories, ...userCategories];
 
