@@ -5,10 +5,11 @@ import { toast } from 'sonner';
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
 import { Button } from '@/components/ui/button';
 import { useAccountingRecords } from '@/hooks/useAccountingRecords';
+import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { useConfirm } from '@/hooks/useConfirmModal';
 import { getAccountLabel } from '@/lib/account';
 import { deleteAccountingRecord } from '@/lib/api/accounting';
-import { getCategoryIcon, getCategoryInfo } from '@/lib/categories';
+import { getCategoryIconById, getCategoryLabelById } from '@/lib/categories';
 import { AccountingRecord } from '@/types/accounting';
 
 interface RecordsProps {
@@ -20,6 +21,7 @@ interface RecordsProps {
 export default function Records({ date, month, onEdit }: RecordsProps) {
   const { filteredRecords, loading } = useAccountingRecords(date, month);
   const { confirm, ConfirmModal } = useConfirm();
+  const { categoryMap } = useCategoryMap();
 
   const handleDelete = async (record: AccountingRecord) => {
     confirm({
@@ -71,12 +73,18 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                             }`}
                           />
                           <div className="relative z-10 text-2xl">
-                            {getCategoryIcon(record.category)}
+                            {getCategoryIconById(
+                              record.categoryId,
+                              categoryMap,
+                            )}
                           </div>
                         </div>
                         <div className="space-y-2">
                           <p className="font-medium">
-                            {getCategoryInfo(record.category).label}
+                            {getCategoryLabelById(
+                              record.categoryId,
+                              categoryMap,
+                            )}
                           </p>
                           {record.note && (
                             <p className="text-sm text-muted-foreground">
