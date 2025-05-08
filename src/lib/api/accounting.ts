@@ -1,4 +1,3 @@
-import { auth } from '@/lib/firebase';
 import { endOfMonth, startOfMonth } from 'date-fns';
 
 import {
@@ -28,8 +27,7 @@ import { AccountingRecord, AccountingRecordPayload } from '@/types/accounting';
 /**
  * 上傳單張圖片到 Firebase Storage
  */
-async function uploadImage(file: File): Promise<string> {
-  const uid = auth.currentUser?.uid;
+async function uploadImage(uid: string, file: File): Promise<string> {
   if (!uid) throw new Error('未登入，無法上傳圖片');
 
   const storageRef = ref(storage, `receipts/${uid}/${file.name}-${Date.now()}`);
@@ -40,14 +38,16 @@ async function uploadImage(file: File): Promise<string> {
 /**
  * 新增一筆記帳紀錄到 Firestore
  */
-export async function addAccountingRecord(data: AccountingRecordPayload) {
-  const uid = auth.currentUser?.uid;
+export async function addAccountingRecord(
+  uid: string,
+  data: AccountingRecordPayload,
+) {
   if (!uid) throw new Error('未登入');
 
   try {
     // 上傳所有圖片並獲取下載 URL
     const imageUrls = data.newImages
-      ? await Promise.all(data.newImages.map(uploadImage))
+      ? await Promise.all(data.newImages.map((file) => uploadImage(uid, file)))
       : [];
 
     const docRef = await addDoc(collection(db, 'accounting-records'), {
@@ -73,6 +73,7 @@ export async function addAccountingRecord(data: AccountingRecordPayload) {
  * 更新一筆記帳紀錄到 Firestore
  */
 export async function updateAccountingRecord(
+  uid: string,
   id: string,
   data: AccountingRecordPayload,
 ) {
@@ -83,7 +84,7 @@ export async function updateAccountingRecord(
 
     if (data.newImages) {
       const newImageUrls = await Promise.all(
-        data.newImages.map((image) => uploadImage(image)),
+        data.newImages.map((image) => uploadImage(uid, image)),
       );
       imageUrls = [...newImageUrls];
     }
@@ -131,10 +132,10 @@ export async function deleteAccountingRecord(id: string) {
  * 監聽指定月份的 Firestore 記帳紀錄
  */
 export function getAccountingRecords(
+  uid: string,
   month: number,
   callback: (data: AccountingRecord[]) => void,
 ) {
-  const uid = auth.currentUser?.uid;
   if (!uid) return () => {};
 
   const now = new Date();
@@ -167,11 +168,11 @@ export function getAccountingRecords(
  * 監聽日期區間的 Firestore 記帳紀錄
  */
 export function getAccountingRecordsByRange(
+  uid: string,
   startDate: Date,
   endDate: Date,
   callback: (data: AccountingRecord[]) => void,
 ) {
-  const uid = auth.currentUser?.uid;
   if (!uid) return () => {};
 
   const startTimestamp = Timestamp.fromDate(startDate);
@@ -198,10 +199,10 @@ export function getAccountingRecordsByRange(
 }
 
 export async function getRecordsBatch(
+  uid: string,
   lastDate: Date | null,
   batchSize: number,
 ): Promise<AccountingRecord[]> {
-  const uid = auth.currentUser?.uid;
   if (!uid) return [];
 
   const recordsRef = collection(db, 'accounting-records');
@@ -237,9 +238,9 @@ export async function getRecordsBatch(
  * 根據 ID 取得單筆記帳紀錄
  */
 export async function getAccountingRecordById(
+  uid: string,
   id: string,
 ): Promise<AccountingRecord | null> {
-  const uid = auth.currentUser?.uid;
   if (!uid) return null;
 
   try {
