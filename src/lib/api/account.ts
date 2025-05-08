@@ -5,9 +5,15 @@ import {
   db,
   doc,
   getDoc,
+  getDocs,
+  or,
+  query,
   updateDoc,
+  where,
 } from '@/lib/firebase';
+import { Account } from '@/types/account';
 
+// TODO: 預設帳戶，上線後刪除
 const ACCOUNTS_CATEGORIES = [
   {
     label: '現金',
@@ -26,6 +32,7 @@ const ACCOUNTS_CATEGORIES = [
   },
 ];
 
+// TODO: 預設帳戶，上線後刪除
 export const uploadAccounts = async () => {
   const categoriesRef = collection(db, 'accounts');
 
@@ -81,4 +88,27 @@ export const deleteAccount = async ({
   await updateDoc(accountRef, {
     deletedBy: arrayUnion(uid),
   });
+};
+
+export const getAccountMap = async (
+  uid: string,
+): Promise<Record<string, Account>> => {
+  if (!uid) throw new Error('使用者未登入');
+
+  const categoryRef = collection(db, 'accounts');
+
+  const q = query(
+    categoryRef,
+    or(where('createdBy', '==', 'system'), where('createdBy', '==', uid)),
+  );
+
+  const snapshot = await getDocs(q);
+
+  const map: Record<string, Account> = {};
+  snapshot.forEach((doc) => {
+    const data = doc.data() as Account;
+    map[doc.id] = { ...data, id: doc.id };
+  });
+
+  return map;
 };
