@@ -80,28 +80,19 @@ export default function RecordForm({
   const [oldImages, setOldImages] = useState<string[]>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [isDeletedAccount, setIsDeletedAccount] = useState(false);
 
   const loadAccounts = async () => {
     if (!uid) return;
     const result = await getVisibleAccounts(uid);
 
     if (Array.isArray(result)) {
-      const accountsIncludingDeleted: Account[] = [...result];
+      const deleted =
+        !!record?.accountId &&
+        result.every((acc) => acc.id !== record?.accountId);
 
-      if (
-        record?.accountId &&
-        !result.some((acc) => acc.id === record.accountId)
-      ) {
-        accountsIncludingDeleted.push({
-          id: record.accountId,
-          label: accountMap[record.accountId]?.label || '未知帳戶',
-          createTime: accountMap[record.accountId]?.createTime || '',
-          createdBy: accountMap[record.accountId]?.createdBy || '',
-          deletedBy: accountMap[record.accountId]?.deletedBy || [],
-        });
-      }
-
-      setAccounts(accountsIncludingDeleted);
+      setIsDeletedAccount(deleted);
+      setAccounts(result);
     } else {
       console.error('getVisibleAccounts error:', result);
     }
@@ -275,26 +266,22 @@ export default function RecordForm({
                         <SelectValue placeholder="請選擇帳戶" />
                       </SelectTrigger>
                       <SelectContent>
-                        {accounts.map((option) => {
-                          const isDeleted =
-                            uid && option.deletedBy?.includes(uid);
-                          return (
-                            <SelectItem key={option.id} value={option.id}>
-                              <div className="flex items-center justify-between">
-                                <span
-                                  className={isDeleted ? 'text-gray-02' : ''}
-                                >
-                                  {option.label}
-                                </span>
-                                {isDeleted && (
-                                  <div className="ml-2 flex items-center text-sm text-gray-02">
-                                    (已刪除)
-                                  </div>
-                                )}
-                              </div>
-                            </SelectItem>
-                          );
-                        })}
+                        {accounts.map((option) => (
+                          <SelectItem key={option.id} value={option.id}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                        {isDeletedAccount && record?.accountId && (
+                          <SelectItem value={record.accountId}>
+                            <span className="text-gray-02">
+                              {accountMap[record.accountId]?.label ||
+                                '已刪除帳戶'}
+                            </span>
+                            <span className="ml-2 text-sm text-gray-02">
+                              (已刪除)
+                            </span>
+                          </SelectItem>
+                        )}
                       </SelectContent>
                     </Select>
                   </FormControl>
