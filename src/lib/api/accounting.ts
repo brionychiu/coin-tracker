@@ -56,7 +56,7 @@ export async function addAccountingRecord(
       amount: data.amount,
       categoryId: data.categoryId,
       categoryType: data.categoryType,
-      account: data.account,
+      accountId: data.accountId,
       note: data.note,
       images: imageUrls, // 存的是 URL 陣列
     });
