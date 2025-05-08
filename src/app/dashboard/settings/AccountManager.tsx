@@ -47,7 +47,7 @@ export default function AccountManager() {
       message: `確定要刪除「${selectAccount.label}」類別嗎？此操作無法復原。`,
       onConfirm: async () => {
         try {
-          await deleteAccount({ accountId: selectAccount.id, uid });
+          await deleteAccount({ uid, accountId: selectAccount.id });
           await loadAccounts();
           toast.success('刪除成功！');
         } catch (error) {

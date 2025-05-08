@@ -43,11 +43,11 @@ export const uploadAccounts = async () => {
 };
 
 export const addAccount = async ({
-  label,
   uid,
+  label,
 }: {
-  label: string;
   uid: string;
+  label: string;
 }): Promise<string> => {
   try {
     const docRef = await addDoc(collection(db, 'accounts'), {
@@ -64,11 +64,11 @@ export const addAccount = async ({
 };
 
 export const deleteAccount = async ({
-  accountId,
   uid,
+  accountId,
 }: {
-  accountId: string;
   uid: string;
+  accountId: string;
 }) => {
   const accountRef = doc(db, 'accounts', accountId);
   const accountSnap = await getDoc(accountRef);

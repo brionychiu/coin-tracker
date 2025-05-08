@@ -33,8 +33,8 @@ export default function AddAccountDialog({
     if (!label || !uid) return;
     try {
       await addAccount({
-        label,
         uid,
+        label,
       });
       toast.success('新增成功');
       onOpenChange(false);
