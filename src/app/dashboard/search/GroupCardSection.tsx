@@ -3,9 +3,10 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 
 import { Button } from '@/components/ui/button';
 import { highlightText } from '@/components/ui/highlight-text';
-import { getAccountLabel } from '@/lib/account';
+import { getAccountLabelById } from '@/lib/account';
 import { getCategoryIconById, getCategoryLabelById } from '@/lib/categories';
 import { formatToShortDay } from '@/lib/format';
+import { Account } from '@/types/account';
 import { AccountingRecord } from '@/types/accounting';
 import { Category } from '@/types/category';
 
@@ -14,6 +15,7 @@ interface GroupSectionProps {
   groupItems: AccountingRecord[];
   debouncedKeyword: string;
   categoryMap: Record<string, Category>;
+  accountMap: Record<string, Account>;
   onEdit: (record: AccountingRecord) => void;
   onDelete: (record: AccountingRecord) => void;
 }
@@ -22,6 +24,7 @@ export const GroupCardSection = ({
   group,
   groupItems,
   debouncedKeyword,
+  accountMap,
   categoryMap,
   onEdit,
   onDelete,
@@ -65,7 +68,7 @@ export const GroupCardSection = ({
             <div className="text-right text-sm">
               <p className="text-lg font-semibold">{record.amount}</p>
               <p className="text-muted-foreground">
-                {getAccountLabel(record.account)}
+                {getAccountLabelById(record.accountId, accountMap)}
               </p>
             </div>
           </div>

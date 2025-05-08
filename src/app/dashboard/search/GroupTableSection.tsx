@@ -4,9 +4,10 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { Button } from '@/components/ui/button';
 import { highlightText } from '@/components/ui/highlight-text';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
-import { getAccountLabel } from '@/lib/account';
+import { getAccountLabelById } from '@/lib/account';
 import { getCategoryIconById, getCategoryLabelById } from '@/lib/categories';
 import { formatToShortDay } from '@/lib/format';
+import { Account } from '@/types/account';
 import { AccountingRecord } from '@/types/accounting';
 import { Category } from '@/types/category';
 
@@ -14,6 +15,7 @@ interface GroupTableSectionProps {
   group: string;
   groupItems: AccountingRecord[];
   debouncedKeyword: string;
+  accountMap: Record<string, Account>;
   categoryMap: Record<string, Category>;
   onEdit: (record: AccountingRecord) => void;
   onDelete: (record: AccountingRecord) => void;
@@ -23,6 +25,7 @@ export const GroupTableSection = ({
   group,
   groupItems,
   debouncedKeyword,
+  accountMap,
   categoryMap,
   onEdit,
   onDelete,
@@ -61,7 +64,7 @@ export const GroupTableSection = ({
               {record.note ? highlightText(record.note, debouncedKeyword) : '-'}
             </TableCell>
             <TableCell className="w-1/6 text-right">
-              {getAccountLabel(record.account)}
+              {getAccountLabelById(record.accountId, accountMap)}
             </TableCell>
             <TableCell className="w-1/6 font-semibold">
               <div className="flex justify-between">

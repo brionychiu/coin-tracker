@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react';
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
 import { Input } from '@/components/ui/input';
 import { Table, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useAccountMap } from '@/hooks/useAccountMap';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
@@ -34,6 +35,7 @@ export default function SearchTable({
   onDelete,
 }: RecordsProps) {
   const { categoryMap } = useCategoryMap();
+  const { accountMap } = useAccountMap();
 
   const [keyword, setKeyword] = useState('');
   const debouncedKeyword = useDebouncedValue(keyword, 300);
@@ -120,6 +122,7 @@ export default function SearchTable({
               group={group}
               groupItems={groupItems}
               debouncedKeyword={debouncedKeyword}
+              accountMap={accountMap}
               categoryMap={categoryMap}
               onEdit={onEdit}
               onDelete={onDelete}
@@ -149,6 +152,7 @@ export default function SearchTable({
               group={group}
               groupItems={groupItems}
               debouncedKeyword={debouncedKeyword}
+              accountMap={accountMap}
               categoryMap={categoryMap}
               onEdit={onEdit}
               onDelete={onDelete}
