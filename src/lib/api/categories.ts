@@ -1,7 +1,6 @@
 import {
   addDoc,
   arrayUnion,
-  auth,
   collection,
   db,
   doc,
@@ -194,16 +193,19 @@ export const uploadCategories = async () => {
 };
 
 export interface AddCategoryPayload {
+  uid: string;
   label: string;
   icon: string;
   type: 'income' | 'expense';
 }
 
 export const addCategory = async (payload: AddCategoryPayload) => {
-  const uid = auth.currentUser?.uid;
-  if (!uid) throw new Error('使用者未登入');
+  const { uid, label, icon, type } = payload;
 
-  const { label, icon, type } = payload;
+  if (!uid) throw new Error('使用者未登入');
+  if (!label || !icon || !type) {
+    throw new Error('請提供類別名稱、圖示和類型');
+  }
 
   try {
     const docRef = await addDoc(collection(db, 'categories'), {
@@ -222,11 +224,12 @@ export const addCategory = async (payload: AddCategoryPayload) => {
 };
 
 export const deleteCategory = async ({
+  uid,
   categoryId,
 }: {
+  uid: string;
   categoryId: string;
 }) => {
-  const uid = auth.currentUser?.uid;
   if (!uid) throw new Error('使用者未登入');
 
   const categoryRef = doc(db, 'categories', categoryId);
@@ -242,8 +245,9 @@ export const deleteCategory = async ({
   });
 };
 
-export const getCategoryMap = async (): Promise<Record<string, Category>> => {
-  const uid = auth.currentUser?.uid;
+export const getCategoryMap = async (
+  uid: string,
+): Promise<Record<string, Category>> => {
   if (!uid) throw new Error('使用者未登入');
 
   const categoryRef = collection(db, 'categories');

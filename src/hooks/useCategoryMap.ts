@@ -17,13 +17,13 @@ export function useCategoryMap() {
         return;
       }
 
-      const map = await getCategoryMap();
+      const map = await getCategoryMap(uid);
       setCategoryMap(map);
       setLoading(false);
     };
 
     fetchCategoryMap();
-  }, []);
+  }, [uid]);
 
   return { categoryMap, loading };
 }

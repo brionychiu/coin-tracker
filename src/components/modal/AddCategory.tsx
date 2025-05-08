@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/hooks/useAuth';
 import { addCategory } from '@/lib/api/categories';
 import { iconMap, IconName } from '@/lib/iconMap';
 
@@ -30,6 +31,8 @@ export default function AddCategoryDialog({
   onOpenChange,
   onAddSuccess,
 }: AddCategoryDialogProps) {
+  const { uid } = useAuth();
+
   const [label, setLabel] = useState('');
   const [selectedIconName, setSelectedIconName] = useState<IconName | null>(
     null,
@@ -37,10 +40,11 @@ export default function AddCategoryDialog({
   const bgColor = type === 'expense' ? 'bg-red-04' : 'bg-green-01';
 
   const handleSubmit = async () => {
-    if (!label || !selectedIconName) return;
+    if (!label || !selectedIconName || !uid) return;
 
     try {
       const id = await addCategory({
+        uid,
         label,
         icon: selectedIconName,
         type,

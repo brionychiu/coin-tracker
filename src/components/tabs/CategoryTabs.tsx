@@ -82,7 +82,7 @@ export default function CategoryTabs({
   };
 
   const handleDelete = async () => {
-    if (!value) return;
+    if (!value || !uid) return;
 
     const selectedCategory = categories.find((c) => c.id === value);
     if (!selectedCategory) return;
@@ -92,7 +92,7 @@ export default function CategoryTabs({
       message: `確定要刪除「${selectedCategory.label}」類別嗎？此操作無法復原。`,
       onConfirm: async () => {
         try {
-          await deleteCategory({ categoryId: selectedCategory.id });
+          await deleteCategory({ uid, categoryId: selectedCategory.id });
           await loadCategories();
           toast.success('刪除成功！');
         } catch (error) {
