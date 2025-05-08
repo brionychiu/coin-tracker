@@ -10,6 +10,7 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
+import { getVisibleAccounts } from '@/app/api/accounts/route';
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
 import CategoryTabs from '@/components/tabs/CategoryTabs';
 import { Button } from '@/components/ui/button';
@@ -33,13 +34,13 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks/useAuth';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
-import { accountOptions } from '@/lib/account';
 import {
   addAccountingRecord,
   updateAccountingRecord,
 } from '@/lib/api/accounting';
 import { handleNumericInput } from '@/lib/inputValidators';
 import { useDateStore } from '@/stores/dateStore';
+import { Account } from '@/types/account';
 import { AccountingRecord } from '@/types/accounting';
 
 interface RecordFormProps {
@@ -49,11 +50,6 @@ interface RecordFormProps {
   onSave: (updatedRecord?: AccountingRecord) => void;
 }
 
-const accountEnumValues = accountOptions.map((option) => option.value) as [
-  string,
-  ...string[],
-];
-
 const FormSchema = z.object({
   date: z.date({ required_error: '請選擇日期' }),
   amount: z
@@ -62,9 +58,7 @@ const FormSchema = z.object({
     .regex(/^[0-9]+$/, { message: '金額必須是正整數' })
     .refine((val) => parseInt(val, 10) > 0, { message: '金額必須大於 0' }),
   categoryId: z.string().min(1, { message: '請選擇類別' }),
-  account: z.enum(accountEnumValues, {
-    errorMap: () => ({ message: '請選擇一個帳戶' }),
-  }),
+  accountId: z.string().min(1, { message: '請選擇帳戶' }),
   images: z.array(z.instanceof(File)).max(5).optional(),
   note: z.string().max(500).optional(),
 });
@@ -83,13 +77,29 @@ export default function RecordForm({
   const [imageList, setImageList] = useState<any[]>([]);
   const [oldImages, setOldImages] = useState<string[]>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+
+  const loadAccounts = async () => {
+    if (!uid) return;
+    const result = await getVisibleAccounts(uid);
+
+    if (Array.isArray(result)) {
+      setAccounts(result);
+    } else {
+      console.error('getVisibleAccounts error:', result);
+    }
+  };
+
+  useEffect(() => {
+    loadAccounts();
+  }, [uid]);
 
   const defaultValues = useMemo(
     () => ({
       date: record ? new Date(record.date) : date || new Date(),
       amount: record?.amount ?? '',
       categoryId: record?.categoryId ?? '',
-      account: record?.account || 'cash',
+      accountId: record?.accountId || accounts[0]?.id || '',
       images: [],
       note: record?.note || '',
     }),
@@ -234,7 +244,7 @@ export default function RecordForm({
             />
             <FormField
               control={form.control}
-              name="account"
+              name="accountId"
               render={({ field }) => (
                 <FormItem className="w-1/2">
                   <FormLabel>帳戶：</FormLabel>
@@ -247,8 +257,8 @@ export default function RecordForm({
                         <SelectValue placeholder="請選擇帳戶" />
                       </SelectTrigger>
                       <SelectContent>
-                        {accountOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
+                        {accounts.map((option) => (
+                          <SelectItem key={option.id} value={option.id}>
                             {option.label}
                           </SelectItem>
                         ))}
