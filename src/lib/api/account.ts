@@ -90,6 +90,7 @@ export const deleteAccount = async ({
   });
 };
 
+// 取得所有帳戶（包含軟刪除）
 export const getAccountMap = async (
   uid: string,
 ): Promise<Record<string, Account>> => {

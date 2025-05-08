@@ -245,6 +245,7 @@ export const deleteCategory = async ({
   });
 };
 
+// 取得所有類別（包含軟刪除）
 export const getCategoryMap = async (
   uid: string,
 ): Promise<Record<string, Category>> => {
