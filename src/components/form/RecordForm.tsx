@@ -32,6 +32,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useAccountMap } from '@/hooks/useAccountMap';
 import { useAuth } from '@/hooks/useAuth';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
 import {
@@ -73,6 +74,7 @@ export default function RecordForm({
   const { uid } = useAuth();
   const { setDate } = useDateStore();
   const { categoryMap, loading } = useCategoryMap();
+  const { accountMap, loading: accountMapLoading } = useAccountMap();
 
   const [imageList, setImageList] = useState<any[]>([]);
   const [oldImages, setOldImages] = useState<string[]>([]);
@@ -84,15 +86,31 @@ export default function RecordForm({
     const result = await getVisibleAccounts(uid);
 
     if (Array.isArray(result)) {
-      setAccounts(result);
+      const accountsIncludingDeleted: Account[] = [...result];
+
+      if (
+        record?.accountId &&
+        !result.some((acc) => acc.id === record.accountId)
+      ) {
+        accountsIncludingDeleted.push({
+          id: record.accountId,
+          label: accountMap[record.accountId]?.label || '未知帳戶',
+          createTime: accountMap[record.accountId]?.createTime || '',
+          createdBy: accountMap[record.accountId]?.createdBy || '',
+          deletedBy: accountMap[record.accountId]?.deletedBy || [],
+        });
+      }
+
+      setAccounts(accountsIncludingDeleted);
     } else {
       console.error('getVisibleAccounts error:', result);
     }
   };
 
   useEffect(() => {
+    if (!uid || accountMapLoading) return;
     loadAccounts();
-  }, [uid]);
+  }, [uid, accountMapLoading]);
 
   const defaultValues = useMemo(
     () => ({
@@ -197,7 +215,7 @@ export default function RecordForm({
 
   return (
     <>
-      {(isSubmitting || loading) && <FullscreenLoading />}
+      {(isSubmitting || loading || accountMapLoading) && <FullscreenLoading />}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -257,11 +275,26 @@ export default function RecordForm({
                         <SelectValue placeholder="請選擇帳戶" />
                       </SelectTrigger>
                       <SelectContent>
-                        {accounts.map((option) => (
-                          <SelectItem key={option.id} value={option.id}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
+                        {accounts.map((option) => {
+                          const isDeleted =
+                            uid && option.deletedBy?.includes(uid);
+                          return (
+                            <SelectItem key={option.id} value={option.id}>
+                              <div className="flex items-center justify-between">
+                                <span
+                                  className={isDeleted ? 'text-gray-02' : ''}
+                                >
+                                  {option.label}
+                                </span>
+                                {isDeleted && (
+                                  <div className="ml-2 flex items-center text-sm text-gray-02">
+                                    (已刪除)
+                                  </div>
+                                )}
+                              </div>
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
                   </FormControl>
