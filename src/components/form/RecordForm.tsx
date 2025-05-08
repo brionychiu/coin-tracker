@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/hooks/useAuth';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { accountOptions } from '@/lib/account';
 import {
@@ -75,6 +76,7 @@ export default function RecordForm({
   onSave,
 }: RecordFormProps) {
   const isEditMode = !!record;
+  const { uid } = useAuth();
   const { setDate } = useDateStore();
   const { categoryMap, loading } = useCategoryMap();
 
@@ -147,6 +149,10 @@ export default function RecordForm({
   };
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    if (!uid) {
+      toast.error('請先登入');
+      return;
+    }
     try {
       const recordData = {
         ...data,
@@ -158,12 +164,16 @@ export default function RecordForm({
 
       if (isEditMode) {
         if (!record?.id) throw new Error('缺少記錄 ID');
-        const updated = await updateAccountingRecord(record.id, recordData);
+        const updated = await updateAccountingRecord(
+          uid,
+          record.id,
+          recordData,
+        );
         toast.success('更新成功');
         onSave(updated);
         setDate(new Date(data.date));
       } else {
-        await addAccountingRecord(recordData);
+        await addAccountingRecord(uid, recordData);
         toast.success('新增成功');
         onSave();
         setDate(new Date(data.date));
