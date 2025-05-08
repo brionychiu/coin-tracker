@@ -1,9 +1,11 @@
-export const accountOptions = [
-  { value: 'cash', label: '現金' },
-  { value: 'bank', label: '銀行' },
-  { value: 'credit', label: '信用卡' },
-];
+import { Account } from '@/types/account';
 
-export const getAccountLabel = (value: string): string => {
-  return accountOptions.find((option) => option.value === value)?.label || '未知帳戶';
+export const getAccountLabelById = (
+  accountId: string,
+  accountMap: Record<string, Account>,
+): string => {
+  const account = accountMap[accountId];
+  if (!account) return '未知帳戶';
+
+  return account.label;
 };
