@@ -7,6 +7,7 @@ import AddCategoryDialog from '@/components/modal/AddCategory';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
+import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { useConfirm } from '@/hooks/useConfirmModal';
 import { deleteCategory } from '@/lib/api/categories';
 import { iconMap } from '@/lib/iconMap';
@@ -15,6 +16,7 @@ import { Category } from '@/types/category';
 interface TabsCategoryProps {
   isEdit: boolean;
   value?: string;
+  categoryId?: string;
   onChange?: (value: string) => void;
 }
 
@@ -24,8 +26,15 @@ const TabButton = ({
   isSelected,
   onClick,
   activeTab,
-}: any) => {
-  const bgColor = activeTab === 'expense' ? 'bg-red-04' : 'bg-green-01';
+  isDeleted = false,
+}: {
+  label: string;
+  icon: React.ElementType;
+  isSelected: boolean;
+  onClick: () => void;
+  activeTab: 'expense' | 'income';
+  isDeleted?: boolean;
+}) => {
   return (
     <Button
       variant="tabHover"
@@ -36,12 +45,20 @@ const TabButton = ({
       <span className="relative flex h-10 w-10 items-center justify-center">
         {isSelected && (
           <span
-            className={`absolute left-0 right-0 top-1 mx-auto h-8 w-8 rounded-full ${bgColor} opacity-80`}
+            className={`absolute left-0 right-0 top-1 mx-auto h-8 w-8 rounded-full ${activeTab === 'expense' ? 'bg-red-04' : 'bg-green-01'} opacity-80`}
           />
         )}
-        <Icon className="relative z-10 size-6" />
+        <Icon
+          className={`relative z-10 size-6 ${isDeleted ? 'text-gray-02' : ''}`}
+        />
       </span>
-      <p className="z-10 text-xs font-normal">{label}</p>
+      <p
+        className={`z-10 text-xs font-normal ${
+          isDeleted ? 'text-gray-02' : ''
+        }`}
+      >
+        {label}
+      </p>
     </Button>
   );
 };
@@ -49,23 +66,35 @@ const TabButton = ({
 export default function CategoryTabs({
   isEdit,
   value,
+  categoryId,
   onChange,
 }: TabsCategoryProps) {
   const { uid } = useAuth();
   const { confirm, ConfirmModal } = useConfirm();
+  const { categoryMap, loading: categoryMapLoading } = useCategoryMap();
 
   const [activeTab, setActiveTab] = useState<'expense' | 'income'>('expense');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [isDeletedCategory, setIsDeletedCategory] = useState(false);
 
   const loadCategories = async () => {
     if (!uid) return;
-    const result = await getVisibleCategories(uid, activeTab);
+    const result = await getVisibleCategories(uid);
 
     if (Array.isArray(result)) {
       setCategories(result);
-      if (result.length > 0) {
-        onChange?.(result[0].id);
+
+      const deleted =
+        !!categoryId && !result.some((acc) => acc.id === categoryId);
+
+      setIsDeletedCategory(deleted);
+
+      if (result.length > 0 && !value) {
+        const expenseCategories = result.filter(
+          (cat) => cat.type === 'expense',
+        );
+        onChange?.(expenseCategories[0].id);
       }
     } else {
       console.error('無法取得類別', result);
@@ -75,7 +104,7 @@ export default function CategoryTabs({
 
   useEffect(() => {
     loadCategories();
-  }, [activeTab, uid]);
+  }, [uid, categoryMapLoading]);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab as 'expense' | 'income');
@@ -121,20 +150,40 @@ export default function CategoryTabs({
         {['expense', 'income'].map((tab) => (
           <TabsContent key={tab} value={tab}>
             <div className="grid grid-cols-3 gap-5 sm:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
-              {categories.map(({ id, icon, label }, index) => {
-                const Icon = iconMap[icon] || iconMap['LayoutGrid'];
-                return (
-                  <TabButton
-                    key={index}
-                    label={label}
-                    icon={Icon}
-                    isSelected={value === id}
-                    activeTab={activeTab}
-                    onClick={() => onChange?.(id)}
-                    isEdit={isEdit}
-                  />
-                );
-              })}
+              {categories
+                .filter((cat) => cat.type === tab)
+                .map(({ id, icon, label }, index) => {
+                  const Icon = iconMap[icon] || iconMap['LayoutGrid'];
+                  return (
+                    <TabButton
+                      key={index}
+                      label={label}
+                      icon={Icon}
+                      isSelected={value === id}
+                      activeTab={activeTab}
+                      onClick={() => onChange?.(id)}
+                    />
+                  );
+                })}
+              {isDeletedCategory &&
+                categoryId &&
+                categoryMap[categoryId]?.type === tab &&
+                (() => {
+                  const icon = categoryMap[categoryId]?.icon;
+                  const Icon = iconMap[icon] || iconMap['LayoutGrid'];
+                  const label = categoryMap[categoryId]?.label || '已刪除類別';
+                  return (
+                    <TabButton
+                      key="deleted"
+                      label={label}
+                      icon={Icon}
+                      isSelected={value === categoryId}
+                      activeTab={tab}
+                      onClick={() => onChange?.(categoryId)}
+                      isDeleted={true}
+                    />
+                  );
+                })()}
             </div>
           </TabsContent>
         ))}
