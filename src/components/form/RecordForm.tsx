@@ -87,9 +87,11 @@ export default function RecordForm({
     const result = await getVisibleAccounts(uid);
 
     if (Array.isArray(result)) {
+      // 如果 record?.accountId 不在 result 中，則表示該帳戶已被刪除
+      // 但仍然需要顯示在下拉選單中
       const deleted =
         !!record?.accountId &&
-        result.every((acc) => acc.id !== record?.accountId);
+        !result.some((acc) => acc.id === record?.accountId);
 
       setIsDeletedAccount(deleted);
       setAccounts(result);
