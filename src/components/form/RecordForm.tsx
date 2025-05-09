@@ -303,6 +303,7 @@ export default function RecordForm({
                     isEdit={false}
                     value={field.value}
                     onChange={field.onChange}
+                    categoryId={isEditMode ? record?.categoryId : undefined}
                   />
                 </FormControl>
                 <FormMessage />
