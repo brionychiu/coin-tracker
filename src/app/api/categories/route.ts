@@ -2,10 +2,7 @@ import { collection, db, getDocs, orderBy, query, where } from '@/lib/firebase';
 import { Category } from '@/types/category';
 import { NextResponse } from 'next/server';
 
-export async function getVisibleCategories(
-  uid: string | undefined,
-  type: 'income' | 'expense',
-) {
+export async function getVisibleCategories(uid: string | undefined) {
   if (!uid) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -13,7 +10,6 @@ export async function getVisibleCategories(
   // 1. 取得 system 預設類別
   const systemQuery = query(
     collection(db, 'categories'),
-    where('type', '==', type),
     where('createdBy', '==', 'system'),
     orderBy('createTime', 'asc'),
   );
@@ -21,7 +17,6 @@ export async function getVisibleCategories(
   // 2. 取得使用者自訂類別
   const userQuery = query(
     collection(db, 'categories'),
-    where('type', '==', type),
     where('createdBy', '==', uid),
     orderBy('createTime', 'asc'),
   );
