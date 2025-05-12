@@ -52,6 +52,7 @@ export async function addAccountingRecord(
 
     const docRef = await addDoc(collection(db, 'accounting-records'), {
       uid,
+      createTime: data.createTime,
       date: data.date,
       accountId: data.accountId,
       amount: data.amount,
@@ -148,7 +149,7 @@ export function getAccountingRecords(
     where('uid', '==', uid),
     where('date', '>=', startTimestamp),
     where('date', '<=', endTimestamp),
-    orderBy('date'),
+    orderBy('createTime', 'desc'),
   );
 
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
