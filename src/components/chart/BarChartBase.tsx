@@ -11,7 +11,7 @@ import {
 import { useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 
-import { getCategoryChartData } from '@/lib/chart';
+import { getCategoryChartData } from '@/lib/utils/chart';
 import { AccountingRecord } from '@/types/accounting';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);

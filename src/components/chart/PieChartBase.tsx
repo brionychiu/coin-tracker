@@ -4,7 +4,7 @@ import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import { useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
 
-import { getCategoryChartData } from '@/lib/chart';
+import { getCategoryChartData } from '@/lib/utils/chart';
 import { AccountingRecord } from '@/types/accounting';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
