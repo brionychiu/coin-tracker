@@ -1,9 +1,10 @@
 // Firestore 存的記帳紀錄（Firestore 內的格式）
 export interface AccountingRecord {
   id: string;
-  accountId: string;
   date: Date;
+  accountId: string;
   amount: string;
+  currency: string;
   categoryId: string;
   categoryType: 'expense' | 'income';
   note?: string;
@@ -15,6 +16,7 @@ export interface AccountingRecordPayload {
   date: Date;
   accountId: string;
   amount: string;
+  currency: string;
   categoryId: string;
   categoryType: 'expense' | 'income';
   note?: string;
