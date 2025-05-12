@@ -14,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
 import { addCategory } from '@/lib/api/categories';
-import { iconMap, IconName } from '@/lib/iconMap';
+import { iconMap, IconName } from '@/lib/constants/iconMap';
 
 const ICON_OPTIONS: IconName[] = Object.keys(iconMap) as IconName[];
 

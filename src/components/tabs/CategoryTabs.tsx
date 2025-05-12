@@ -10,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { useConfirm } from '@/hooks/useConfirmModal';
 import { deleteCategory } from '@/lib/api/categories';
-import { iconMap } from '@/lib/iconMap';
+import { iconMap } from '@/lib/constants/iconMap';
 import { Category } from '@/types/category';
 
 interface TabsCategoryProps {
