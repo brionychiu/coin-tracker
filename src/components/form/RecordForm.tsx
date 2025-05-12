@@ -12,6 +12,7 @@ import { z } from 'zod';
 
 import { getVisibleAccounts } from '@/app/api/accounts/route';
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
+import { AccountSelect } from '@/components/select/AccountSelect';
 import { CurrencySelect } from '@/components/select/CurrencySelect';
 import CategoryTabs from '@/components/tabs/CategoryTabs';
 import { Button } from '@/components/ui/button';
@@ -25,13 +26,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useAccountMap } from '@/hooks/useAccountMap';
 import { useAuth } from '@/hooks/useAuth';
@@ -82,20 +76,12 @@ export default function RecordForm({
   const [oldImages, setOldImages] = useState<string[]>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
-  const [isDeletedAccount, setIsDeletedAccount] = useState(false);
 
   const loadAccounts = async () => {
     if (!uid) return;
     const result = await getVisibleAccounts(uid);
 
     if (Array.isArray(result)) {
-      // 如果 record?.accountId 不在 result 中，則表示該帳戶已被刪除
-      // 但仍然需要顯示在下拉選單中
-      const deleted =
-        !!record?.accountId &&
-        !result.some((acc) => acc.id === record?.accountId);
-
-      setIsDeletedAccount(deleted);
       setAccounts(result);
     } else {
       console.error('getVisibleAccounts error:', result);
@@ -245,32 +231,12 @@ export default function RecordForm({
                 <FormItem className="w-1/2">
                   <FormLabel>帳戶：</FormLabel>
                   <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="請選擇帳戶" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {accounts.map((option) => (
-                          <SelectItem key={option.id} value={option.id}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                        {isDeletedAccount && record?.accountId && (
-                          <SelectItem value={record.accountId}>
-                            <span className="text-gray-02">
-                              {accountMap[record.accountId]?.label ||
-                                '已刪除帳戶'}
-                            </span>
-                            <span className="ml-2 text-sm text-gray-02">
-                              (已刪除)
-                            </span>
-                          </SelectItem>
-                        )}
-                      </SelectContent>
-                    </Select>
+                    <AccountSelect
+                      value={field.value}
+                      onChange={field.onChange}
+                      accountId={record?.accountId}
+                      accountMap={accountMap}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
