@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 
 import { type DateRange } from '@/components/tabs/DateRangeTabs';
-import { formatChartTimeKey } from '@/lib/format';
+import { formatChartTimeKey } from '@/lib/utils/format';
 import { AccountingRecord } from '@/types/accounting';
 
 ChartJS.register(

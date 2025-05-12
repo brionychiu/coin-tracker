@@ -10,7 +10,7 @@ import { useAccountMap } from '@/hooks/useAccountMap';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
-import { formatToYearMonthGroup } from '@/lib/format';
+import { formatToYearMonthGroup } from '@/lib/utils/format';
 import { AccountingRecord } from '@/types/accounting';
 import { GroupCardSection } from './GroupCardSection';
 import { GroupTableSection } from './GroupTableSection';
