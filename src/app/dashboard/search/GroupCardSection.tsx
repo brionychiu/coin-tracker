@@ -3,9 +3,9 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 
 import { Button } from '@/components/ui/button';
 import { highlightText } from '@/components/ui/highlight-text';
-import { getAccountLabelById } from '@/lib/account';
 import { getCategoryIconById, getCategoryLabelById } from '@/lib/categories';
 import { formatToShortDay } from '@/lib/format';
+import { getAccountLabelById } from '@/lib/utils/account';
 import { Account } from '@/types/account';
 import { AccountingRecord } from '@/types/accounting';
 import { Category } from '@/types/category';

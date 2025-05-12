@@ -8,9 +8,9 @@ import { useAccountingRecords } from '@/hooks/useAccountingRecords';
 import { useAccountMap } from '@/hooks/useAccountMap';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { useConfirm } from '@/hooks/useConfirmModal';
-import { getAccountLabelById } from '@/lib/account';
 import { deleteAccountingRecord } from '@/lib/api/accounting';
 import { getCategoryIconById, getCategoryLabelById } from '@/lib/categories';
+import { getAccountLabelById } from '@/lib/utils/account';
 import { AccountingRecord } from '@/types/accounting';
 
 interface RecordsProps {
