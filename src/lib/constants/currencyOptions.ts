@@ -1,0 +1,75 @@
+export const currencyGroups = [
+  {
+    label: '常用貨幣',
+    value: 'Common',
+    options: [
+      { value: 'USD', label: '美元' },
+      { value: 'EUR', label: '歐元' },
+      { value: 'JPY', label: '日圓' },
+      { value: 'GBP', label: '英鎊' },
+      { value: 'CNY', label: '人民幣' },
+      { value: 'HKD', label: '港幣' },
+      { value: 'TWD', label: '新台幣' },
+    ],
+  },
+  {
+    label: '亞洲',
+    value: 'Asia',
+    options: [
+      { value: 'CNY', label: '人民幣' },
+      { value: 'JPY', label: '日圓' },
+      { value: 'KRW', label: '韓元' },
+      { value: 'TWD', label: '新台幣' },
+      { value: 'HKD', label: '港幣' },
+      { value: 'SGD', label: '新加坡幣' },
+      { value: 'THB', label: '泰銖' },
+      { value: 'INR', label: '印度盧比' },
+      { value: 'IDR', label: '印尼盾' },
+      { value: 'VND', label: '越南盾' },
+    ],
+  },
+  {
+    label: '歐洲',
+    value: 'Europe',
+    options: [
+      { value: 'EUR', label: '歐元' },
+      { value: 'GBP', label: '英鎊' },
+      { value: 'CHF', label: '瑞士法郎' },
+      { value: 'SEK', label: '瑞典克朗' },
+      { value: 'NOK', label: '挪威克朗' },
+      { value: 'DKK', label: '丹麥克朗' },
+      { value: 'PLN', label: '波蘭茲羅提' },
+    ],
+  },
+  {
+    label: '美洲',
+    value: 'America',
+    options: [
+      { value: 'USD', label: '美元' },
+      { value: 'CAD', label: '加幣' },
+      { value: 'MXN', label: '墨西哥披索' },
+      { value: 'BRL', label: '巴西雷亞爾' },
+      { value: 'ARS', label: '阿根廷比索' },
+    ],
+  },
+  {
+    label: '中東／非洲',
+    value: 'MiddleEastAfrica',
+    options: [
+      { value: 'AED', label: '阿聯酋迪拉姆' },
+      { value: 'SAR', label: '沙烏地里亞爾' },
+      { value: 'ILS', label: '以色列謝克爾' },
+      { value: 'ZAR', label: '南非蘭特' },
+      { value: 'EGP', label: '埃及鎊' },
+    ],
+  },
+  {
+    label: '大洋洲',
+    value: 'Oceania',
+    options: [
+      { value: 'AUD', label: '澳幣' },
+      { value: 'NZD', label: '紐西蘭元' },
+      { value: 'FJD', label: '斐濟元' },
+    ],
+  },
+];
