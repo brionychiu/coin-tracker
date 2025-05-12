@@ -21,7 +21,7 @@ import {
   uploadBytes,
   where,
 } from '@/lib/firebase';
-import { convertToTimestamp } from '@/lib/utils';
+import { convertToTimestamp } from '@/lib/utils/date';
 import { AccountingRecord, AccountingRecordPayload } from '@/types/accounting';
 
 /**
