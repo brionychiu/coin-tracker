@@ -53,10 +53,10 @@ export async function addAccountingRecord(
     const docRef = await addDoc(collection(db, 'accounting-records'), {
       uid,
       date: data.date,
+      accountId: data.accountId,
       amount: data.amount,
       categoryId: data.categoryId,
       categoryType: data.categoryType,
-      accountId: data.accountId,
       note: data.note,
       images: imageUrls, // 存的是 URL 陣列
     });

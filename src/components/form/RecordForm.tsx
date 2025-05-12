@@ -53,13 +53,13 @@ interface RecordFormProps {
 
 const FormSchema = z.object({
   date: z.date({ required_error: '請選擇日期' }),
+  accountId: z.string().min(1, { message: '請選擇帳戶' }),
   amount: z
     .string()
     .min(1, { message: '請輸入金額' })
     .regex(/^[0-9]+$/, { message: '金額必須是正整數' })
     .refine((val) => parseInt(val, 10) > 0, { message: '金額必須大於 0' }),
   categoryId: z.string().min(1, { message: '請選擇類別' }),
-  accountId: z.string().min(1, { message: '請選擇帳戶' }),
   images: z.array(z.instanceof(File)).max(5).optional(),
   note: z.string().max(500).optional(),
 });
@@ -108,9 +108,9 @@ export default function RecordForm({
   const defaultValues = useMemo(
     () => ({
       date: record ? new Date(record.date) : date || new Date(),
+      accountId: record?.accountId || accounts[0]?.id || '',
       amount: record?.amount ?? '',
       categoryId: record?.categoryId ?? '',
-      accountId: record?.accountId || accounts[0]?.id || '',
       images: [],
       note: record?.note || '',
     }),
@@ -218,35 +218,17 @@ export default function RecordForm({
             {isEditMode ? '編輯' : '新增'}{' '}
             {form.watch('date')?.toLocaleDateString('zh-TW') ?? ''} 的記帳項目
           </h2>
-          <FormField
-            control={form.control}
-            name="date"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>日期：</FormLabel>
-                <FormControl>
-                  <DatePicker
-                    value={field.value}
-                    onChange={(date) => field.onChange(date)}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <div className="flex gap-4">
             <FormField
               control={form.control}
-              name="amount"
+              name="date"
               render={({ field }) => (
                 <FormItem className="w-1/2">
-                  <FormLabel>金額：</FormLabel>
+                  <FormLabel>日期：</FormLabel>
                   <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="請輸入數字"
-                      onKeyDown={handleNumericInput}
-                      {...field}
+                    <DatePicker
+                      value={field.value}
+                      onChange={(date) => field.onChange(date)}
                     />
                   </FormControl>
                   <FormMessage />
@@ -286,6 +268,26 @@ export default function RecordForm({
                         )}
                       </SelectContent>
                     </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex gap-4">
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <FormItem className="w-1/2">
+                  <FormLabel>金額：</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="請輸入數字"
+                      onKeyDown={handleNumericInput}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
