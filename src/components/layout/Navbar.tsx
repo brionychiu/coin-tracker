@@ -12,11 +12,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
-import icon from '@/assets/images/icon.png';
+import logo from '@/assets/images/logo.png';
 import AuthModal from '@/components/modal/Auth';
 import { Button } from '@/components/ui/button';
 import { DialogTitle } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useAuth } from '@/hooks/useAuth';
 
 const navItems = [
   {
@@ -43,6 +44,8 @@ const navItems = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { user, isAuthenticated } = useAuth();
+
   const [open, setOpen] = useState(false);
 
   const isActive = (url: string) => pathname === url;
@@ -88,7 +91,7 @@ export default function Navbar() {
             <div className="px-2">
               <Image
                 className="rounded-md"
-                src={icon}
+                src={logo}
                 alt="Logo Icon"
                 width={32}
                 height={40}
@@ -123,6 +126,11 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-3 md:gap-4">
+          {isAuthenticated && user && (
+            <span className="max-w-[120px] truncate text-base font-normal text-gray-03 md:max-w-[200px]">
+              {user.email}
+            </span>
+          )}
           <AuthModal />
         </div>
       </div>

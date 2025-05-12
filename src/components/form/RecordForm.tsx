@@ -10,6 +10,7 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
+import { getVisibleAccounts } from '@/app/api/accounts/route';
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
 import CategoryTabs from '@/components/tabs/CategoryTabs';
 import { Button } from '@/components/ui/button';
@@ -31,19 +32,16 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { accountOptions } from '@/lib/account';
+import { useAccountMap } from '@/hooks/useAccountMap';
+import { useAuth } from '@/hooks/useAuth';
+import { useCategoryMap } from '@/hooks/useCategoryMap';
 import {
   addAccountingRecord,
   updateAccountingRecord,
 } from '@/lib/api/accounting';
-import {
-  EXPENSE_CATEGORIES,
-  INCOME_CATEGORIES,
-  getCategoryInfo,
-  getCategoryLabel,
-} from '@/lib/categories';
 import { handleNumericInput } from '@/lib/inputValidators';
 import { useDateStore } from '@/stores/dateStore';
+import { Account } from '@/types/account';
 import { AccountingRecord } from '@/types/accounting';
 
 interface RecordFormProps {
@@ -53,15 +51,6 @@ interface RecordFormProps {
   onSave: (updatedRecord?: AccountingRecord) => void;
 }
 
-const accountEnumValues = accountOptions.map((option) => option.value) as [
-  string,
-  ...string[],
-];
-const categoryEnumValues = [
-  ...EXPENSE_CATEGORIES.map((c) => c.label),
-  ...INCOME_CATEGORIES.map((c) => c.label),
-] as [string, ...string[]];
-
 const FormSchema = z.object({
   date: z.date({ required_error: '請選擇日期' }),
   amount: z
@@ -69,10 +58,8 @@ const FormSchema = z.object({
     .min(1, { message: '請輸入金額' })
     .regex(/^[0-9]+$/, { message: '金額必須是正整數' })
     .refine((val) => parseInt(val, 10) > 0, { message: '金額必須大於 0' }),
-  category: z.enum(categoryEnumValues),
-  account: z.enum(accountEnumValues, {
-    errorMap: () => ({ message: '請選擇一個帳戶' }),
-  }),
+  categoryId: z.string().min(1, { message: '請選擇類別' }),
+  accountId: z.string().min(1, { message: '請選擇帳戶' }),
   images: z.array(z.instanceof(File)).max(5).optional(),
   note: z.string().max(500).optional(),
 });
@@ -84,20 +71,46 @@ export default function RecordForm({
   onSave,
 }: RecordFormProps) {
   const isEditMode = !!record;
+  const { uid } = useAuth();
   const { setDate } = useDateStore();
+  const { categoryMap, loading } = useCategoryMap();
+  const { accountMap, loading: accountMapLoading } = useAccountMap();
 
   const [imageList, setImageList] = useState<any[]>([]);
   const [oldImages, setOldImages] = useState<string[]>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [isDeletedAccount, setIsDeletedAccount] = useState(false);
+
+  const loadAccounts = async () => {
+    if (!uid) return;
+    const result = await getVisibleAccounts(uid);
+
+    if (Array.isArray(result)) {
+      // 如果 record?.accountId 不在 result 中，則表示該帳戶已被刪除
+      // 但仍然需要顯示在下拉選單中
+      const deleted =
+        !!record?.accountId &&
+        !result.some((acc) => acc.id === record?.accountId);
+
+      setIsDeletedAccount(deleted);
+      setAccounts(result);
+    } else {
+      console.error('getVisibleAccounts error:', result);
+    }
+  };
+
+  useEffect(() => {
+    if (!uid || accountMapLoading) return;
+    loadAccounts();
+  }, [uid, accountMapLoading]);
 
   const defaultValues = useMemo(
     () => ({
       date: record ? new Date(record.date) : date || new Date(),
       amount: record?.amount ?? '',
-      category: record
-        ? getCategoryLabel(record.category)
-        : (EXPENSE_CATEGORIES[0]?.label ?? ''),
-      account: record?.account || 'cash',
+      categoryId: record?.categoryId ?? '',
+      accountId: record?.accountId || accounts[0]?.id || '',
       images: [],
       note: record?.note || '',
     }),
@@ -125,14 +138,16 @@ export default function RecordForm({
       .map((img) => img.file) as File[];
 
     // 確保新照片加上舊照片不超過 5 張
-    if (files.length + oldImages.length > 5) {
+    if (changedList.length > 5) {
       toast.error('最多只能上傳 5 張圖片');
       return;
     }
 
     setNewImages(files);
     setImageList(changedList);
-    form.setValue('images', files);
+    form.setValue('images', [
+      ...imageList.filter((img) => !img.isOld).map((img) => img.file),
+    ]);
   };
 
   const handleImageRemove = (index: number) => {
@@ -155,37 +170,37 @@ export default function RecordForm({
   };
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    if (!uid) {
+      toast.error('請先登入');
+      return;
+    }
     try {
-      const selectedCategory = [
-        ...EXPENSE_CATEGORIES,
-        ...INCOME_CATEGORIES,
-      ].find((c) => c.label === data.category);
-      if (!selectedCategory) throw new Error('分類錯誤');
-
-      const { categoryType } = getCategoryInfo(selectedCategory.code);
-
       const recordData = {
         ...data,
-        category: selectedCategory.code,
-        categoryType,
+        categoryId: data.categoryId,
+        categoryType: categoryMap[data.categoryId].type,
         newImages,
         oldImages,
       };
 
       if (isEditMode) {
         if (!record?.id) throw new Error('缺少記錄 ID');
-        const updated = await updateAccountingRecord(record.id, recordData);
+        const updated = await updateAccountingRecord(
+          uid,
+          record.id,
+          recordData,
+        );
         toast.success('更新成功');
         onSave(updated);
         setDate(new Date(data.date));
       } else {
-        await addAccountingRecord(recordData);
+        await addAccountingRecord(uid, recordData);
         toast.success('新增成功');
         onSave();
         setDate(new Date(data.date));
       }
 
-      form.reset();
+      form.reset(defaultValues);
     } catch (error: any) {
       toast.error(`${isEditMode ? '更新' : '新增'}失敗：${error.message}`);
     }
@@ -193,7 +208,7 @@ export default function RecordForm({
 
   return (
     <>
-      {isSubmitting && <FullscreenLoading />}
+      {(isSubmitting || loading || accountMapLoading) && <FullscreenLoading />}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -240,7 +255,7 @@ export default function RecordForm({
             />
             <FormField
               control={form.control}
-              name="account"
+              name="accountId"
               render={({ field }) => (
                 <FormItem className="w-1/2">
                   <FormLabel>帳戶：</FormLabel>
@@ -253,11 +268,22 @@ export default function RecordForm({
                         <SelectValue placeholder="請選擇帳戶" />
                       </SelectTrigger>
                       <SelectContent>
-                        {accountOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
+                        {accounts.map((option) => (
+                          <SelectItem key={option.id} value={option.id}>
                             {option.label}
                           </SelectItem>
                         ))}
+                        {isDeletedAccount && record?.accountId && (
+                          <SelectItem value={record.accountId}>
+                            <span className="text-gray-02">
+                              {accountMap[record.accountId]?.label ||
+                                '已刪除帳戶'}
+                            </span>
+                            <span className="ml-2 text-sm text-gray-02">
+                              (已刪除)
+                            </span>
+                          </SelectItem>
+                        )}
                       </SelectContent>
                     </Select>
                   </FormControl>
@@ -268,12 +294,17 @@ export default function RecordForm({
           </div>
           <FormField
             control={form.control}
-            name="category"
+            name="categoryId"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>類別：</FormLabel>
                 <FormControl>
-                  <CategoryTabs value={field.value} onChange={field.onChange} />
+                  <CategoryTabs
+                    isEdit={false}
+                    value={field.value}
+                    onChange={field.onChange}
+                    categoryId={isEditMode ? record?.categoryId : undefined}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

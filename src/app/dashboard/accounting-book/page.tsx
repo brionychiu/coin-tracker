@@ -1,23 +1,19 @@
 'use client';
 
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { CustomCalendar } from '@/app/dashboard/accounting-book/CustomCalendar';
 import Records from '@/app/dashboard/accounting-book/Records';
-import RecordForm from '@/components/form/RecordForm';
 import { Button } from '@/components/ui/button';
 import { useAccountingRecords } from '@/hooks/useAccountingRecords';
 import { useDateStore } from '@/stores/dateStore';
-import { AccountingRecord } from '@/types/accounting';
 
 export default function AccountingBookPage() {
+  const router = useRouter();
   const { date, setDate } = useDateStore();
   const month = date ? date.getMonth() : new Date().getMonth();
-  const [isEditing, setIsEditing] = useState(false);
-  const [editRecord, setEditRecord] = useState<any | null>(null);
 
-  // TODO: 可以考慮是否將 Records.tsx 的 useAccountingRecords 部分也放在這裡
   const { records } = useAccountingRecords(date, month);
   const recordDates = records.map((record) => new Date(record.date));
 
@@ -25,58 +21,39 @@ export default function AccountingBookPage() {
     setDate(newDate);
   };
 
-  const handleEdit = (record: AccountingRecord) => {
-    setIsEditing(true);
-    setEditRecord(record);
-
-    if (record?.date) {
-      const recordDate = new Date(record.date);
-      setDate(recordDate);
-    }
+  const handleEdit = (recordId: string) => {
+    router.push(`/dashboard/accounting-book/form/${recordId}`);
   };
 
-  const handleCloseEdit = () => {
-    setIsEditing(false);
-    setEditRecord(null);
-    if (date) {
-      setDate(date);
-    }
+  const handleCreate = () => {
+    router.push('/dashboard/accounting-book/form/new');
   };
 
   return (
     <div className="mx-auto h-full w-full max-w-6xl bg-white">
       <div className="flex-row gap-6 md:flex">
-        {isEditing ? (
-          <div className="flex w-full items-center justify-center">
-            <RecordForm
-              date={editRecord?.date || date}
-              record={editRecord}
-              onCancel={handleCloseEdit}
-              onSave={handleCloseEdit}
-            />
-          </div>
-        ) : (
-          <>
-            <div className="flex flex-col items-center justify-self-center md:w-96 md:justify-self-start">
-              <CustomCalendar
-                mode="single"
-                selected={date}
-                onSelect={(newDate) => newDate && setDate(newDate)}
-                month={new Date(new Date().getFullYear(), month)}
-                onMonthChange={handleMonthChange}
-                recordDates={recordDates}
-                className="md:p-4"
-              />
-              <Button onClick={() => setIsEditing(true)} className="my-5">
-                <Plus />
-                新增記帳
-              </Button>
-            </div>
-            <div className="md:flex-1">
-              <Records date={date} month={month} onEdit={handleEdit} />
-            </div>
-          </>
-        )}
+        <div className="flex flex-col items-center justify-self-center md:w-96 md:justify-self-start">
+          <CustomCalendar
+            mode="single"
+            selected={date}
+            onSelect={(newDate) => newDate && setDate(newDate)}
+            month={new Date(new Date().getFullYear(), month)}
+            onMonthChange={handleMonthChange}
+            recordDates={recordDates}
+            className="md:p-4"
+          />
+          <Button onClick={handleCreate} className="my-5">
+            <Plus />
+            新增記帳
+          </Button>
+        </div>
+        <div className="md:flex-1">
+          <Records
+            date={date}
+            month={month}
+            onEdit={(record) => handleEdit(record.id)}
+          />
+        </div>
       </div>
     </div>
   );

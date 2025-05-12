@@ -17,6 +17,7 @@ export function useAuth() {
 
   return {
     user,
+    uid: user?.uid ?? null,
     isLoading,
     isAuthenticated: !!user,
     logout,

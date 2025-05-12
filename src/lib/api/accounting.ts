@@ -1,4 +1,3 @@
-import { auth } from '@/lib/firebase';
 import { endOfMonth, startOfMonth } from 'date-fns';
 
 import {
@@ -7,6 +6,7 @@ import {
   db,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   getDownloadURL,
   limit,
@@ -27,10 +27,9 @@ import { AccountingRecord, AccountingRecordPayload } from '@/types/accounting';
 /**
  * 上傳單張圖片到 Firebase Storage
  */
-async function uploadImage(file: File): Promise<string> {
-  const uid = auth.currentUser?.uid;
+async function uploadImage(uid: string, file: File): Promise<string> {
   if (!uid) throw new Error('未登入，無法上傳圖片');
-  
+
   const storageRef = ref(storage, `receipts/${uid}/${file.name}-${Date.now()}`);
   await uploadBytes(storageRef, file);
   return await getDownloadURL(storageRef);
@@ -39,21 +38,25 @@ async function uploadImage(file: File): Promise<string> {
 /**
  * 新增一筆記帳紀錄到 Firestore
  */
-export async function addAccountingRecord(data: AccountingRecordPayload) {
-  const uid = auth.currentUser?.uid;
+export async function addAccountingRecord(
+  uid: string,
+  data: AccountingRecordPayload,
+) {
   if (!uid) throw new Error('未登入');
 
   try {
     // 上傳所有圖片並獲取下載 URL
-    const imageUrls = data.newImages ? await Promise.all(data.newImages.map(uploadImage)) : [];
+    const imageUrls = data.newImages
+      ? await Promise.all(data.newImages.map((file) => uploadImage(uid, file)))
+      : [];
 
     const docRef = await addDoc(collection(db, 'accounting-records'), {
       uid,
       date: data.date,
       amount: data.amount,
-      category: data.category,
+      categoryId: data.categoryId,
       categoryType: data.categoryType,
-      account: data.account,
+      accountId: data.accountId,
       note: data.note,
       images: imageUrls, // 存的是 URL 陣列
     });
@@ -69,15 +72,19 @@ export async function addAccountingRecord(data: AccountingRecordPayload) {
 /**
  * 更新一筆記帳紀錄到 Firestore
  */
-export async function updateAccountingRecord(id: string, data: AccountingRecordPayload) {
+export async function updateAccountingRecord(
+  uid: string,
+  id: string,
+  data: AccountingRecordPayload,
+) {
   try {
     const recordRef = doc(db, 'accounting-records', id);
-    
+
     let imageUrls: string[] = [];
 
     if (data.newImages) {
       const newImageUrls = await Promise.all(
-        data.newImages.map((image) => uploadImage(image))
+        data.newImages.map((image) => uploadImage(uid, image)),
       );
       imageUrls = [...newImageUrls];
     }
@@ -97,8 +104,7 @@ export async function updateAccountingRecord(id: string, data: AccountingRecordP
       id,
       ...cleanData,
       images: imageUrls,
-    }; 
-
+    };
   } catch (error) {
     console.error('更新失敗:', error);
     throw error;
@@ -126,27 +132,23 @@ export async function deleteAccountingRecord(id: string) {
  * 監聽指定月份的 Firestore 記帳紀錄
  */
 export function getAccountingRecords(
+  uid: string,
   month: number,
-  callback: (data: AccountingRecord[]) => void
+  callback: (data: AccountingRecord[]) => void,
 ) {
-  const uid = auth.currentUser?.uid;
   if (!uid) return () => {};
 
   const now = new Date();
   const startOfMonthDate = new Date(now.getFullYear(), month, 1);
-  const startTimestamp = Timestamp.fromDate(
-    startOfMonth(startOfMonthDate)
-  );
-  const endTimestamp = Timestamp.fromDate(
-    endOfMonth(startOfMonthDate)
-  );
+  const startTimestamp = Timestamp.fromDate(startOfMonth(startOfMonthDate));
+  const endTimestamp = Timestamp.fromDate(endOfMonth(startOfMonthDate));
 
   const q = query(
     collection(db, 'accounting-records'),
     where('uid', '==', uid),
     where('date', '>=', startTimestamp),
     where('date', '<=', endTimestamp),
-    orderBy('date') 
+    orderBy('date'),
   );
 
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -166,11 +168,11 @@ export function getAccountingRecords(
  * 監聽日期區間的 Firestore 記帳紀錄
  */
 export function getAccountingRecordsByRange(
+  uid: string,
   startDate: Date,
   endDate: Date,
-  callback: (data: AccountingRecord[]) => void
+  callback: (data: AccountingRecord[]) => void,
 ) {
-  const uid = auth.currentUser?.uid;
   if (!uid) return () => {};
 
   const startTimestamp = Timestamp.fromDate(startDate);
@@ -180,7 +182,7 @@ export function getAccountingRecordsByRange(
     collection(db, 'accounting-records'),
     where('uid', '==', uid),
     where('date', '>=', startTimestamp),
-    where('date', '<=', endTimestamp)
+    where('date', '<=', endTimestamp),
   );
 
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -196,8 +198,11 @@ export function getAccountingRecordsByRange(
   return unsubscribe;
 }
 
-export async function getRecordsBatch(lastDate: Date | null, batchSize: number): Promise<AccountingRecord[]> {
-  const uid = auth.currentUser?.uid;
+export async function getRecordsBatch(
+  uid: string,
+  lastDate: Date | null,
+  batchSize: number,
+): Promise<AccountingRecord[]> {
   if (!uid) return [];
 
   const recordsRef = collection(db, 'accounting-records');
@@ -206,7 +211,7 @@ export async function getRecordsBatch(lastDate: Date | null, batchSize: number):
     recordsRef,
     where('uid', '==', uid),
     orderBy('date', 'desc'), // 降冪排序，最新的記錄排前面
-    limit(batchSize) 
+    limit(batchSize),
   );
 
   if (lastDate) {
@@ -226,5 +231,35 @@ export async function getRecordsBatch(lastDate: Date | null, batchSize: number):
   } catch (error) {
     console.error('載入記帳資料失敗:', error);
     return [];
+  }
+}
+
+/**
+ * 根據 ID 取得單筆記帳紀錄
+ */
+export async function getAccountingRecordById(
+  uid: string,
+  id: string,
+): Promise<AccountingRecord | null> {
+  if (!uid) return null;
+
+  try {
+    const recordRef = doc(db, 'accounting-records', id);
+    const recordSnap = await getDoc(recordRef);
+
+    if (!recordSnap.exists()) return null;
+
+    const data = recordSnap.data();
+
+    if (data.uid !== uid) return null;
+
+    return {
+      id: recordSnap.id,
+      ...data,
+      date: data.date.toDate(), // Timestamp 轉 Date
+    } as AccountingRecord;
+  } catch (error) {
+    console.error('取得單筆記帳資料失敗:', error);
+    return null;
   }
 }

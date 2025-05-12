@@ -1,22 +1,26 @@
 import { initializeApp } from 'firebase/app';
 import type { User } from 'firebase/auth';
-import {
-  getAuth,
-  onAuthStateChanged,
-} from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import {
   addDoc,
+  arrayUnion,
   collection,
-  deleteDoc, doc,
+  deleteDoc,
+  doc,
+  getDoc,
   getDocs,
-  getFirestore, limit,
+  getFirestore,
+  limit,
   onSnapshot,
-  orderBy, query, startAfter,
+  or,
+  orderBy,
+  query,
+  startAfter,
   Timestamp,
   updateDoc,
   where,
-} from "firebase/firestore";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+} from 'firebase/firestore';
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -35,5 +39,30 @@ const auth = getAuth(app);
 const subscribeToAuthChanges = (callback: (user: User | null) => void) =>
   onAuthStateChanged(auth, callback);
 
-export { addDoc, auth, collection, db, deleteDoc, doc, getDocs, getDownloadURL, limit, onAuthStateChanged, onSnapshot, orderBy, query, ref, startAfter, storage, subscribeToAuthChanges, Timestamp, updateDoc, uploadBytes, User, where };
-
+export {
+  addDoc,
+  arrayUnion,
+  auth,
+  collection,
+  db,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  getDownloadURL,
+  limit,
+  onAuthStateChanged,
+  onSnapshot,
+  or,
+  orderBy,
+  query,
+  ref,
+  startAfter,
+  storage,
+  subscribeToAuthChanges,
+  Timestamp,
+  updateDoc,
+  uploadBytes,
+  User,
+  where,
+};
