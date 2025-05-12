@@ -12,6 +12,7 @@ import { z } from 'zod';
 
 import { getVisibleAccounts } from '@/app/api/accounts/route';
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
+import { CurrencySelect } from '@/components/select/CurrencySelect';
 import CategoryTabs from '@/components/tabs/CategoryTabs';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
@@ -59,6 +60,7 @@ const FormSchema = z.object({
     .min(1, { message: '請輸入金額' })
     .regex(/^[0-9]+$/, { message: '金額必須是正整數' })
     .refine((val) => parseInt(val, 10) > 0, { message: '金額必須大於 0' }),
+  currency: z.string().min(1, { message: '請選擇幣別' }),
   categoryId: z.string().min(1, { message: '請選擇類別' }),
   images: z.array(z.instanceof(File)).max(5).optional(),
   note: z.string().max(500).optional(),
@@ -110,6 +112,7 @@ export default function RecordForm({
       date: record ? new Date(record.date) : date || new Date(),
       accountId: record?.accountId || accounts[0]?.id || '',
       amount: record?.amount ?? '',
+      currency: record?.currency || 'Common-TWD',
       categoryId: record?.categoryId ?? '',
       images: [],
       note: record?.note || '',
@@ -287,6 +290,22 @@ export default function RecordForm({
                       placeholder="請輸入數字"
                       onKeyDown={handleNumericInput}
                       {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="currency"
+              render={({ field }) => (
+                <FormItem className="w-1/2">
+                  <FormLabel>貨幣：</FormLabel>
+                  <FormControl>
+                    <CurrencySelect
+                      value={field.value}
+                      onChange={field.onChange}
                     />
                   </FormControl>
                   <FormMessage />
