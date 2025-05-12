@@ -1,7 +1,7 @@
 import { Category } from '@/types/category';
 import { LayoutGrid } from 'lucide-react';
 import React from 'react';
-import { iconMap } from './constants/iconMap';
+import { iconMap } from '../constants/iconMap';
 
 export const getCategoryLabelById = (
   categoryId: string,

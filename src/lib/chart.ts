@@ -1,6 +1,6 @@
 import { useCategoryMap } from '@/hooks/useCategoryMap';
-import { getCategoryLabelById } from '@/lib/categories';
 import { graphBgColors } from '@/lib/constants/chartColors';
+import { getCategoryLabelById } from '@/lib/utils/categories';
 import { AccountingRecord } from '@/types/accounting';
 
 // Pie chart, Bar chart
