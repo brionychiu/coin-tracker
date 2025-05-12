@@ -6,7 +6,7 @@ import { TbEyeFilled } from 'react-icons/tb';
 
 import { Button } from '@/components/ui/button';
 import { Input, type InputProps } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/tailwindUtils';
 
 const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...props }, ref) => {
@@ -31,9 +31,9 @@ const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
           disabled={disabled}
         >
           {showPassword && !disabled ? (
-            <TbEyeFilled className="text-gray-03 h-4 w-4" aria-hidden="true" />
+            <TbEyeFilled className="h-4 w-4 text-gray-03" aria-hidden="true" />
           ) : (
-            <EyeOffIcon className="text-gray-03 h-4 w-4" aria-hidden="true" />
+            <EyeOffIcon className="h-4 w-4 text-gray-03" aria-hidden="true" />
           )}
           <span className="sr-only">
             {showPassword ? 'Hide password' : 'Show password'}

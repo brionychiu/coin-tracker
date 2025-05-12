@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useConfirm } from '@/hooks/useConfirmModal';
 import { deleteAccount } from '@/lib/api/account';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/tailwindUtils';
 import { Account } from '@/types/account';
 
 export default function AccountManager() {
