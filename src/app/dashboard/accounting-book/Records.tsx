@@ -14,6 +14,7 @@ import {
   getCategoryIconById,
   getCategoryLabelById,
 } from '@/lib/utils/categories';
+import { getCurrencyLabel } from '@/lib/utils/input';
 import { AccountingRecord } from '@/types/accounting';
 
 interface RecordsProps {
@@ -124,10 +125,15 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                         <div>
                           <dt className="sr-only">金額</dt>
                           <dd className="text-lg font-semibold">
-                            {record.amount}
+                            <span className="text-lg font-bold">
+                              {record.amount}
+                            </span>
+                            <span className="ml-1 break-keep text-sm font-bold">
+                              {getCurrencyLabel(record.currency)}
+                            </span>
                           </dd>
                           <dt className="sr-only">帳戶</dt>
-                          <dd className="text-muted-foreground">
+                          <dd className="break-keep text-muted-foreground">
                             {getAccountLabelById(record.accountId, accountMap)}
                           </dd>
                         </div>
