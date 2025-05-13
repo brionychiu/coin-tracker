@@ -25,3 +25,7 @@ export const formatChartTimeKey = (
     ? format(formattedDate, 'MMM')
     : format(formattedDate, 'yyyy-MM-dd');
 };
+
+export function formatYearMonthString(date = new Date()) {
+  return format(date, 'yyyy-MM');
+}
