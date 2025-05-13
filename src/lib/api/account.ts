@@ -17,17 +17,17 @@ import { Account } from '@/types/account';
 const ACCOUNTS_CATEGORIES = [
   {
     label: '現金',
-    createTime: '2020-10-10T00:00:00',
+    createAt: '2020-10-10T00:00:00',
     createdBy: 'system',
   },
   {
     label: '銀行',
-    createTime: '2020-10-10T00:01:00',
+    createAt: '2020-10-10T00:01:00',
     createdBy: 'system',
   },
   {
     label: '信用卡',
-    createTime: '2020-10-10T00:02:00',
+    createAt: '2020-10-10T00:02:00',
     createdBy: 'system',
   },
 ];
@@ -59,7 +59,7 @@ export const addAccount = async ({
   try {
     const docRef = await addDoc(collection(db, 'accounts'), {
       label: label.trim(),
-      createTime: new Date().toISOString(),
+      createAt: new Date().toISOString(),
       createdBy: uid,
     });
 
