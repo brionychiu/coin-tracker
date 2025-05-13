@@ -105,7 +105,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div className="hidden gap-4 md:flex">
+        <div className="hidden sm:gap-1 md:flex lg:gap-4">
           {navItems.map((item) => {
             const ActiveIcon = item.icon;
             return (
