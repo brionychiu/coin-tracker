@@ -56,6 +56,8 @@ export async function addAccountingRecord(
       date: data.date,
       accountId: data.accountId,
       amount: data.amount,
+      currency: data.currency,
+      exchangeRate: data.exchangeRate,
       categoryId: data.categoryId,
       categoryType: data.categoryType,
       note: data.note,
