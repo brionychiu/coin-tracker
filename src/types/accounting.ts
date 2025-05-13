@@ -6,6 +6,7 @@ export interface AccountingRecord {
   accountId: string;
   amount: string;
   currency: string;
+  exchangeRate: number;
   categoryId: string;
   categoryType: 'expense' | 'income';
   note?: string;
@@ -19,6 +20,7 @@ export interface AccountingRecordPayload {
   accountId: string;
   amount: string;
   currency: string;
+  exchangeRate: number;
   categoryId: string;
   categoryType: 'expense' | 'income';
   note?: string;
