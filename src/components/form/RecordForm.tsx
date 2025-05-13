@@ -34,7 +34,7 @@ import {
   addAccountingRecord,
   updateAccountingRecord,
 } from '@/lib/api/accounting';
-import { handleNumericInput } from '@/lib/utils/inputValidators';
+import { handleNumericInput } from '@/lib/utils/input';
 import { useDateStore } from '@/stores/dateStore';
 import { Account } from '@/types/account';
 import { AccountingRecord } from '@/types/accounting';
