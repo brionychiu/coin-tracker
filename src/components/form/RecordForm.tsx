@@ -95,7 +95,7 @@ export default function RecordForm({
 
   const defaultValues = useMemo(
     () => ({
-      createTime: new Date().toISOString(),
+      createAt: new Date().toISOString(),
       date: record ? new Date(record.date) : date || new Date(),
       accountId: record?.accountId || accounts[0]?.id || '',
       amount: record?.amount ?? '',
@@ -167,7 +167,7 @@ export default function RecordForm({
     try {
       const recordData = {
         ...data,
-        createTime: new Date().toISOString(),
+        createAt: new Date().toISOString(),
         categoryId: data.categoryId,
         categoryType: categoryMap[data.categoryId].type,
         newImages,

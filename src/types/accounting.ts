@@ -1,7 +1,7 @@
 // Firestore 存的記帳紀錄（Firestore 內的格式）
 export interface AccountingRecord {
   id: string;
-  createTime: string;
+  createAt: string;
   date: Date;
   accountId: string;
   amount: string;
@@ -14,7 +14,7 @@ export interface AccountingRecord {
 
 // 新增/編輯時使用的型別（含 File 陣列）
 export interface AccountingRecordPayload {
-  createTime: string;
+  createAt: string;
   date: Date;
   accountId: string;
   amount: string;
