@@ -68,75 +68,66 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                     key={record.id}
                     className="group rounded-2xl border p-4 shadow-sm transition-shadow duration-200 hover:shadow-md"
                   >
-                    <div className="flex justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="relative flex h-8 w-8 items-center justify-center">
-                          <span
-                            className={`absolute h-5 w-5 rounded-full opacity-80 ${
-                              record.categoryType === 'income'
-                                ? 'bg-green-01'
-                                : 'bg-red-04'
-                            }`}
-                          />
-                          <div className="relative z-10 text-2xl">
-                            {getCategoryIconById(
-                              record.categoryId,
-                              categoryMap,
-                            )}
-                          </div>
+                    <div className="flex items-center gap-4">
+                      <div className="relative flex h-8 w-8 flex-none items-center justify-center">
+                        <span
+                          className={`absolute h-5 w-5 rounded-full opacity-80 ${
+                            record.categoryType === 'income'
+                              ? 'bg-green-01'
+                              : 'bg-red-04'
+                          }`}
+                        />
+                        <div className="relative z-10 text-2xl">
+                          {getCategoryIconById(record.categoryId, categoryMap)}
                         </div>
-                        <div className="space-y-2">
+                      </div>
+                      <div className="grow space-y-2">
+                        <div className="flex justify-between">
                           <p className="font-medium">
                             {getCategoryLabelById(
                               record.categoryId,
                               categoryMap,
                             )}
                           </p>
-                          {record.note && (
-                            <p className="text-sm text-muted-foreground">
-                              {record.note}
-                            </p>
-                          )}
-                          <PhotoProvider>
-                            {record.images?.length > 0 && (
-                              <figure className="flex flex-wrap gap-4">
-                                {record.images.map((url, index) => (
-                                  <div key={index} className="relative">
-                                    <PhotoView src={url}>
-                                      <div className="relative h-10 w-10 cursor-pointer overflow-hidden rounded sm:h-16 sm:w-16">
-                                        <img
-                                          src={url}
-                                          alt={`收據照片 ${index + 1}`}
-                                          className="object-cover transition-transform duration-200 hover:scale-105"
-                                        />
-                                        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 hover:opacity-100">
-                                          <Search className="h-6 w-6 text-white" />
-                                        </div>
-                                      </div>
-                                    </PhotoView>
-                                  </div>
-                                ))}
-                              </figure>
-                            )}
-                          </PhotoProvider>
-                        </div>
-                      </div>
-                      <dl className="flex flex-col justify-between text-right text-sm">
-                        <div>
-                          <dt className="sr-only">金額</dt>
-                          <dd className="text-lg font-semibold">
+                          <p className="text-lg font-semibold">
                             <span className="text-lg font-bold">
                               {record.amount}
                             </span>
                             <span className="ml-1 break-keep text-sm font-bold">
                               {getCurrencyLabel(record.currency)}
                             </span>
-                          </dd>
-                          <dt className="sr-only">帳戶</dt>
-                          <dd className="break-keep text-muted-foreground">
-                            {getAccountLabelById(record.accountId, accountMap)}
-                          </dd>
+                          </p>
                         </div>
+                        <p className="break-keep text-muted-foreground">
+                          {getAccountLabelById(record.accountId, accountMap)}
+                        </p>
+                        {record.note && (
+                          <p className="text-sm text-muted-foreground">
+                            備註：{record.note}
+                          </p>
+                        )}
+                        <PhotoProvider>
+                          {record.images?.length > 0 && (
+                            <figure className="flex flex-wrap gap-4">
+                              {record.images.map((url, index) => (
+                                <div key={index} className="relative">
+                                  <PhotoView src={url}>
+                                    <div className="relative h-10 w-10 cursor-pointer overflow-hidden rounded sm:h-16 sm:w-16">
+                                      <img
+                                        src={url}
+                                        alt={`收據照片 ${index + 1}`}
+                                        className="object-cover transition-transform duration-200 hover:scale-105"
+                                      />
+                                      <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 hover:opacity-100">
+                                        <Search className="h-6 w-6 text-white" />
+                                      </div>
+                                    </div>
+                                  </PhotoView>
+                                </div>
+                              ))}
+                            </figure>
+                          )}
+                        </PhotoProvider>
                         <div className="mt-2 flex justify-end gap-2">
                           <Button
                             type="button"
@@ -155,7 +146,7 @@ export default function Records({ date, month, onEdit }: RecordsProps) {
                             <Trash2 className="size-4" />
                           </Button>
                         </div>
-                      </dl>
+                      </div>
                     </div>
                   </li>
                 ))}
