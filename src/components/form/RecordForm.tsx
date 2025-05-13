@@ -3,8 +3,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleX, Search } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { toast } from 'sonner';
@@ -30,6 +30,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAccountMap } from '@/hooks/useAccountMap';
 import { useAuth } from '@/hooks/useAuth';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
+import { useExchangeRate } from '@/hooks/useExchangeRate';
 import {
   addAccountingRecord,
   updateAccountingRecord,
@@ -76,6 +77,7 @@ export default function RecordForm({
   const [oldImages, setOldImages] = useState<string[]>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [exchangeRate, setExchangeRate] = useState<number>(1);
 
   const loadAccounts = async () => {
     if (!uid) return;
@@ -114,6 +116,21 @@ export default function RecordForm({
   });
 
   const { isSubmitting } = form.formState;
+
+  const originalCurrency = useRef(form.getValues('currency'));
+  const formCurrency = useWatch({
+    control: form.control,
+    name: 'currency',
+  });
+  const formDate = useWatch({
+    control: form.control,
+    name: 'date',
+  });
+
+  useExchangeRate(formDate, formCurrency, (rate) => {
+    if (isEditMode && originalCurrency.current === formCurrency) return;
+    setExchangeRate(rate);
+  });
 
   useEffect(() => {
     if (isEditMode && record?.images) {
@@ -168,6 +185,7 @@ export default function RecordForm({
       const recordData = {
         ...data,
         createAt: new Date().toISOString(),
+        exchangeRate: exchangeRate,
         categoryId: data.categoryId,
         categoryType: categoryMap[data.categoryId].type,
         newImages,
