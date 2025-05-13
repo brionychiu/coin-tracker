@@ -81,7 +81,6 @@ export default function CategoryTabs({
   const loadCategories = async () => {
     if (!uid) return;
     const result = await getVisibleCategories(uid);
-
     if (Array.isArray(result)) {
       setCategories(result);
 
@@ -90,11 +89,18 @@ export default function CategoryTabs({
 
       setIsDeletedCategory(deleted);
 
-      if (result.length > 0 && !value) {
+      if (categoryId) {
+        const tabType = categoryMap[categoryId]?.type;
+        if (tabType === 'income' || tabType === 'expense') {
+          setActiveTab(tabType);
+        }
+      } else if (result.length > 0 && !value) {
         const expenseCategories = result.filter(
           (cat) => cat.type === 'expense',
         );
-        onChange?.(expenseCategories[0].id);
+        if (expenseCategories.length > 0) {
+          onChange?.(expenseCategories[0].id);
+        }
       }
     } else {
       console.error('無法取得類別', result);
@@ -178,7 +184,7 @@ export default function CategoryTabs({
                       label={label}
                       icon={Icon}
                       isSelected={value === categoryId}
-                      activeTab={tab}
+                      activeTab={activeTab}
                       onClick={() => onChange?.(categoryId)}
                       isDeleted={true}
                     />
