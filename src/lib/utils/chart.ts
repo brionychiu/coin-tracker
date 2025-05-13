@@ -14,9 +14,11 @@ export function getCategoryChartData(
 
   const amountByCategoryId: Record<string, number> = {};
   for (const record of filtered) {
-    const amount = parseFloat(record.amount);
+    const amountInTWD = parseFloat(
+      (parseFloat(record.amount) / (record.exchangeRate ?? 1)).toFixed(),
+    );
     amountByCategoryId[record.categoryId] =
-      (amountByCategoryId[record.categoryId] || 0) + amount;
+      (amountByCategoryId[record.categoryId] || 0) + amountInTWD;
   }
 
   // 排序：金額高的排在前面
