@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   title: '快樂記帳',
   description: '輕鬆掌握生活收支',
   icons: {
-    icon: '/icon.png',
+    icon: '/logo.png',
   },
 };
 
