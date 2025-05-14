@@ -56,7 +56,10 @@ export const PieChartBase = ({
   return (
     <div className="rounded-md border p-4 shadow">
       <h2 className="text-lg font-semibold">{title}</h2>
-      <h3 className="mb-1 text-lg font-normal text-gray-02">${total}</h3>
+      <h3 className="mb-1 font-normal text-gray-02">
+        <span className="text-sm">NT$</span>
+        <span className="text-lg">{total}</span>
+      </h3>
       <Pie data={chartData} options={options} />
       <div className="mt-4">
         <ul>
@@ -69,9 +72,10 @@ export const PieChartBase = ({
                 ></span>
                 <span>{label}</span>
               </div>
-              <p className="flex items-center gap-3">
-                <span>{percentages[index]}%</span>
-                <span className="text-gray-02">${data[index]}</span>
+              <p className="flex items-center">
+                <span className="mr-2">{percentages[index]}%</span>
+                <span className="text-sm text-gray-02">NT$</span>
+                <span className="text-gray-02">{data[index]}</span>
               </p>
             </li>
           ))}
