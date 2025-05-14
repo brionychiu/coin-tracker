@@ -127,7 +127,7 @@ export default function Navbar() {
 
         <div className="flex items-center gap-3 md:gap-4">
           {isAuthenticated && user && (
-            <span className="max-w-[120px] truncate text-base font-normal text-gray-03 md:max-w-[200px]">
+            <span className="hidden max-w-[120px] truncate text-base font-normal text-gray-03 mobile:block md:max-w-[200px]">
               {user.email}
             </span>
           )}
