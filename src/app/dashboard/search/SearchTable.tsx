@@ -89,7 +89,7 @@ export default function SearchTable({
           <Input
             type="text"
             placeholder="按備註搜尋"
-            className="pl-10"
+            className="pl-10 text-sm"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
           />
