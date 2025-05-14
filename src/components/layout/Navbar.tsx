@@ -90,11 +90,11 @@ export default function Navbar() {
           <Link href="/" className="flex items-center">
             <div className="px-2">
               <Image
-                className="rounded-md"
+                className="h-10 w-10 rounded-md md:h-12 md:w-12"
                 src={logo}
                 alt="Logo Icon"
-                width={32}
-                height={40}
+                width={50}
+                height={50}
                 priority
               />
             </div>
