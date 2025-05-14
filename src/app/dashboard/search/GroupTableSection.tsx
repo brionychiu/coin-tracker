@@ -10,6 +10,7 @@ import {
   getCategoryLabelById,
 } from '@/lib/utils/categories';
 import { formatToShortDay } from '@/lib/utils/format';
+import { getCurrencyLabel } from '@/lib/utils/input';
 import { Account } from '@/types/account';
 import { AccountingRecord } from '@/types/accounting';
 import { Category } from '@/types/category';
@@ -41,7 +42,7 @@ export const GroupTableSection = ({
       <TableBody>
         {groupItems.map((record) => (
           <TableRow key={record.id} className="hover:bg-system-02">
-            <TableCell className="w-1/6">
+            <TableCell className="w-[12.5%]">
               <div className="flex items-center">
                 <div className="relative flex h-8 w-8 items-center justify-center">
                   <span
@@ -60,18 +61,23 @@ export const GroupTableSection = ({
                 </span>
               </div>
             </TableCell>
-            <TableCell className="w-1/6">
+            <TableCell className="w-[12.5%]">
               {formatToShortDay(record.date)}
             </TableCell>
-            <TableCell className="w-1/3 truncate">
+            <TableCell className="w-[37.5%] truncate">
               {record.note ? highlightText(record.note, debouncedKeyword) : '-'}
             </TableCell>
-            <TableCell className="w-1/6 text-right">
+            <TableCell className="w-[12.5%] text-right">
               {getAccountLabelById(record.accountId, accountMap)}
             </TableCell>
-            <TableCell className="w-1/6 font-semibold">
+            <TableCell className="w-[25%] font-semibold">
               <div className="flex justify-between">
-                <span>{record.amount}</span>
+                <p className="break-keep">
+                  <span>{record.amount}</span>
+                  <span className="ml-1 text-xs">
+                    {getCurrencyLabel(record.currency)}
+                  </span>
+                </p>
                 <div className="mt-1 flex gap-2">
                   {record.images.length > 0 && (
                     <PhotoProvider>

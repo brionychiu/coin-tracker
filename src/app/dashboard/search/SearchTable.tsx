@@ -101,11 +101,11 @@ export default function SearchTable({
           <Table className="w-full table-fixed">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-1/6">類別</TableHead>
-                <TableHead className="w-1/6">日期</TableHead>
-                <TableHead className="w-1/3">備註</TableHead>
-                <TableHead className="w-1/6 text-right">帳戶</TableHead>
-                <TableHead className="w-1/6">金額</TableHead>
+                <TableHead className="w-[12.5%]">類別</TableHead>
+                <TableHead className="w-[12.5%]">日期</TableHead>
+                <TableHead className="w-[37.5%]">備註</TableHead>
+                <TableHead className="w-[12.5%] text-right">帳戶</TableHead>
+                <TableHead className="w-[25%]">金額</TableHead>
               </TableRow>
             </TableHeader>
           </Table>
