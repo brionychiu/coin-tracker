@@ -7,6 +7,7 @@ import { useRef } from 'react';
 import InvestingPanaImage from '@/assets/images/investing-pana.png';
 import InvoiceCuateImage from '@/assets/images/invoice-cuate.png';
 import SavingImage from '@/assets/images/saving-money.png';
+import savingsCuateImage from '@/assets/images/savings-cuate.png';
 import {
   Carousel,
   CarouselContent,
@@ -35,6 +36,14 @@ export const HomeHero = () => {
                 <Image
                   src={InvestingPanaImage}
                   alt="Investing image"
+                  className="rounded-lg object-contain"
+                  priority
+                />
+              </CarouselItem>
+              <CarouselItem>
+                <Image
+                  src={savingsCuateImage}
+                  alt="Savings image"
                   className="rounded-lg object-contain"
                   priority
                 />
