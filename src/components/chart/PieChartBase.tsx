@@ -58,7 +58,7 @@ export const PieChartBase = ({
       <h2 className="text-lg font-semibold">{title}</h2>
       <h3 className="mb-1 font-normal text-gray-02">
         <span className="text-sm">NT$</span>
-        <span className="text-lg">{total}</span>
+        <span className="text-lg">{total.toLocaleString()}</span>
       </h3>
       <Pie data={chartData} options={options} />
       <div className="mt-4">
@@ -75,7 +75,9 @@ export const PieChartBase = ({
               <p className="flex items-center">
                 <span className="mr-2">{percentages[index]}%</span>
                 <span className="text-sm text-gray-02">NT$</span>
-                <span className="text-gray-02">{data[index]}</span>
+                <span className="text-gray-02">
+                  {data[index].toLocaleString()}
+                </span>
               </p>
             </li>
           ))}
