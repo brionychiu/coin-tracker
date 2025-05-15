@@ -50,7 +50,7 @@ export default {
           '02': '#7FCFEA',
         },
         red: {
-          '01':'#FFF3F2',
+          '01': '#FFF3F2',
           '02': '#FFE0DF',
           '03': '#FFC7C5',
           '04': '#ffb5c3',
