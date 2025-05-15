@@ -5,10 +5,10 @@ import Image from 'next/image';
 import { useRef } from 'react';
 
 import coinsAmicoImage from '@/assets/images/coins-amico.png';
-import InvestingPanaImage from '@/assets/images/investing-pana.png';
-import InvoiceCuateImage from '@/assets/images/invoice-cuate.png';
-import SavingImage from '@/assets/images/saving-money.png';
-import savingsCuateImage from '@/assets/images/savings-cuate.png';
+import investingPanaImage from '@/assets/images/investing-pana.png';
+import invoiceCuateImage from '@/assets/images/invoice-cuate.png';
+import revenueBroImage from '@/assets/images/revenue-bro.png';
+import savingMoneyImage from '@/assets/images/saving-money.png';
 import {
   Carousel,
   CarouselContent,
@@ -26,7 +26,7 @@ export const HomeHero = () => {
             <CarouselContent>
               <CarouselItem>
                 <Image
-                  src={SavingImage}
+                  src={savingMoneyImage}
                   alt="Saving money image"
                   className="rounded-lg object-contain"
                   priority
@@ -34,7 +34,7 @@ export const HomeHero = () => {
               </CarouselItem>
               <CarouselItem>
                 <Image
-                  src={InvestingPanaImage}
+                  src={investingPanaImage}
                   alt="Investing image"
                   className="rounded-lg object-contain"
                   priority
@@ -50,7 +50,7 @@ export const HomeHero = () => {
               </CarouselItem>
               <CarouselItem>
                 <Image
-                  src={savingsCuateImage}
+                  src={revenueBroImage}
                   alt="Savings image"
                   className="rounded-lg object-contain"
                   priority
@@ -58,7 +58,7 @@ export const HomeHero = () => {
               </CarouselItem>
               <CarouselItem>
                 <Image
-                  src={InvoiceCuateImage}
+                  src={invoiceCuateImage}
                   alt="Invoice image"
                   className="rounded-lg object-contain"
                   priority
