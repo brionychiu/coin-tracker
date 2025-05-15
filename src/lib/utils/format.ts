@@ -16,9 +16,16 @@ export const formatToShortDay = (date: string | Date) => {
  * - 月視圖：yyyy-MM-dd
  * - 年視圖：MMM
  */
-export const formatChartTimeKey = (date: string | Date, isYearView: boolean) => {
+export const formatChartTimeKey = (
+  date: string | Date,
+  isYearView: boolean,
+) => {
   const formattedDate = new Date(date);
   return isYearView
     ? format(formattedDate, 'MMM')
     : format(formattedDate, 'yyyy-MM-dd');
 };
+
+export function formatYearMonthString(date = new Date()) {
+  return format(date, 'yyyy-MM');
+}

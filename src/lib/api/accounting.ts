@@ -21,7 +21,7 @@ import {
   uploadBytes,
   where,
 } from '@/lib/firebase';
-import { convertToTimestamp } from '@/lib/utils';
+import { convertToTimestamp } from '@/lib/utils/date';
 import { AccountingRecord, AccountingRecordPayload } from '@/types/accounting';
 
 /**
@@ -52,11 +52,14 @@ export async function addAccountingRecord(
 
     const docRef = await addDoc(collection(db, 'accounting-records'), {
       uid,
+      createAt: data.createAt,
       date: data.date,
+      accountId: data.accountId,
       amount: data.amount,
+      currency: data.currency,
+      exchangeRate: data.exchangeRate,
       categoryId: data.categoryId,
       categoryType: data.categoryType,
-      accountId: data.accountId,
       note: data.note,
       images: imageUrls, // 存的是 URL 陣列
     });
@@ -148,7 +151,7 @@ export function getAccountingRecords(
     where('uid', '==', uid),
     where('date', '>=', startTimestamp),
     where('date', '<=', endTimestamp),
-    orderBy('date'),
+    orderBy('createAt', 'desc'),
   );
 
   const unsubscribe = onSnapshot(q, (querySnapshot) => {

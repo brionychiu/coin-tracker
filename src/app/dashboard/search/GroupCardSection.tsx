@@ -3,9 +3,13 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 
 import { Button } from '@/components/ui/button';
 import { highlightText } from '@/components/ui/highlight-text';
-import { getAccountLabelById } from '@/lib/account';
-import { getCategoryIconById, getCategoryLabelById } from '@/lib/categories';
-import { formatToShortDay } from '@/lib/format';
+import { getAccountLabelById } from '@/lib/utils/account';
+import {
+  getCategoryIconById,
+  getCategoryLabelById,
+} from '@/lib/utils/categories';
+import { formatToShortDay } from '@/lib/utils/format';
+import { getCurrencyLabel } from '@/lib/utils/input';
 import { Account } from '@/types/account';
 import { AccountingRecord } from '@/types/accounting';
 import { Category } from '@/types/category';
@@ -30,13 +34,20 @@ export const GroupCardSection = ({
   onDelete,
 }: GroupSectionProps) => (
   <div key={group} className="mb-6">
-    <h2 className="mb-2 text-sm font-medium text-muted-foreground">{group}</h2>
+    <h2 className="mb-2 ml-1 text-sm font-medium text-muted-foreground">
+      {group}
+    </h2>
     <div className="space-y-4">
       {groupItems.map((record) => (
         <div
           key={record.id}
           className="rounded-2xl border p-4 shadow-sm transition-shadow hover:shadow-md"
         >
+          <p
+            className={`text-xs text-muted-foreground ${record.note ? 'mb-3' : ''}`}
+          >
+            {formatToShortDay(record.date)}
+          </p>
           <div className="flex justify-between">
             <div className="flex items-center gap-4">
               <div className="relative flex h-8 w-8 items-center justify-center">
@@ -60,13 +71,15 @@ export const GroupCardSection = ({
                     {highlightText(record.note, debouncedKeyword)}
                   </p>
                 )}
-                <p className="text-xs text-muted-foreground">
-                  {formatToShortDay(record.date)}
-                </p>
               </div>
             </div>
             <div className="text-right text-sm">
-              <p className="text-lg font-semibold">{record.amount}</p>
+              <p className="font-semibold">
+                <span className="text-lg">{record.amount}</span>
+                <span className="ml-1 text-xs">
+                  {getCurrencyLabel(record.currency)}
+                </span>
+              </p>
               <p className="text-muted-foreground">
                 {getAccountLabelById(record.accountId, accountMap)}
               </p>
@@ -75,7 +88,7 @@ export const GroupCardSection = ({
 
           {record.images.length > 0 && (
             <PhotoProvider>
-              <div className="mt-2 flex flex-wrap gap-4">
+              <div className="mt-3 flex flex-wrap gap-4">
                 {record.images.map((url, index) => (
                   <div key={index} className="relative">
                     <PhotoView src={url}>

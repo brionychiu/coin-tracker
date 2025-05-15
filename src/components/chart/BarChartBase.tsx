@@ -11,7 +11,7 @@ import {
 import { useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 
-import { getCategoryChartData } from '@/lib/chart';
+import { getCategoryChartData } from '@/lib/utils/chart';
 import { AccountingRecord } from '@/types/accounting';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
@@ -62,7 +62,10 @@ export const BarChartBase = ({
   return (
     <div className="rounded-md border p-4 shadow">
       <h2 className="text-lg font-semibold">{title}</h2>
-      <h3 className="mb-3 text-lg font-normal text-gray-02">${total}</h3>
+      <h3 className="mb-1 font-normal text-gray-02">
+        <span className="text-sm">NT$</span>
+        <span className="text-lg">{total}</span>
+      </h3>
       <Bar data={chartData} options={chartOptions} />
       <div className="mt-4">
         <ul>
@@ -75,9 +78,10 @@ export const BarChartBase = ({
                 ></span>
                 <span>{label}</span>
               </div>
-              <p className="flex items-center gap-3">
-                <span>{percentages[index]}%</span>
-                <span className="text-gray-02">${data[index]}</span>
+              <p className="flex items-center">
+                <span className="mr-2">{percentages[index]}%</span>
+                <span className="text-sm text-gray-02">NT$</span>
+                <span className="text-gray-02">{data[index]}</span>
               </p>
             </li>
           ))}

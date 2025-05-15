@@ -11,14 +11,14 @@ export async function getVisibleAccounts(uid: string | undefined) {
   const systemQuery = query(
     collection(db, 'accounts'),
     where('createdBy', '==', 'system'),
-    orderBy('createTime', 'asc'),
+    orderBy('createAt', 'asc'),
   );
 
   // 2. 取得使用者自訂類別
   const userQuery = query(
     collection(db, 'accounts'),
     where('createdBy', '==', uid),
-    orderBy('createTime', 'asc'),
+    orderBy('createAt', 'asc'),
   );
 
   const [systemSnap, userSnap] = await Promise.all([
@@ -30,7 +30,7 @@ export async function getVisibleAccounts(uid: string | undefined) {
     .map((doc) => ({
       id: doc.id,
       label: doc.data().label,
-      createTime: doc.data().createTime,
+      createAt: doc.data().createAt,
       createdBy: doc.data().createdBy,
       deletedBy: doc.data().deletedBy,
     }))
@@ -40,7 +40,7 @@ export async function getVisibleAccounts(uid: string | undefined) {
     .map((doc) => ({
       id: doc.id,
       label: doc.data().label,
-      createTime: doc.data().createTime,
+      createAt: doc.data().createAt,
       createdBy: doc.data().createdBy,
       deletedBy: doc.data().deletedBy,
     }))

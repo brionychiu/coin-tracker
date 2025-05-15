@@ -3,8 +3,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleX, Search } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { toast } from 'sonner';
@@ -12,6 +12,8 @@ import { z } from 'zod';
 
 import { getVisibleAccounts } from '@/app/api/accounts/route';
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
+import { AccountSelect } from '@/components/select/AccountSelect';
+import { CurrencySelect } from '@/components/select/CurrencySelect';
 import CategoryTabs from '@/components/tabs/CategoryTabs';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
@@ -24,22 +26,16 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useAccountMap } from '@/hooks/useAccountMap';
 import { useAuth } from '@/hooks/useAuth';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
+import { useExchangeRate } from '@/hooks/useExchangeRate';
 import {
   addAccountingRecord,
   updateAccountingRecord,
 } from '@/lib/api/accounting';
-import { handleNumericInput } from '@/lib/inputValidators';
+import { handleNumericInput } from '@/lib/utils/input';
 import { useDateStore } from '@/stores/dateStore';
 import { Account } from '@/types/account';
 import { AccountingRecord } from '@/types/accounting';
@@ -53,13 +49,14 @@ interface RecordFormProps {
 
 const FormSchema = z.object({
   date: z.date({ required_error: '請選擇日期' }),
+  accountId: z.string().min(1, { message: '請選擇帳戶' }),
   amount: z
     .string()
     .min(1, { message: '請輸入金額' })
     .regex(/^[0-9]+$/, { message: '金額必須是正整數' })
     .refine((val) => parseInt(val, 10) > 0, { message: '金額必須大於 0' }),
+  currency: z.string().min(1, { message: '請選擇幣別' }),
   categoryId: z.string().min(1, { message: '請選擇類別' }),
-  accountId: z.string().min(1, { message: '請選擇帳戶' }),
   images: z.array(z.instanceof(File)).max(5).optional(),
   note: z.string().max(500).optional(),
 });
@@ -80,20 +77,13 @@ export default function RecordForm({
   const [oldImages, setOldImages] = useState<string[]>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
-  const [isDeletedAccount, setIsDeletedAccount] = useState(false);
+  const [exchangeRate, setExchangeRate] = useState<number>(1);
 
   const loadAccounts = async () => {
     if (!uid) return;
     const result = await getVisibleAccounts(uid);
 
     if (Array.isArray(result)) {
-      // 如果 record?.accountId 不在 result 中，則表示該帳戶已被刪除
-      // 但仍然需要顯示在下拉選單中
-      const deleted =
-        !!record?.accountId &&
-        !result.some((acc) => acc.id === record?.accountId);
-
-      setIsDeletedAccount(deleted);
       setAccounts(result);
     } else {
       console.error('getVisibleAccounts error:', result);
@@ -107,10 +97,12 @@ export default function RecordForm({
 
   const defaultValues = useMemo(
     () => ({
+      createAt: new Date().toISOString(),
       date: record ? new Date(record.date) : date || new Date(),
-      amount: record?.amount ?? '',
-      categoryId: record?.categoryId ?? '',
       accountId: record?.accountId || accounts[0]?.id || '',
+      amount: record?.amount ?? '',
+      currency: record?.currency || 'Common-TWD',
+      categoryId: record?.categoryId ?? '',
       images: [],
       note: record?.note || '',
     }),
@@ -124,6 +116,21 @@ export default function RecordForm({
   });
 
   const { isSubmitting } = form.formState;
+
+  const originalCurrency = useRef(form.getValues('currency'));
+  const formCurrency = useWatch({
+    control: form.control,
+    name: 'currency',
+  });
+  const formDate = useWatch({
+    control: form.control,
+    name: 'date',
+  });
+
+  useExchangeRate(formDate, formCurrency, (rate) => {
+    if (isEditMode && originalCurrency.current === formCurrency) return;
+    setExchangeRate(rate);
+  });
 
   useEffect(() => {
     if (isEditMode && record?.images) {
@@ -177,6 +184,8 @@ export default function RecordForm({
     try {
       const recordData = {
         ...data,
+        createAt: new Date().toISOString(),
+        exchangeRate: exchangeRate,
         categoryId: data.categoryId,
         categoryType: categoryMap[data.categoryId].type,
         newImages,
@@ -218,22 +227,42 @@ export default function RecordForm({
             {isEditMode ? '編輯' : '新增'}{' '}
             {form.watch('date')?.toLocaleDateString('zh-TW') ?? ''} 的記帳項目
           </h2>
-          <FormField
-            control={form.control}
-            name="date"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>日期：</FormLabel>
-                <FormControl>
-                  <DatePicker
-                    value={field.value}
-                    onChange={(date) => field.onChange(date)}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="flex gap-4">
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem className="w-1/2">
+                  <FormLabel>日期：</FormLabel>
+                  <FormControl>
+                    <DatePicker
+                      value={field.value}
+                      onChange={(date) => field.onChange(date)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="accountId"
+              render={({ field }) => (
+                <FormItem className="w-1/2">
+                  <FormLabel>帳戶：</FormLabel>
+                  <FormControl>
+                    <AccountSelect
+                      value={field.value}
+                      onChange={field.onChange}
+                      accountId={record?.accountId}
+                      accountMap={accountMap}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <div className="flex gap-4">
             <FormField
               control={form.control}
@@ -255,37 +284,15 @@ export default function RecordForm({
             />
             <FormField
               control={form.control}
-              name="accountId"
+              name="currency"
               render={({ field }) => (
                 <FormItem className="w-1/2">
-                  <FormLabel>帳戶：</FormLabel>
+                  <FormLabel>貨幣：</FormLabel>
                   <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="請選擇帳戶" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {accounts.map((option) => (
-                          <SelectItem key={option.id} value={option.id}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                        {isDeletedAccount && record?.accountId && (
-                          <SelectItem value={record.accountId}>
-                            <span className="text-gray-02">
-                              {accountMap[record.accountId]?.label ||
-                                '已刪除帳戶'}
-                            </span>
-                            <span className="ml-2 text-sm text-gray-02">
-                              (已刪除)
-                            </span>
-                          </SelectItem>
-                        )}
-                      </SelectContent>
-                    </Select>
+                    <CurrencySelect
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

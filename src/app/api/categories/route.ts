@@ -11,14 +11,14 @@ export async function getVisibleCategories(uid: string | undefined) {
   const systemQuery = query(
     collection(db, 'categories'),
     where('createdBy', '==', 'system'),
-    orderBy('createTime', 'asc'),
+    orderBy('createAt', 'asc'),
   );
 
   // 2. 取得使用者自訂類別
   const userQuery = query(
     collection(db, 'categories'),
     where('createdBy', '==', uid),
-    orderBy('createTime', 'asc'),
+    orderBy('createAt', 'asc'),
   );
 
   const [systemSnap, userSnap] = await Promise.all([
@@ -32,7 +32,7 @@ export async function getVisibleCategories(uid: string | undefined) {
       label: doc.data().label,
       icon: doc.data().icon,
       type: doc.data().type,
-      createTime: doc.data().createTime,
+      createAt: doc.data().createAt,
       createdBy: doc.data().createdBy,
       deletedBy: doc.data().deletedBy,
     }))
@@ -44,7 +44,7 @@ export async function getVisibleCategories(uid: string | undefined) {
       label: doc.data().label,
       icon: doc.data().icon,
       type: doc.data().type,
-      createTime: doc.data().createTime,
+      createAt: doc.data().createAt,
       createdBy: doc.data().createdBy,
       deletedBy: doc.data().deletedBy,
     }))

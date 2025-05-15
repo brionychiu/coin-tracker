@@ -90,11 +90,11 @@ export default function Navbar() {
           <Link href="/" className="flex items-center">
             <div className="px-2">
               <Image
-                className="rounded-md"
+                className="h-10 w-10 rounded-md md:h-12 md:w-12"
                 src={logo}
                 alt="Logo Icon"
-                width={32}
-                height={40}
+                width={50}
+                height={50}
                 priority
               />
             </div>
@@ -105,7 +105,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div className="hidden gap-4 md:flex">
+        <div className="hidden sm:gap-1 md:flex lg:gap-4">
           {navItems.map((item) => {
             const ActiveIcon = item.icon;
             return (
@@ -127,7 +127,7 @@ export default function Navbar() {
 
         <div className="flex items-center gap-3 md:gap-4">
           {isAuthenticated && user && (
-            <span className="max-w-[120px] truncate text-base font-normal text-gray-03 md:max-w-[200px]">
+            <span className="hidden max-w-[120px] truncate text-base font-normal text-gray-03 mobile:block md:max-w-[200px]">
               {user.email}
             </span>
           )}

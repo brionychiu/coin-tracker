@@ -6,7 +6,7 @@ import * as React from 'react';
 import { DayPicker } from 'react-day-picker';
 
 import { buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/tailwindUtils';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
   recordDates?: Date[]; // 新增記帳日期陣列
