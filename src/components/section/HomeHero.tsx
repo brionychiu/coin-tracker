@@ -4,6 +4,7 @@ import Autoplay from 'embla-carousel-autoplay';
 import Image from 'next/image';
 import { useRef } from 'react';
 
+import coinsAmicoImage from '@/assets/images/coins-amico.png';
 import InvestingPanaImage from '@/assets/images/investing-pana.png';
 import InvoiceCuateImage from '@/assets/images/invoice-cuate.png';
 import SavingImage from '@/assets/images/saving-money.png';
@@ -20,7 +21,6 @@ export const HomeHero = () => {
   return (
     <section className="flex h-screen w-full flex-col items-center justify-center bg-system-02 px-6">
       <div className="flex flex-col-reverse items-center justify-center pt-10 lg:flex-row lg:items-center lg:gap-10 lg:pt-0">
-        {/* Carousel Start */}
         <div className="w-[300px] sm:w-[400px] md:w-[500px] lg:w-[550px]">
           <Carousel plugins={[autoplay.current]} opts={{ loop: true }}>
             <CarouselContent>
@@ -36,6 +36,14 @@ export const HomeHero = () => {
                 <Image
                   src={InvestingPanaImage}
                   alt="Investing image"
+                  className="rounded-lg object-contain"
+                  priority
+                />
+              </CarouselItem>
+              <CarouselItem>
+                <Image
+                  src={coinsAmicoImage}
+                  alt="Coins image"
                   className="rounded-lg object-contain"
                   priority
                 />
@@ -59,7 +67,6 @@ export const HomeHero = () => {
             </CarouselContent>
           </Carousel>
         </div>
-        {/* Carousel End */}
         <div className="max-w-xl text-center lg:text-left">
           <h2 className="mb-5 text-3xl font-bold lg:text-4xl">
             懶人記帳首選，無痛養成記帳習慣，原來理財可以很簡單！
