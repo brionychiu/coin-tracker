@@ -8,11 +8,13 @@ import { AlignEndHorizontal, ChartPie } from 'lucide-react';
 import { BarChartBase } from './BarChartBase';
 import { PieChartBase } from './PieChartBase';
 
-interface IncomeChartSwitcherProps {
+interface IncomeCategorySwitcherProps {
   records: AccountingRecord[];
 }
 
-export const IncomeChartSwitcher = ({ records }: IncomeChartSwitcherProps) => {
+export const IncomeCategorySwitcher = ({
+  records,
+}: IncomeCategorySwitcherProps) => {
   const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
 
   const toggleChart = () => {
