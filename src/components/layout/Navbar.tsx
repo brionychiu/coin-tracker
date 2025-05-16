@@ -12,7 +12,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
-import logo from '@/assets/images/logo.png';
 import AuthModal from '@/components/modal/Auth';
 import { Button } from '@/components/ui/button';
 import { DialogTitle } from '@/components/ui/dialog';
@@ -91,7 +90,7 @@ export default function Navbar() {
             <div className="px-2">
               <Image
                 className="h-10 w-10 rounded-md md:h-12 md:w-12"
-                src={logo}
+                src="/logo.png"
                 alt="Logo Icon"
                 width={50}
                 height={50}
