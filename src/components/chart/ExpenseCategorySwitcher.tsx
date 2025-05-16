@@ -6,13 +6,13 @@ import { AlignEndHorizontal, ChartPie } from 'lucide-react';
 import { BarChartBase } from './BarChartBase';
 import { PieChartBase } from './PieChartBase';
 
-interface ExpenseChartSwitcherProps {
+interface ExpenseCategorySwitcherProps {
   records: AccountingRecord[];
 }
 
-export const ExpenseChartSwitcher = ({
+export const ExpenseCategorySwitcher = ({
   records,
-}: ExpenseChartSwitcherProps) => {
+}: ExpenseCategorySwitcherProps) => {
   const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
 
   const toggleChart = () => {
