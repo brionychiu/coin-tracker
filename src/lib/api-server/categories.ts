@@ -22,12 +22,12 @@ export async function getVisibleCategories(uid: string): Promise<Category[]> {
       const data = doc.data();
       return {
         id: doc.id,
-        label: doc.data().label,
-        icon: doc.data().icon,
-        type: doc.data().type,
-        createAt: doc.data().createAt,
-        createdBy: doc.data().createdBy,
-        deletedBy: doc.data().deletedBy,
+        label: data.label,
+        icon: data.icon,
+        type: data.type,
+        createAt: data.createAt,
+        createdBy: data.createdBy,
+        deletedBy: data.deletedBy,
       };
     })
     .filter((acc: Category) => !acc.deletedBy?.includes(uid));
@@ -37,12 +37,12 @@ export async function getVisibleCategories(uid: string): Promise<Category[]> {
       const data = doc.data();
       return {
         id: doc.id,
-        label: doc.data().label,
-        icon: doc.data().icon,
-        type: doc.data().type,
-        createAt: doc.data().createAt,
-        createdBy: doc.data().createdBy,
-        deletedBy: doc.data().deletedBy,
+        label: data.label,
+        icon: data.icon,
+        type: data.type,
+        createAt: data.createAt,
+        createdBy: data.createdBy,
+        deletedBy: data.deletedBy,
       };
     })
     .filter((acc: Category) => !acc.deletedBy?.includes(uid));
