@@ -10,7 +10,6 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { getVisibleAccounts } from '@/app/api/accounts/route';
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
 import { AccountSelect } from '@/components/select/AccountSelect';
 import { CurrencySelect } from '@/components/select/CurrencySelect';
@@ -31,6 +30,7 @@ import { useAccountMap } from '@/hooks/useAccountMap';
 import { useAuth } from '@/hooks/useAuth';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { useExchangeRate } from '@/hooks/useExchangeRate';
+import { fetchVisibleAccounts } from '@/lib/api-client/account';
 import {
   addAccountingRecord,
   updateAccountingRecord,
@@ -80,13 +80,11 @@ export default function RecordForm({
   const [exchangeRate, setExchangeRate] = useState<number>(1);
 
   const loadAccounts = async () => {
-    if (!uid) return;
-    const result = await getVisibleAccounts(uid);
-
-    if (Array.isArray(result)) {
+    try {
+      const result = await fetchVisibleAccounts();
       setAccounts(result);
-    } else {
-      console.error('getVisibleAccounts error:', result);
+    } catch (error) {
+      console.error('getVisibleAccounts error:', error);
     }
   };
 
