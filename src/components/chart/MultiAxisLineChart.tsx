@@ -36,13 +36,13 @@ export const MultiAxisLineChart = ({
   incomeRecords,
   dateRange,
 }: MultiAxisLineChartProps) => {
-  if (!dateRange) {
-    return <p className="py-4 text-center">日期範圍未提供</p>;
-  }
-
-  const isYearView =
-    new Date(dateRange.endDate).getFullYear() >
-    new Date(dateRange.startDate).getFullYear();
+  useEffect(() => {
+    if (!dateRange) return;
+    const timer = setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [dateRange]);
 
   // Group data by day or month based on the view
   const groupData = (records: AccountingRecord[], isYearView: boolean) => {
@@ -65,6 +65,14 @@ export const MultiAxisLineChart = ({
 
     return grouped;
   };
+
+  if (!dateRange) {
+    return <p className="py-4 text-center">日期範圍未提供</p>;
+  }
+
+  const isYearView =
+    new Date(dateRange.endDate).getFullYear() >
+    new Date(dateRange.startDate).getFullYear();
 
   const groupedExpenseData = groupData(expenseRecords, isYearView);
   const groupedIncomeData = groupData(incomeRecords, isYearView);
@@ -146,14 +154,6 @@ export const MultiAxisLineChart = ({
       },
     },
   };
-
-  useEffect(() => {
-    if (!dateRange) return;
-    const timer = setTimeout(() => {
-      window.dispatchEvent(new Event('resize'));
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [dateRange]);
 
   return (
     <div className="rounded-md border p-4 shadow">
