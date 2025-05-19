@@ -148,11 +148,12 @@ export const MultiAxisLineChart = ({
   };
 
   useEffect(() => {
+    if (!dateRange) return;
     const timer = setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
     }, 300);
     return () => clearTimeout(timer);
-  }, []);
+  }, [dateRange]);
 
   return (
     <div className="rounded-md border p-4 shadow">
