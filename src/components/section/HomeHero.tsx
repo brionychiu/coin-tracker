@@ -11,11 +11,11 @@ import {
 } from '@/components/ui/carousel';
 
 const imageList = [
-  { src: '/images/saving-money.png', alt: 'Saving money image' },
-  { src: '/images/investing-pana.png', alt: 'Investing image' },
-  { src: '/images/coins-amico.png', alt: 'Coins image' },
-  { src: '/images/revenue-bro.png', alt: 'Revenue image' },
-  { src: '/images/invoice-cuate.png', alt: 'Invoice image' },
+  { src: '/saving-money.png', alt: 'Saving money image' },
+  { src: '/investing-pana.png', alt: 'Investing image' },
+  { src: '/coins-amico.png', alt: 'Coins image' },
+  { src: '/revenue-bro.png', alt: 'Revenue image' },
+  { src: '/invoice-cuate.png', alt: 'Invoice image' },
 ];
 
 export const HomeHero = () => {
