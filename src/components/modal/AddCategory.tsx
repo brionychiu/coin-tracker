@@ -43,7 +43,7 @@ export default function AddCategoryDialog({
     if (!label || !selectedIconName || !uid) return;
 
     try {
-      const id = await addCategory({
+      await addCategory({
         uid,
         label,
         icon: selectedIconName,
