@@ -2,14 +2,16 @@ import { CirclePlus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import { getVisibleCategories } from '@/app/api/categories/route';
 import AddCategoryDialog from '@/components/modal/AddCategory';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { useConfirm } from '@/hooks/useConfirmModal';
-import { deleteCategory } from '@/lib/api-client/categories';
+import {
+  deleteCategory,
+  fetchVisibleCategories,
+} from '@/lib/api-client/categories';
 import { iconMap } from '@/lib/constants/iconMap';
 import { Category } from '@/types/category';
 
@@ -80,8 +82,11 @@ export default function CategoryTabs({
 
   const loadCategories = async () => {
     if (!uid) return;
-    const result = await getVisibleCategories(uid);
-    if (Array.isArray(result)) {
+
+    try {
+      const result = await fetchVisibleCategories();
+      if (!Array.isArray(result)) throw new Error('資料格式錯誤');
+
       setCategories(result);
 
       const deleted =
@@ -102,8 +107,8 @@ export default function CategoryTabs({
           onChange?.(expenseCategories[0].id);
         }
       }
-    } else {
-      console.error('無法取得類別', result);
+    } catch (error) {
+      console.error('無法取得類別:', error);
       setCategories([]);
     }
   };
