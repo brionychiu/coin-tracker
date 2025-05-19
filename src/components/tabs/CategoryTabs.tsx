@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { useConfirm } from '@/hooks/useConfirmModal';
-import { deleteCategory } from '@/lib/api/categories';
+import { deleteCategory } from '@/lib/api-client/categories';
 import { iconMap } from '@/lib/constants/iconMap';
 import { Category } from '@/types/category';
 

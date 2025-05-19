@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useAuth } from '@/hooks/useAuth';
-import { getRecordsBatch } from '@/lib/api/accounting';
+import { getRecordsBatch } from '@/lib/api-client/accounting';
 import { AccountingRecord } from '@/types/accounting';
 
 export function usePaginatedRecords(batchSize = 100) {

@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
-import { signIn } from '@/lib/api/auth';
+import { signIn } from '@/lib/api-client/auth';
 
 const FormSchema = z.object({
   email: z.string().email({ message: '請輸入正確格式電子信箱' }),

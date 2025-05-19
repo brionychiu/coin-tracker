@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 
-import { logoutUser } from '@/lib/api/auth';
+import { logoutUser } from '@/lib/api-client/auth';
 import { useAuthStore } from '@/stores/authStore';
 
 export function useAuth() {

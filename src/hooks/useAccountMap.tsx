@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useAuth } from '@/hooks/useAuth';
-import { getAccountMap } from '@/lib/api/account';
+import { getAccountMap } from '@/lib/api-client/account';
 import { Account } from '@/types/account';
 
 export function useAccountMap() {

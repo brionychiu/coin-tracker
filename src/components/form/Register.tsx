@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
-import { registerUser } from '@/lib/api/auth';
+import { registerUser } from '@/lib/api-client/auth';
 
 const FormSchema = z
   .object({

@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import {
   addMonthlyExchangeRate,
   getMonthlyExchangeRate,
-} from '@/lib/api/exchangeRate';
+} from '@/lib/api-client/exchangeRate';
 import { getEffectiveYearMonth } from '@/lib/utils/date';
 import { parseCurrencyValue } from '@/lib/utils/input';
 
