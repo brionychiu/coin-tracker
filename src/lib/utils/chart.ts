@@ -1,15 +1,14 @@
-import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { graphBgColors } from '@/lib/constants/chartColors';
 import { getCategoryLabelById } from '@/lib/utils/categories';
 import { AccountingRecord } from '@/types/accounting';
+import { Category } from '@/types/category';
 
 // Pie chart, Bar chart
 export function getCategoryChartData(
   records: AccountingRecord[],
+  categoryMap: Record<string, Category>,
   categoryType: 'expense' | 'income' = 'expense',
 ) {
-  const { categoryMap } = useCategoryMap();
-
   const filtered = records.filter((r) => r.categoryType === categoryType);
 
   const amountByCategoryId: Record<string, number> = {};

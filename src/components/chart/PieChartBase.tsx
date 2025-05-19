@@ -4,6 +4,7 @@ import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import { useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
 
+import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { getCategoryChartData } from '@/lib/utils/chart';
 import { AccountingRecord } from '@/types/accounting';
 
@@ -20,8 +21,11 @@ export const PieChartBase = ({
   categoryType,
   title,
 }: PieChartBaseProps) => {
+  const { categoryMap } = useCategoryMap();
+
   const { labels, data, percentages, total, colors } = getCategoryChartData(
     records,
+    categoryMap,
     categoryType,
   );
 

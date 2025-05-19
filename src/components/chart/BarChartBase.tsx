@@ -11,6 +11,7 @@ import {
 import { useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 
+import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { getCategoryChartData } from '@/lib/utils/chart';
 import { AccountingRecord } from '@/types/accounting';
 
@@ -27,8 +28,11 @@ export const BarChartBase = ({
   categoryType,
   title,
 }: BarChartBaseProps) => {
+  const { categoryMap } = useCategoryMap();
+
   const { labels, data, percentages, total, colors } = getCategoryChartData(
     records,
+    categoryMap,
     categoryType,
   );
 
