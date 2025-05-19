@@ -1,8 +1,9 @@
+import { AlignEndHorizontal, ChartPie } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { AccountingRecord } from '@/types/accounting';
-import { AlignEndHorizontal, ChartPie } from 'lucide-react';
+
 import { BarChartBase } from './BarChartBase';
 import { PieChartBase } from './PieChartBase';
 

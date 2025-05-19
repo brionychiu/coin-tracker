@@ -10,17 +10,14 @@ type AuthState = {
 };
 
 export const useAuthStore = create<AuthState>((set) => {
-  
   onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    const token = await user.getIdToken();
-    Cookies.set('authToken', token, { expires: 180, secure: true });
-    
-  } else {
-    Cookies.remove('authToken');
-  }
-  set({ user, isLoading: false });
-
+    if (user) {
+      const token = await user.getIdToken();
+      Cookies.set('authToken', token, { expires: 180, secure: true });
+    } else {
+      Cookies.remove('authToken');
+    }
+    set({ user, isLoading: false });
   });
 
   return {

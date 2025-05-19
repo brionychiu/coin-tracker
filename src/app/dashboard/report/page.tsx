@@ -6,7 +6,7 @@ import { ExpenseCategorySwitcher } from '@/components/chart/ExpenseCategorySwitc
 import { IncomeCategorySwitcher } from '@/components/chart/IncomeCategorySwitcher';
 import { MultiAxisLineChart } from '@/components/chart/MultiAxisLineChart';
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
-import { DateRangeTabs, type DateRange } from '@/components/tabs/DateRangeTabs';
+import { type DateRange, DateRangeTabs } from '@/components/tabs/DateRangeTabs';
 import { useAccountingRecordsByRange } from '@/hooks/useAccountingRecords';
 
 export default function ReportPage() {

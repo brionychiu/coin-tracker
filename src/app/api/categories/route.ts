@@ -1,6 +1,7 @@
+import { NextResponse } from 'next/server';
+
 import { collection, db, getDocs, orderBy, query, where } from '@/lib/firebase';
 import { Category } from '@/types/category';
-import { NextResponse } from 'next/server';
 
 export async function getVisibleCategories(uid: string | undefined) {
   if (!uid) {

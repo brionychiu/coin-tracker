@@ -1,7 +1,8 @@
-import { getVisibleAccounts } from '@/lib/api-server/account';
-import { adminAuth } from '@/lib/firebaseAdmin';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+
+import { getVisibleAccounts } from '@/lib/api-server/account';
+import { adminAuth } from '@/lib/firebaseAdmin';
 
 export async function GET() {
   const token = (await cookies()).get('authToken')?.value;

@@ -32,9 +32,9 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       icons={{
         success: <CircleCheckBig className="size-5 text-primary-02" />,
-        info: <BadgeInfo className="text-green-01 size-5" />,
+        info: <BadgeInfo className="size-5 text-green-01" />,
         warning: <AlertTriangle className="size-5 text-warning-01" />,
-        error: <XCircle className="text-error-01 size-5" />,
+        error: <XCircle className="size-5 text-error-01" />,
         loading: <Loader2 className="size-5 animate-spin text-primary-02" />,
       }}
       {...props}

@@ -1,11 +1,20 @@
-import { auth } from '@/lib/firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth';
 import Cookies from 'js-cookie';
 import { toast } from 'sonner';
 
+import { auth } from '@/lib/firebase';
+
 export const signIn = async (email: string, password: string) => {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
     const token = await userCredential.user.getIdToken();
     Cookies.set('authToken', token, { expires: 180, secure: true });
 

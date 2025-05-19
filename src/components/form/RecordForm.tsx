@@ -30,11 +30,11 @@ import { useAccountMap } from '@/hooks/useAccountMap';
 import { useAuth } from '@/hooks/useAuth';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { useExchangeRate } from '@/hooks/useExchangeRate';
-import { fetchVisibleAccounts } from '@/lib/api-client/account';
 import {
   addAccountingRecord,
   updateAccountingRecord,
 } from '@/lib/api/accounting';
+import { fetchVisibleAccounts } from '@/lib/api-client/account';
 import { handleNumericInput } from '@/lib/utils/input';
 import { useDateStore } from '@/stores/dateStore';
 import { Account } from '@/types/account';
@@ -183,7 +183,7 @@ export default function RecordForm({
       const recordData = {
         ...data,
         createAt: new Date().toISOString(),
-        exchangeRate: exchangeRate,
+        exchangeRate,
         categoryId: data.categoryId,
         categoryType: categoryMap[data.categoryId].type,
         newImages,

@@ -1,13 +1,14 @@
 'use client';
 
+import Autoplay from 'embla-carousel-autoplay';
+import Image from 'next/image';
+import { useRef } from 'react';
+
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
 } from '@/components/ui/carousel';
-import Autoplay from 'embla-carousel-autoplay';
-import Image from 'next/image';
-import { useRef } from 'react';
 
 const imageList = [
   { src: '/images/saving-money.png', alt: 'Saving money image' },

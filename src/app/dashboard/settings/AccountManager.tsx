@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { useAuth } from '@/hooks/useAuth';
 import { useConfirm } from '@/hooks/useConfirmModal';
-import { fetchVisibleAccounts } from '@/lib/api-client/account';
 import { deleteAccount } from '@/lib/api/account';
+import { fetchVisibleAccounts } from '@/lib/api-client/account';
 import { cn } from '@/lib/utils/tailwindUtils';
 import { Account } from '@/types/account';
 
