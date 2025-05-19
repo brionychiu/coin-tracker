@@ -1,6 +1,7 @@
 'use client';
 
-import { getVisibleAccounts } from '@/app/api/accounts/route';
+import { useEffect, useState } from 'react';
+
 import {
   Select,
   SelectContent,
@@ -9,8 +10,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
+import { fetchVisibleAccounts } from '@/lib/api-client/account';
 import { Account } from '@/types/account';
-import { useEffect, useState } from 'react';
 
 interface AccountSelectProps {
   value: string;
@@ -31,19 +32,20 @@ export function AccountSelect({
 
   useEffect(() => {
     if (!uid) return;
+
     const fetchAccounts = async () => {
-      const result = await getVisibleAccounts(uid);
-      if (Array.isArray(result)) {
-        // 如果 record?.accountId 不在 result 中，則表示該帳戶已被刪除
-        // 但仍然需要顯示在下拉選單中
+      try {
+        const result = await fetchVisibleAccounts();
+        // 如果 record?.accountId 不在 result 中，則表示該帳戶已被刪除，但仍然需要顯示在下拉選單中
         const deleted =
           !!accountId && !result.some((acc) => acc.id === accountId);
         setIsDeletedAccount(deleted);
         setAccounts(result);
-      } else {
-        console.error('getVisibleAccounts error:', result);
+      } catch (error) {
+        console.error('getVisibleAccounts error:', error);
       }
     };
+
     fetchAccounts();
   }, [uid, accountId]);
 
