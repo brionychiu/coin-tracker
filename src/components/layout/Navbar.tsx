@@ -54,36 +54,42 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
           <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-64">
-              <div className="mb-4 flex items-center justify-between">
-                <DialogTitle className="text-lg font-bold">選單</DialogTitle>
-              </div>
-              <nav className="flex flex-col space-y-2">
-                {navItems.map((item) => {
-                  const ActiveIcon = item.icon;
-                  return (
-                    <Link
-                      key={item.title}
-                      href={item.url}
-                      onClick={() => setOpen(false)}
-                      className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition hover:bg-accent hover:text-accent-foreground ${
-                        isActive(item.url)
-                          ? 'bg-accent font-semibold text-accent-foreground'
-                          : 'text-muted-foreground'
-                      }`}
-                    >
-                      <ActiveIcon size={18} />
-                      {item.title}
-                    </Link>
-                  );
-                })}
-              </nav>
-            </SheetContent>
+            {isAuthenticated && (
+              <>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="md:hidden">
+                    <Menu />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-64">
+                  <div className="mb-4 flex items-center justify-between">
+                    <DialogTitle className="text-lg font-bold">
+                      選單
+                    </DialogTitle>
+                  </div>
+                  <nav className="flex flex-col space-y-2">
+                    {navItems.map((item) => {
+                      const ActiveIcon = item.icon;
+                      return (
+                        <Link
+                          key={item.title}
+                          href={item.url}
+                          onClick={() => setOpen(false)}
+                          className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition hover:bg-accent hover:text-accent-foreground ${
+                            isActive(item.url)
+                              ? 'bg-accent font-semibold text-accent-foreground'
+                              : 'text-muted-foreground'
+                          }`}
+                        >
+                          <ActiveIcon size={18} />
+                          {item.title}
+                        </Link>
+                      );
+                    })}
+                  </nav>
+                </SheetContent>
+              </>
+            )}
           </Sheet>
 
           <Link href="/" className="flex items-center">
@@ -105,23 +111,24 @@ export default function Navbar() {
         </div>
 
         <div className="hidden sm:gap-1 md:flex lg:gap-4">
-          {navItems.map((item) => {
-            const ActiveIcon = item.icon;
-            return (
-              <Link
-                key={item.title}
-                href={item.url}
-                className={`flex items-center gap-1 px-3 py-2 text-sm font-medium hover:text-primary ${
-                  isActive(item.url)
-                    ? 'font-semibold text-primary'
-                    : 'text-muted-foreground'
-                }`}
-              >
-                <ActiveIcon size={18} />
-                {item.title}
-              </Link>
-            );
-          })}
+          {isAuthenticated &&
+            navItems.map((item) => {
+              const ActiveIcon = item.icon;
+              return (
+                <Link
+                  key={item.title}
+                  href={item.url}
+                  className={`flex items-center gap-1 px-3 py-2 text-sm font-medium hover:text-primary ${
+                    isActive(item.url)
+                      ? 'font-semibold text-primary'
+                      : 'text-muted-foreground'
+                  }`}
+                >
+                  <ActiveIcon size={18} />
+                  {item.title}
+                </Link>
+              );
+            })}
         </div>
 
         <div className="flex items-center gap-3 md:gap-4">
