@@ -50,7 +50,8 @@ export function useExchangeRate({
       }
 
       // 若無快取，則發送 API 並儲存至 Firestore
-      const apiUrl = `https://api.exchangerate.host/historical?access_key=${process.env.NEXT_PUBLIC_EXCHANGE_RATE_API_KEY}&source=TWD&date=${effectiveYearMonth}-01`;
+      const apiUrl = `/api/exchange-rate?date=${effectiveYearMonth}-01&currency=${currencyValue}`;
+
       const res = await fetch(apiUrl);
       const apiData = await res.json();
 
