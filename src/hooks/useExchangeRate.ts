@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
   addMonthlyExchangeRate,
@@ -7,67 +7,89 @@ import {
 import { getEffectiveYearMonth } from '@/lib/utils/date';
 import { parseCurrencyValue } from '@/lib/utils/input';
 
-export function useExchangeRate(
-  targetDate: Date,
-  currency: string,
-  setExchangeRate: (rate: number) => void,
-) {
-  useEffect(() => {
-    if (
-      !targetDate ||
-      !currency ||
-      currency === 'Common-TWD' ||
-      currency === 'Asia-TWD'
-    ) {
+interface UseExchangeRateProps {
+  targetDate: Date;
+  currency: string;
+  enabled?: boolean;
+}
+
+export function useExchangeRate({
+  targetDate,
+  currency,
+  enabled = true,
+}: UseExchangeRateProps) {
+  const [exchangeRate, setExchangeRate] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchExchangeRate = useCallback(async () => {
+    if (!targetDate || !currency) return;
+
+    if (currency === 'Common-TWD' || currency === 'Asia-TWD') {
       setExchangeRate(1);
       return;
     }
 
-    const fetchExchangeRate = async () => {
-      const effectiveYearMonth = getEffectiveYearMonth(targetDate);
-      const currencyValue = parseCurrencyValue(currency).value;
-      const quoteKey = `TWD${currencyValue}`;
+    setIsLoading(true);
+    setError(null);
 
-      try {
-        // Firestore 取得
-        const cachedRate = await getMonthlyExchangeRate(
-          effectiveYearMonth,
-          quoteKey,
-        );
+    const effectiveYearMonth = getEffectiveYearMonth(targetDate); // 'YYYY-MM'
+    const currencyValue = parseCurrencyValue(currency).value; // e.g., 'USD'
+    const quoteKey = `TWD${currencyValue}`;
 
-        if (cachedRate) {
-          setExchangeRate(cachedRate);
-          return;
-        }
+    try {
+      // 先從 Firestore 快取查詢
+      const cachedRate = await getMonthlyExchangeRate(
+        effectiveYearMonth,
+        quoteKey,
+      );
 
-        // 若無該月份資料，才抓 exchangerate host API 並建立新文件
-        const res = await fetch(
-          `https://api.exchangerate.host/historical?access_key=${process.env.NEXT_PUBLIC_EXCHANGE_RATE_API_KEY}&source=TWD&date=${effectiveYearMonth}-01`,
-        );
-        const apiData = await res.json();
-
-        if (!apiData.success || !apiData.quotes) {
-          throw new Error('API 回傳錯誤');
-        }
-
-        // 儲存 API 結果到 Firestore
-        await addMonthlyExchangeRate(effectiveYearMonth, {
-          source: apiData.source,
-          quotes: apiData.quotes,
-          timestamp: apiData.timestamp,
-        });
-
-        const rate = apiData.quotes?.[quoteKey];
-        if (rate) {
-          setExchangeRate(rate);
-        } else {
-          console.warn(`API 回傳中找不到 ${quoteKey} 匯率`);
-        }
-      } catch (error) {
-        console.error('取得匯率失敗:', error);
+      if (cachedRate) {
+        setExchangeRate(cachedRate);
+        return;
       }
-    };
 
-    fetchExchangeRate();
-  }, [currency, setExchangeRate, targetDate]);
+      // 若無快取，則發送 API 並儲存至 Firestore
+      const apiUrl = `https://api.exchangerate.host/historical?access_key=${process.env.NEXT_PUBLIC_EXCHANGE_RATE_API_KEY}&source=TWD&date=${effectiveYearMonth}-01`;
+      const res = await fetch(apiUrl);
+      const apiData = await res.json();
+
+      if (!apiData.success || !apiData.quotes) {
+        throw new Error('API 回傳錯誤');
+      }
+
+      await addMonthlyExchangeRate(effectiveYearMonth, {
+        source: apiData.source,
+        quotes: apiData.quotes,
+        timestamp: apiData.timestamp,
+      });
+
+      const rate = apiData.quotes?.[quoteKey];
+
+      if (rate) {
+        setExchangeRate(rate);
+      } else {
+        console.warn(`API 回傳中找不到 ${quoteKey} 匯率`);
+        setExchangeRate(null);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('取得匯率失敗'));
+      setExchangeRate(null);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currency, targetDate]);
+
+  useEffect(() => {
+    if (enabled) {
+      fetchExchangeRate();
+    }
+  }, [enabled, fetchExchangeRate]);
+
+  return {
+    exchangeRate,
+    isLoading,
+    error,
+    refetch: fetchExchangeRate,
+  };
 }
