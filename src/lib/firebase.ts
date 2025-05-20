@@ -22,7 +22,13 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import {
+  deleteObject,
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+} from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -48,6 +54,7 @@ export {
   collection,
   db,
   deleteDoc,
+  deleteObject,
   doc,
   getDoc,
   getDocs,
