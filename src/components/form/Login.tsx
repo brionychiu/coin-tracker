@@ -39,10 +39,12 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
       password: '',
     },
   });
+  const TEST_EMAIL = process.env.NEXT_PUBLIC_TEST_EMAIL || '';
+  const TEST_PASSWORD = process.env.NEXT_PUBLIC_TEST_PASSWORD || '';
 
   const handleTestLogin = () => {
-    form.setValue('email', 'test@mail.com');
-    form.setValue('password', 'abc1234');
+    form.setValue('email', TEST_EMAIL);
+    form.setValue('password', TEST_PASSWORD);
   };
 
   async function onSubmit(values: z.infer<typeof FormSchema>) {
