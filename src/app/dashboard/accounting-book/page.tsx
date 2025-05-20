@@ -32,7 +32,7 @@ export default function AccountingBookPage() {
   return (
     <div className="mx-auto h-full w-full max-w-6xl bg-white">
       <div className="flex-row gap-6 md:flex">
-        <div className="flex flex-col items-center justify-self-center md:w-96 md:justify-self-start">
+        <div className="flex flex-col items-center justify-self-center md:justify-self-start lg:w-96">
           <CustomCalendar
             mode="single"
             selected={date}
