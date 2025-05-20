@@ -5,6 +5,7 @@ import {
   collection,
   db,
   deleteDoc,
+  deleteObject,
   doc,
   getDoc,
   getDocs,
@@ -14,6 +15,7 @@ import {
   orderBy,
   query,
   ref,
+  ref as storageRefFromURL,
   startAfter,
   storage,
   Timestamp,
@@ -82,9 +84,15 @@ export async function updateAccountingRecord(
 ) {
   try {
     const recordRef = doc(db, 'accounting-records', id);
+    const recordSnap = await getDoc(recordRef);
 
+    if (!recordSnap.exists()) throw new Error('紀錄不存在');
+
+    const existingData = recordSnap.data();
+    const existingImages: string[] = existingData.images || [];
+
+    // 上傳新圖片
     let imageUrls: string[] = [];
-
     if (data.newImages) {
       const newImageUrls = await Promise.all(
         data.newImages.map((image) => uploadImage(uid, image)),
@@ -92,12 +100,29 @@ export async function updateAccountingRecord(
       imageUrls = [...newImageUrls];
     }
 
+    // 合併仍保留的舊圖片
     if (data.oldImages) {
       imageUrls = [...imageUrls, ...data.oldImages];
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { newImages, oldImages, ...cleanData } = data;
 
+    // 找出被刪除的圖片 URL（Firestore 中有，但 data.oldImages 沒有）
+    const removedImageUrls = existingImages.filter(
+      (url: string) => !data.oldImages?.includes(url),
+    );
+
+    // 刪除 Storage 中對應的圖片
+    await Promise.all(
+      removedImageUrls.map(async (url) => {
+        try {
+          const imageRef = storageRefFromURL(storage, url);
+          await deleteObject(imageRef);
+        } catch (error) {
+          console.warn('刪除圖片失敗', url, error);
+        }
+      }),
+    );
+
+    const { newImages: _newImages, oldImages: _oldImages, ...cleanData } = data;
     await updateDoc(recordRef, {
       ...cleanData,
       images: imageUrls,
@@ -120,11 +145,28 @@ export async function updateAccountingRecord(
 export async function deleteAccountingRecord(id: string) {
   try {
     const recordRef = doc(db, 'accounting-records', id);
+    const recordSnap = await getDoc(recordRef);
 
-    // 刪除記錄
+    if (!recordSnap.exists()) throw new Error('找不到記帳紀錄');
+
+    const data = recordSnap.data();
+    const images: string[] = data.images || [];
+
+    // 刪除 Storage 裡的實體圖片
+    await Promise.all(
+      images.map(async (url) => {
+        try {
+          const storageRef = storageRefFromURL(storage, url);
+          await deleteObject(storageRef);
+        } catch (error) {
+          console.warn('刪除圖片失敗:', url, error);
+        }
+      }),
+    );
+
+    // 刪除 Firestore 裡的紀錄
     await deleteDoc(recordRef);
-
-    console.log('Document deleted with ID: ', id);
+    console.log('Document and images deleted with ID:', id);
   } catch (error) {
     console.error('刪除失敗:', error);
     throw error;
