@@ -95,7 +95,7 @@ export async function updateAccountingRecord(
     if (data.oldImages) {
       imageUrls = [...imageUrls, ...data.oldImages];
     }
-
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { newImages, oldImages, ...cleanData } = data;
 
     await updateDoc(recordRef, {
