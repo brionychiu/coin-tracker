@@ -30,7 +30,7 @@ export default function DesktopNavbar({
                 : 'text-muted-foreground'
             }`}
           >
-            <ActiveIcon size={18} />
+            <ActiveIcon size={18} className="hidden lg:inline-block" />
             {item.title}
           </Link>
         );
