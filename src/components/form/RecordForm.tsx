@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleX, Search } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
@@ -77,7 +77,6 @@ export default function RecordForm({
   const [oldImages, setOldImages] = useState<string[]>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
-  const [exchangeRate, setExchangeRate] = useState<number>(1);
 
   const loadAccounts = async () => {
     try {
@@ -115,7 +114,6 @@ export default function RecordForm({
 
   const { isSubmitting } = form.formState;
 
-  const originalCurrency = useRef(form.getValues('currency'));
   const formCurrency = useWatch({
     control: form.control,
     name: 'currency',
@@ -125,9 +123,14 @@ export default function RecordForm({
     name: 'date',
   });
 
-  useExchangeRate(formDate, formCurrency, (rate) => {
-    if (isEditMode && originalCurrency.current === formCurrency) return;
-    setExchangeRate(rate);
+  const {
+    exchangeRate,
+    isLoading: isExchangeLoading,
+    refetch: fetchExchangeRateAgain,
+  } = useExchangeRate({
+    targetDate: formDate,
+    currency: formCurrency,
+    enabled: !isEditMode || formCurrency !== record?.currency,
   });
 
   useEffect(() => {
@@ -179,6 +182,13 @@ export default function RecordForm({
       toast.error('請先登入');
       return;
     }
+    if (!exchangeRate) {
+      await fetchExchangeRateAgain();
+    }
+    if (!exchangeRate) {
+      toast.error('尚未取得匯率，請稍候再試');
+      return;
+    }
     try {
       const recordData = {
         ...data,
@@ -215,7 +225,9 @@ export default function RecordForm({
 
   return (
     <>
-      {(isSubmitting || loading || accountMapLoading) && <FullscreenLoading />}
+      {(isExchangeLoading || isSubmitting || loading || accountMapLoading) && (
+        <FullscreenLoading />
+      )}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
