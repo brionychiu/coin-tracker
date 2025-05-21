@@ -14,7 +14,7 @@ interface ExpenseAccountSwitcherProps {
 export const ExpenseAccountSwitcher = ({
   records,
 }: ExpenseAccountSwitcherProps) => {
-  const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
+  const [chartType, setChartType] = useState<'pie' | 'bar'>('bar');
 
   const toggleChart = () => {
     setChartType((prev) => (prev === 'pie' ? 'bar' : 'pie'));
