@@ -45,12 +45,14 @@ export const ExpenseAccountSwitcher = ({
           records={records}
           categoryType="expense"
           title="支出帳戶比"
+          groupBy="account"
         />
       ) : (
         <BarChartBase
           records={records}
           categoryType="expense"
           title="支出帳戶金額"
+          groupBy="account"
         />
       )}
     </div>
