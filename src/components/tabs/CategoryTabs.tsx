@@ -114,7 +114,9 @@ export default function CategoryTabs({
   };
 
   useEffect(() => {
-    loadCategories();
+    if (uid && !categoryMapLoading) {
+      loadCategories();
+    }
   }, [uid, categoryMapLoading]);
 
   const handleTabChange = (tab: string) => {
