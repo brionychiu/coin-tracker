@@ -43,6 +43,7 @@ export default function AccountManager() {
   };
 
   useEffect(() => {
+    if (!uid) return;
     loadAccounts();
   }, [uid]);
 
