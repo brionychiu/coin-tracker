@@ -47,12 +47,14 @@ export const IncomeCategorySwitcher = ({
           records={records}
           categoryType="income"
           title="收入類別比"
+          groupBy="category"
         />
       ) : (
         <BarChartBase
           records={records}
           categoryType="income"
           title="收入類別金額"
+          groupBy="category"
         />
       )}
     </div>
