@@ -11,8 +11,9 @@ import {
 import { useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 
+import { useAccountMap } from '@/hooks/useAccountMap';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
-import { getCategoryChartData } from '@/lib/utils/chart';
+import { getAccountChartData, getCategoryChartData } from '@/lib/utils/chart';
 import { AccountingRecord } from '@/types/accounting';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
@@ -21,20 +22,24 @@ interface BarChartBaseProps {
   records: AccountingRecord[];
   categoryType: 'expense' | 'income';
   title: string;
+  groupBy?: 'category' | 'account';
 }
 
 export const BarChartBase = ({
   records,
   categoryType,
   title,
+  groupBy = 'category',
 }: BarChartBaseProps) => {
   const { categoryMap } = useCategoryMap();
+  const { accountMap } = useAccountMap();
 
-  const { labels, data, percentages, total, colors } = getCategoryChartData(
-    records,
-    categoryMap,
-    categoryType,
-  );
+  const chartDataSet =
+    groupBy === 'category'
+      ? getCategoryChartData(records, categoryMap, categoryType)
+      : getAccountChartData(records, accountMap, categoryType);
+
+  const { labels, data, percentages, total, colors } = chartDataSet;
 
   const chartData = {
     labels,
@@ -47,11 +52,12 @@ export const BarChartBase = ({
       },
     ],
   };
+
   const chartOptions = {
     responsive: true,
     plugins: {
       legend: {
-        display: false, // 隱藏圖例
+        display: false,
       },
     },
   };

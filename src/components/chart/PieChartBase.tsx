@@ -4,8 +4,9 @@ import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import { useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
 
+import { useAccountMap } from '@/hooks/useAccountMap';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
-import { getCategoryChartData } from '@/lib/utils/chart';
+import { getAccountChartData, getCategoryChartData } from '@/lib/utils/chart';
 import { AccountingRecord } from '@/types/accounting';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -14,20 +15,24 @@ interface PieChartBaseProps {
   records: AccountingRecord[];
   categoryType: 'expense' | 'income';
   title: string;
+  groupBy?: 'category' | 'account';
 }
 
 export const PieChartBase = ({
   records,
   categoryType,
   title,
+  groupBy = 'category',
 }: PieChartBaseProps) => {
   const { categoryMap } = useCategoryMap();
+  const { accountMap } = useAccountMap();
 
-  const { labels, data, percentages, total, colors } = getCategoryChartData(
-    records,
-    categoryMap,
-    categoryType,
-  );
+  const chartDataRaw =
+    groupBy === 'category'
+      ? getCategoryChartData(records, categoryMap, categoryType)
+      : getAccountChartData(records, accountMap, categoryType);
+
+  const { labels, data, percentages, total, colors } = chartDataRaw;
 
   const chartData = {
     labels,
