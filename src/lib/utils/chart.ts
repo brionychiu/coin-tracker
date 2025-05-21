@@ -1,5 +1,6 @@
 import { graphBgColors } from '@/lib/constants/chartColors';
 import { getCategoryLabelById } from '@/lib/utils/categories';
+import { Account } from '@/types/account';
 import { AccountingRecord } from '@/types/accounting';
 import { Category } from '@/types/category';
 
@@ -48,7 +49,7 @@ export function getCategoryChartData(
 // Pie chart, Bar chart - by Account
 export function getAccountChartData(
   records: AccountingRecord[],
-  accountMap: Record<string, { name: string }>,
+  accountMap: Record<string, Account>,
   categoryType: 'expense' | 'income' = 'expense',
 ) {
   const filtered = records.filter((r) => r.categoryType === categoryType);
@@ -68,7 +69,7 @@ export function getAccountChartData(
   const total = entries.reduce((sum, [, val]) => sum + val, 0);
 
   const labels = entries.map(
-    ([accountId]) => accountMap[accountId]?.name ?? '未知帳戶',
+    ([accountId]) => accountMap[accountId]?.label ?? '未知帳戶',
   );
   const data = entries.map(([, val]) => val);
   const percentages = data.map((val) =>
