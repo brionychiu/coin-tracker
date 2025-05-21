@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 
+import { ExpenseAccountSwitcher } from '@/components/chart/ExpenseAccountSwitcher';
 import { ExpenseCategorySwitcher } from '@/components/chart/ExpenseCategorySwitcher';
+import { IncomeAccountSwitcher } from '@/components/chart/IncomeAccountSwitcher';
 import { IncomeCategorySwitcher } from '@/components/chart/IncomeCategorySwitcher';
 import { MultiAxisLineChart } from '@/components/chart/MultiAxisLineChart';
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
@@ -64,6 +66,12 @@ export default function ReportPage() {
             )}
             {incomeRecords.length > 0 && (
               <IncomeCategorySwitcher records={incomeRecords} />
+            )}
+            {expenseRecords.length > 0 && (
+              <ExpenseAccountSwitcher records={expenseRecords} />
+            )}
+            {incomeRecords.length > 0 && (
+              <IncomeAccountSwitcher records={incomeRecords} />
             )}
             {(expenseRecords.length > 0 || incomeRecords.length > 0) && (
               <MultiAxisLineChart
