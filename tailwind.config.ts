@@ -37,6 +37,9 @@ export default {
           '02': '#FFEF98', // 淺黃色
           '03': '#FCFDFA', // 灰白色
         },
+        yellow: {
+          '01': '#FFDB52',
+        },
         gray: {
           '01': '#D1D5DB',
           '02': '#9CA3AF',
@@ -48,12 +51,14 @@ export default {
         blue: {
           '01': '#A3DDF0',
           '02': '#7FCFEA',
+          '03': '#7FD7F7',
         },
         red: {
           '01': '#FFF3F2',
           '02': '#FFE0DF',
           '03': '#FFC7C5',
           '04': '#ffb5c3',
+          '05': '#FF9998',
         },
         warning: {
           '01': '#FFC107',
