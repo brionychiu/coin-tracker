@@ -37,7 +37,7 @@ export default function AccountingBookPage() {
             mode="single"
             selected={date}
             onSelect={(newDate) => newDate && setDate(newDate)}
-            month={new Date(new Date().getFullYear(), month)}
+            month={date}
             onMonthChange={handleMonthChange}
             recordDates={recordDates}
             className="md:p-4"
