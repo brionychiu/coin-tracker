@@ -1,18 +1,16 @@
-// middleware.ts
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const authToken = request.cookies.get('authToken');
+  const token = request.cookies.get('authToken')?.value;
 
-  if (!authToken) {
+  if (!token) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
   return NextResponse.next();
 }
 
-// 配置只讓 /dashboard 開啟 middleware 檢查
+// 僅保護 /dashboard 下的路由
 export const config = {
   matcher: ['/dashboard/:path*'],
 };
