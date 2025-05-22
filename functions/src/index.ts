@@ -16,14 +16,20 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 admin.initializeApp();
 
 export const fetchExchangeRates = onSchedule(
+  // 每月初（1 號）執行
   {
-    schedule: '0 * * * *',
+    schedule: '0 0 1 * *',
     timeZone: 'Asia/Taipei',
   },
   async (event) => {
     const base = 'TWD';
     const now = new Date();
-    const dateStr = now.toISOString().split('T')[0]; // e.g., "2025-05-22"
+
+    // yyyy-mm 格式
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份從 0 開始
+    const docId = `${year}-${month}`;
+    const dateStr = `${year}-${month}-01`;
 
     const apiKey = process.env.EXCHANGE_RATE_API_KEY;
     const url = `https://api.exchangerate.host/historical?access_key=${apiKey}&source=TWD&date=${dateStr}`;
@@ -32,7 +38,6 @@ export const fetchExchangeRates = onSchedule(
       const response = await fetch(url);
       const data = await response.json();
 
-      const docId = `${dateStr}-h${now.getHours()}`; // 例如：2025-05-22-h15
       await admin
         .firestore()
         .collection('exchange-rates-monthly')
@@ -44,7 +49,7 @@ export const fetchExchangeRates = onSchedule(
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
         });
 
-      console.log('✅ Exchange rate data saved (3hr test):', docId);
+      console.log('✅ Exchange rate data saved (3hr test):', docId, data);
     } catch (err) {
       console.error('❌ Error fetching exchange rates:', err);
     }
