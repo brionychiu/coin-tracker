@@ -1,4 +1,5 @@
 import { db, doc, getDoc, serverTimestamp, setDoc } from '@/lib/firebase';
+import type { ExchangeRateMonthlyPayload } from '@/types/exchange-rate';
 
 export async function getMonthlyExchangeRate(
   yearMonth: string,
@@ -16,7 +17,10 @@ export async function getMonthlyExchangeRate(
   return null;
 }
 
-export async function addMonthlyExchangeRate(yearMonth: string, data: any) {
+export async function addMonthlyExchangeRate(
+  yearMonth: string,
+  data: ExchangeRateMonthlyPayload,
+) {
   const docRef = doc(db, 'exchange-rates-monthly', yearMonth);
   await setDoc(docRef, {
     ...data,
