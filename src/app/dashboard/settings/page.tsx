@@ -2,7 +2,6 @@
 import { useState } from 'react';
 
 import CategoryTabs from '@/components/tabs/CategoryTabs';
-import { fetchMonthlyFirstDayRates } from '@/lib/api-client/exchangeRate';
 
 import AccountManager from './AccountManager';
 
@@ -25,9 +24,6 @@ export default function SettingsPage() {
         <h2 className="mb-4 font-semibold">記帳帳戶</h2>
         <AccountManager />
       </div>
-      <button onClick={() => fetchMonthlyFirstDayRates()}>
-        fetchMonthlyFirstDayRates
-      </button>
     </div>
   );
 }
