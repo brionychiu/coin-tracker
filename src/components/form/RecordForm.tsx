@@ -29,16 +29,18 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAccountMap } from '@/hooks/useAccountMap';
 import { useAuth } from '@/hooks/useAuth';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
-import { useExchangeRate } from '@/hooks/useExchangeRate';
 import { fetchVisibleAccounts } from '@/lib/api-client/account';
 import {
   addAccountingRecord,
   updateAccountingRecord,
 } from '@/lib/api-client/accounting';
-import { handleNumericInput } from '@/lib/utils/input';
+import { getEffectiveYearMonth } from '@/lib/utils/date';
+import { handleNumericInput, parseCurrencyValue } from '@/lib/utils/input';
 import { useDateStore } from '@/stores/dateStore';
+import { useExchangeRateStore } from '@/stores/exchangeRateStore';
 import { Account } from '@/types/account';
 import { AccountingRecord } from '@/types/accounting';
+import { ExchangeRateMonthly } from '@/types/exchange-rate';
 
 interface RecordFormProps {
   date: Date | undefined;
@@ -72,11 +74,14 @@ export default function RecordForm({
   const { setDate } = useDateStore();
   const { categoryMap, loading } = useCategoryMap();
   const { accountMap, loading: accountMapLoading } = useAccountMap();
+  const { loading: isExchangeLoading } = useExchangeRateStore();
 
   const [imageList, setImageList] = useState<any[]>([]);
   const [oldImages, setOldImages] = useState<string[]>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [exchangeRateData, setExchangeRateData] =
+    useState<ExchangeRateMonthly | null>(null);
 
   const loadAccounts = async () => {
     try {
@@ -114,24 +119,31 @@ export default function RecordForm({
 
   const { isSubmitting } = form.formState;
 
-  const formCurrency = useWatch({
-    control: form.control,
-    name: 'currency',
-  });
   const formDate = useWatch({
     control: form.control,
     name: 'date',
   });
 
-  const {
-    exchangeRate,
-    isLoading: isExchangeLoading,
-    refetch: fetchExchangeRateAgain,
-  } = useExchangeRate({
-    targetDate: formDate,
-    currency: formCurrency,
-    enabled: !isEditMode || formCurrency !== record?.currency,
-  });
+  useEffect(() => {
+    if (!formDate) return;
+    const yearMonth = getEffectiveYearMonth(formDate);
+
+    const fetchRate = async () => {
+      try {
+        const result = await useExchangeRateStore
+          .getState()
+          .ensureRate(yearMonth);
+        if (!result) {
+          console.error('匯率取得失敗');
+        }
+        setExchangeRateData(result);
+      } catch (error) {
+        console.error('匯率取得失敗', error);
+      }
+    };
+
+    fetchRate();
+  }, [formDate]);
 
   useEffect(() => {
     if (isEditMode && record?.images) {
@@ -182,18 +194,18 @@ export default function RecordForm({
       toast.error('請先登入');
       return;
     }
-    if (!exchangeRate) {
-      await fetchExchangeRateAgain();
-    }
-    if (!exchangeRate) {
+    if (!exchangeRateData) {
       toast.error('尚未取得匯率，請稍候再試');
       return;
     }
+    const currencyValue = parseCurrencyValue(data.currency).value;
+    const quoteKey = `TWD${currencyValue}`;
+
     try {
       const recordData = {
         ...data,
         createAt: new Date().toISOString(),
-        exchangeRate,
+        exchangeRate: exchangeRateData?.quotes[quoteKey] || 1,
         categoryId: data.categoryId,
         categoryType: categoryMap[data.categoryId].type,
         newImages,
