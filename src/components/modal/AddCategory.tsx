@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
-import { addCategory } from '@/lib/api/categories';
+import { addCategory } from '@/lib/api-client/categories';
 import { iconMap, IconName } from '@/lib/constants/iconMap';
 
 const ICON_OPTIONS: IconName[] = Object.keys(iconMap) as IconName[];
@@ -43,7 +43,7 @@ export default function AddCategoryDialog({
     if (!label || !selectedIconName || !uid) return;
 
     try {
-      const id = await addCategory({
+      await addCategory({
         uid,
         label,
         icon: selectedIconName,

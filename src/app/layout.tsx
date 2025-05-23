@@ -1,9 +1,10 @@
+import 'react-photo-view/dist/react-photo-view.css';
 import './globals.css';
 
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import 'react-photo-view/dist/react-photo-view.css';
 
+import { TokenRefresher } from '@/app/_providers/TokenRefresher';
 import Footer from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/sonner';
 
@@ -35,6 +36,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <TokenRefresher />
         <div className="flex min-h-screen flex-col">
           <main className="flex-grow">{children}</main>
           <Footer />

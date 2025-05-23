@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
-import { addAccount } from '@/lib/api/account';
+import { addAccount } from '@/lib/api-client/account';
 
 interface AddAccountDialogProps {
   open: boolean;

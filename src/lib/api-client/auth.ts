@@ -1,13 +1,29 @@
-import { auth } from '@/lib/firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import Cookies from 'js-cookie';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth';
 import { toast } from 'sonner';
+
+import { auth } from '@/lib/firebase';
 
 export const signIn = async (email: string, password: string) => {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
     const token = await userCredential.user.getIdToken();
-    Cookies.set('authToken', token, { expires: 180, secure: true });
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken: token }),
+    });
+
+    if (!res.ok) {
+      throw new Error('無法設置登入 Cookie');
+    }
 
     return userCredential;
   } catch (error: any) {

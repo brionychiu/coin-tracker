@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 
-import { ExpenseChartSwitcher } from '@/components/chart/ExpenseChartSwitcher';
-import { IncomeChartSwitcher } from '@/components/chart/IncomeChartSwitcher';
+import { ExpenseAccountSwitcher } from '@/components/chart/ExpenseAccountSwitcher';
+import { ExpenseCategorySwitcher } from '@/components/chart/ExpenseCategorySwitcher';
+import { IncomeAccountSwitcher } from '@/components/chart/IncomeAccountSwitcher';
+import { IncomeCategorySwitcher } from '@/components/chart/IncomeCategorySwitcher';
 import { MultiAxisLineChart } from '@/components/chart/MultiAxisLineChart';
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
-import { DateRangeTabs, type DateRange } from '@/components/tabs/DateRangeTabs';
+import { type DateRange, DateRangeTabs } from '@/components/tabs/DateRangeTabs';
 import { useAccountingRecordsByRange } from '@/hooks/useAccountingRecords';
 
 export default function ReportPage() {
@@ -60,10 +62,16 @@ export default function ReportPage() {
           )}
           <div className="grid w-full gap-10 sm:grid-cols-1 md:grid-cols-3 [&>*]:w-full">
             {expenseRecords.length > 0 && (
-              <ExpenseChartSwitcher records={expenseRecords} />
+              <ExpenseCategorySwitcher records={expenseRecords} />
             )}
             {incomeRecords.length > 0 && (
-              <IncomeChartSwitcher records={incomeRecords} />
+              <IncomeCategorySwitcher records={incomeRecords} />
+            )}
+            {expenseRecords.length > 0 && (
+              <ExpenseAccountSwitcher records={expenseRecords} />
+            )}
+            {incomeRecords.length > 0 && (
+              <IncomeAccountSwitcher records={incomeRecords} />
             )}
             {(expenseRecords.length > 0 || incomeRecords.length > 0) && (
               <MultiAxisLineChart

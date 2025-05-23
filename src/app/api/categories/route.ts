@@ -1,56 +1,30 @@
-import { collection, db, getDocs, orderBy, query, where } from '@/lib/firebase';
-import { Category } from '@/types/category';
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
-export async function getVisibleCategories(uid: string | undefined) {
-  if (!uid) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+import { getVisibleCategories } from '@/lib/api-server/categories';
+import { adminAuth } from '@/lib/firebaseAdmin';
+
+export async function GET() {
+  const token = (await cookies()).get('authToken')?.value;
+
+  if (!token) {
+    return NextResponse.json(
+      { error: 'Unauthorized (no token)' },
+      { status: 401 },
+    );
   }
 
-  // 1. 取得 system 預設類別
-  const systemQuery = query(
-    collection(db, 'categories'),
-    where('createdBy', '==', 'system'),
-    orderBy('createAt', 'asc'),
-  );
+  try {
+    const decodedToken = await adminAuth.verifyIdToken(token);
+    const uid = decodedToken.uid;
 
-  // 2. 取得使用者自訂類別
-  const userQuery = query(
-    collection(db, 'categories'),
-    where('createdBy', '==', uid),
-    orderBy('createAt', 'asc'),
-  );
-
-  const [systemSnap, userSnap] = await Promise.all([
-    getDocs(systemQuery),
-    getDocs(userQuery),
-  ]);
-
-  const systemCategories = systemSnap.docs
-    .map((doc) => ({
-      id: doc.id,
-      label: doc.data().label,
-      icon: doc.data().icon,
-      type: doc.data().type,
-      createAt: doc.data().createAt,
-      createdBy: doc.data().createdBy,
-      deletedBy: doc.data().deletedBy,
-    }))
-    .filter((cat: Category) => !cat.deletedBy?.includes(uid));
-
-  const userCategories = userSnap.docs
-    .map((doc) => ({
-      id: doc.id,
-      label: doc.data().label,
-      icon: doc.data().icon,
-      type: doc.data().type,
-      createAt: doc.data().createAt,
-      createdBy: doc.data().createdBy,
-      deletedBy: doc.data().deletedBy,
-    }))
-    .filter((cat: Category) => !cat.deletedBy?.includes(uid));
-
-  const categories: Category[] = [...systemCategories, ...userCategories];
-
-  return categories;
+    const accounts = await getVisibleCategories(uid);
+    return NextResponse.json(accounts);
+  } catch (error) {
+    console.error('Token 驗證失敗:', error);
+    return NextResponse.json(
+      { error: 'Invalid or expired token' },
+      { status: 403 },
+    );
+  }
 }

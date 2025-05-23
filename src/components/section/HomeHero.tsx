@@ -4,16 +4,19 @@ import Autoplay from 'embla-carousel-autoplay';
 import Image from 'next/image';
 import { useRef } from 'react';
 
-import coinsAmicoImage from '@/assets/images/coins-amico.png';
-import investingPanaImage from '@/assets/images/investing-pana.png';
-import invoiceCuateImage from '@/assets/images/invoice-cuate.png';
-import revenueBroImage from '@/assets/images/revenue-bro.png';
-import savingMoneyImage from '@/assets/images/saving-money.png';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
 } from '@/components/ui/carousel';
+
+const imageList = [
+  { src: '/saving-money.png', alt: 'Saving money image' },
+  { src: '/investing-pana.png', alt: 'Investing image' },
+  { src: '/coins-amico.png', alt: 'Coins image' },
+  { src: '/revenue-bro.png', alt: 'Revenue image' },
+  { src: '/invoice-cuate.png', alt: 'Invoice image' },
+];
 
 export const HomeHero = () => {
   const autoplay = useRef(Autoplay({ delay: 2500, stopOnInteraction: false }));
@@ -24,46 +27,18 @@ export const HomeHero = () => {
         <div className="w-[300px] sm:w-[400px] md:w-[500px] lg:w-[550px]">
           <Carousel plugins={[autoplay.current]} opts={{ loop: true }}>
             <CarouselContent>
-              <CarouselItem>
-                <Image
-                  src={savingMoneyImage}
-                  alt="Saving money image"
-                  className="rounded-lg object-contain"
-                  priority
-                />
-              </CarouselItem>
-              <CarouselItem>
-                <Image
-                  src={investingPanaImage}
-                  alt="Investing image"
-                  className="rounded-lg object-contain"
-                  priority
-                />
-              </CarouselItem>
-              <CarouselItem>
-                <Image
-                  src={coinsAmicoImage}
-                  alt="Coins image"
-                  className="rounded-lg object-contain"
-                  priority
-                />
-              </CarouselItem>
-              <CarouselItem>
-                <Image
-                  src={revenueBroImage}
-                  alt="Savings image"
-                  className="rounded-lg object-contain"
-                  priority
-                />
-              </CarouselItem>
-              <CarouselItem>
-                <Image
-                  src={invoiceCuateImage}
-                  alt="Invoice image"
-                  className="rounded-lg object-contain"
-                  priority
-                />
-              </CarouselItem>
+              {imageList.map((img) => (
+                <CarouselItem key={img.src}>
+                  <Image
+                    src={img.src}
+                    alt={img.alt}
+                    width={550}
+                    height={550}
+                    className="rounded-lg object-contain"
+                    priority
+                  />
+                </CarouselItem>
+              ))}
             </CarouselContent>
           </Carousel>
         </div>

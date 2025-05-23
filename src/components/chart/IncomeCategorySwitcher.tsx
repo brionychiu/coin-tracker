@@ -1,18 +1,21 @@
 'use client';
 
+import { AlignEndHorizontal, ChartPie } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { AccountingRecord } from '@/types/accounting';
-import { AlignEndHorizontal, ChartPie } from 'lucide-react';
+
 import { BarChartBase } from './BarChartBase';
 import { PieChartBase } from './PieChartBase';
 
-interface IncomeChartSwitcherProps {
+interface IncomeCategorySwitcherProps {
   records: AccountingRecord[];
 }
 
-export const IncomeChartSwitcher = ({ records }: IncomeChartSwitcherProps) => {
+export const IncomeCategorySwitcher = ({
+  records,
+}: IncomeCategorySwitcherProps) => {
   const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
 
   const toggleChart = () => {
@@ -44,12 +47,14 @@ export const IncomeChartSwitcher = ({ records }: IncomeChartSwitcherProps) => {
           records={records}
           categoryType="income"
           title="收入類別比"
+          groupBy="category"
         />
       ) : (
         <BarChartBase
           records={records}
           categoryType="income"
-          title="收入金額"
+          title="收入類別金額"
+          groupBy="category"
         />
       )}
     </div>

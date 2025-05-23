@@ -37,6 +37,9 @@ export default {
           '02': '#FFEF98', // 淺黃色
           '03': '#FCFDFA', // 灰白色
         },
+        yellow: {
+          '01': '#FFDB52',
+        },
         gray: {
           '01': '#D1D5DB',
           '02': '#9CA3AF',
@@ -48,12 +51,14 @@ export default {
         blue: {
           '01': '#A3DDF0',
           '02': '#7FCFEA',
+          '03': '#7FD7F7',
         },
         red: {
           '01': '#FFF3F2',
           '02': '#FFE0DF',
           '03': '#FFC7C5',
           '04': '#ffb5c3',
+          '05': '#FF9998',
         },
         warning: {
           '01': '#FFC107',
@@ -77,11 +82,11 @@ export default {
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         chart: {
-          '1': 'hsl(var(--chart-1))',
-          '2': 'hsl(var(--chart-2))',
-          '3': 'hsl(var(--chart-3))',
-          '4': 'hsl(var(--chart-4))',
-          '5': 'hsl(var(--chart-5))',
+          1: 'hsl(var(--chart-1))',
+          2: 'hsl(var(--chart-2))',
+          3: 'hsl(var(--chart-3))',
+          4: 'hsl(var(--chart-4))',
+          5: 'hsl(var(--chart-5))',
         },
         sidebar: {
           DEFAULT: 'hsl(var(--sidebar-background))',
@@ -100,7 +105,7 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       width: {
-        '350': '350px',
+        350: '350px',
       },
       maxHeight: {
         'screen-minus-200': 'calc(100vh - 200px)',

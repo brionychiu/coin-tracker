@@ -2,14 +2,17 @@ import { CirclePlus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import { getVisibleCategories } from '@/app/api/categories/route';
 import AddCategoryDialog from '@/components/modal/AddCategory';
 import { Button } from '@/components/ui/button';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { useConfirm } from '@/hooks/useConfirmModal';
-import { deleteCategory } from '@/lib/api/categories';
+import {
+  deleteCategory,
+  fetchVisibleCategories,
+} from '@/lib/api-client/categories';
 import { iconMap } from '@/lib/constants/iconMap';
 import { Category } from '@/types/category';
 
@@ -77,11 +80,15 @@ export default function CategoryTabs({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isDeletedCategory, setIsDeletedCategory] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const loadCategories = async () => {
     if (!uid) return;
-    const result = await getVisibleCategories(uid);
-    if (Array.isArray(result)) {
+    setIsLoading(true);
+    try {
+      const result = await fetchVisibleCategories();
+      if (!Array.isArray(result)) throw new Error('資料格式錯誤');
+
       setCategories(result);
 
       const deleted =
@@ -102,14 +109,18 @@ export default function CategoryTabs({
           onChange?.(expenseCategories[0].id);
         }
       }
-    } else {
-      console.error('無法取得類別', result);
+    } catch (error) {
+      console.error('無法取得類別:', error);
       setCategories([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    loadCategories();
+    if (uid && !categoryMapLoading) {
+      loadCategories();
+    }
   }, [uid, categoryMapLoading]);
 
   const handleTabChange = (tab: string) => {
@@ -140,91 +151,100 @@ export default function CategoryTabs({
 
   return (
     <div className="rounded-md border p-2 shadow md:p-4">
-      <Tabs
-        value={activeTab}
-        onValueChange={handleTabChange}
-        className="w-full"
-      >
-        <TabsList className="grid w-full grid-cols-2">
-          {['expense', 'income'].map((tab) => (
-            <TabsTrigger key={tab} value={tab}>
-              {tab === 'expense' ? '支出' : '收入'}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        {['expense', 'income'].map((tab) => (
-          <TabsContent key={tab} value={tab}>
-            <div className="grid grid-cols-3 gap-5 sm:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
-              {categories
-                .filter((cat) => cat.type === tab)
-                .map(({ id, icon, label }, index) => {
-                  const Icon = iconMap[icon] || iconMap['LayoutGrid'];
-                  return (
-                    <TabButton
-                      key={index}
-                      label={label}
-                      icon={Icon}
-                      isSelected={value === id}
-                      activeTab={activeTab}
-                      onClick={() => onChange?.(id)}
-                    />
-                  );
-                })}
-              {isDeletedCategory &&
-                categoryId &&
-                categoryMap[categoryId]?.type === tab &&
-                (() => {
-                  const icon = categoryMap[categoryId]?.icon;
-                  const Icon = iconMap[icon] || iconMap['LayoutGrid'];
-                  const label = categoryMap[categoryId]?.label || '已刪除類別';
-                  return (
-                    <TabButton
-                      key="deleted"
-                      label={label}
-                      icon={Icon}
-                      isSelected={value === categoryId}
-                      activeTab={activeTab}
-                      onClick={() => onChange?.(categoryId)}
-                      isDeleted={true}
-                    />
-                  );
-                })()}
-            </div>
-          </TabsContent>
-        ))}
-      </Tabs>
-      {isEdit && (
-        <div className="mt-6 flex items-center justify-end gap-4 sm:mt-0">
-          <Button
-            type="button"
-            variant="iconHover"
-            size="icon"
-            onClick={() => {
-              setIsDialogOpen(true);
-            }}
-          >
-            <CirclePlus className="size-5" />
-          </Button>
-          <Button
-            type="button"
-            variant="iconHover"
-            size="icon"
-            onClick={handleDelete}
-          >
-            <Trash2 className="size-5" />
-          </Button>
+      {isLoading ? (
+        <div className="flex justify-center py-8">
+          <LoadingSpinner message="正在載入類別..." />
         </div>
+      ) : (
+        <>
+          <Tabs
+            value={activeTab}
+            onValueChange={handleTabChange}
+            className="w-full"
+          >
+            <TabsList className="grid w-full grid-cols-2">
+              {['expense', 'income'].map((tab) => (
+                <TabsTrigger key={tab} value={tab}>
+                  {tab === 'expense' ? '支出' : '收入'}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
+            {['expense', 'income'].map((tab) => (
+              <TabsContent key={tab} value={tab}>
+                <div className="grid grid-cols-3 gap-5 sm:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
+                  {categories
+                    .filter((cat) => cat.type === tab)
+                    .map(({ id, icon, label }, index) => {
+                      const Icon = iconMap[icon] || iconMap['LayoutGrid'];
+                      return (
+                        <TabButton
+                          key={index}
+                          label={label}
+                          icon={Icon}
+                          isSelected={value === id}
+                          activeTab={activeTab}
+                          onClick={() => onChange?.(id)}
+                        />
+                      );
+                    })}
+                  {isDeletedCategory &&
+                    categoryId &&
+                    categoryMap[categoryId]?.type === tab &&
+                    (() => {
+                      const icon = categoryMap[categoryId]?.icon;
+                      const Icon = iconMap[icon] || iconMap['LayoutGrid'];
+                      const label =
+                        categoryMap[categoryId]?.label || '已刪除類別';
+                      return (
+                        <TabButton
+                          key="deleted"
+                          label={label}
+                          icon={Icon}
+                          isSelected={value === categoryId}
+                          activeTab={activeTab}
+                          onClick={() => onChange?.(categoryId)}
+                          isDeleted={true}
+                        />
+                      );
+                    })()}
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+          {isEdit && (
+            <div className="mt-6 flex items-center justify-end gap-4 sm:mt-0">
+              <Button
+                type="button"
+                variant="iconHover"
+                size="icon"
+                onClick={() => {
+                  setIsDialogOpen(true);
+                }}
+              >
+                <CirclePlus className="size-5" />
+              </Button>
+              <Button
+                type="button"
+                variant="iconHover"
+                size="icon"
+                onClick={handleDelete}
+              >
+                <Trash2 className="size-5" />
+              </Button>
+            </div>
+          )}
+          {isEdit && (
+            <AddCategoryDialog
+              open={isDialogOpen}
+              onOpenChange={setIsDialogOpen}
+              type={activeTab}
+              onAddSuccess={loadCategories}
+            />
+          )}
+          {ConfirmModal}
+        </>
       )}
-      {isEdit && (
-        <AddCategoryDialog
-          open={isDialogOpen}
-          onOpenChange={setIsDialogOpen}
-          type={activeTab}
-          onAddSuccess={loadCategories}
-        />
-      )}
-      {ConfirmModal}
     </div>
   );
 }

@@ -1,9 +1,8 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -17,7 +16,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
-import { signIn } from '@/lib/api/auth';
+import { signIn } from '@/lib/api-client/auth';
 
 const FormSchema = z.object({
   email: z.string().email({ message: '請輸入正確格式電子信箱' }),
@@ -40,10 +39,12 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
       password: '',
     },
   });
+  const TEST_EMAIL = process.env.NEXT_PUBLIC_TEST_EMAIL || '';
+  const TEST_PASSWORD = process.env.NEXT_PUBLIC_TEST_PASSWORD || '';
 
   const handleTestLogin = () => {
-    form.setValue('email', 'test@mail.com');
-    form.setValue('password', 'abc1234');
+    form.setValue('email', TEST_EMAIL);
+    form.setValue('password', TEST_PASSWORD);
   };
 
   async function onSubmit(values: z.infer<typeof FormSchema>) {

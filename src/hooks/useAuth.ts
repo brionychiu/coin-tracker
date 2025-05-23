@@ -1,7 +1,6 @@
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 
-import { logoutUser } from '@/lib/api/auth';
+import { logoutUser } from '@/lib/api-client/auth';
 import { useAuthStore } from '@/stores/authStore';
 
 export function useAuth() {
@@ -10,7 +9,7 @@ export function useAuth() {
 
   const logout = async () => {
     await logoutUser();
-    Cookies.remove('authToken');
+    await fetch('/api/auth', { method: 'DELETE' });
     setUser(null);
     router.push('/');
   };

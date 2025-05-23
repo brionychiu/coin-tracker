@@ -26,6 +26,7 @@ function CustomCalendar({
     <DayPicker
       locale={zhTW}
       showOutsideDays={showOutsideDays}
+      fromDate={new Date(2020, 0, 1)}
       className={cn('p-3', className)}
       classNames={{
         months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',

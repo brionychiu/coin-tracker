@@ -6,8 +6,9 @@ import { toast } from 'sonner';
 import RecordForm from '@/components/form/RecordForm';
 import { useConfirm } from '@/hooks/useConfirmModal';
 import { usePaginatedRecords } from '@/hooks/usePaginatedRecords';
-import { deleteAccountingRecord } from '@/lib/api/accounting';
+import { deleteAccountingRecord } from '@/lib/api-client/accounting';
 import { AccountingRecord } from '@/types/accounting';
+
 import SearchTable from './SearchTable';
 
 export default function SearchPage() {

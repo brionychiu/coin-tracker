@@ -4,7 +4,9 @@ import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import { useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
 
-import { getCategoryChartData } from '@/lib/utils/chart';
+import { useAccountMap } from '@/hooks/useAccountMap';
+import { useCategoryMap } from '@/hooks/useCategoryMap';
+import { getAccountChartData, getCategoryChartData } from '@/lib/utils/chart';
 import { AccountingRecord } from '@/types/accounting';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -13,17 +15,24 @@ interface PieChartBaseProps {
   records: AccountingRecord[];
   categoryType: 'expense' | 'income';
   title: string;
+  groupBy?: 'category' | 'account';
 }
 
 export const PieChartBase = ({
   records,
   categoryType,
   title,
+  groupBy = 'category',
 }: PieChartBaseProps) => {
-  const { labels, data, percentages, total, colors } = getCategoryChartData(
-    records,
-    categoryType,
-  );
+  const { categoryMap } = useCategoryMap();
+  const { accountMap } = useAccountMap();
+
+  const chartDataRaw =
+    groupBy === 'category'
+      ? getCategoryChartData(records, categoryMap, categoryType)
+      : getAccountChartData(records, accountMap, categoryType);
+
+  const { labels, data, percentages, total, colors } = chartDataRaw;
 
   const chartData = {
     labels,
@@ -58,7 +67,7 @@ export const PieChartBase = ({
       <h2 className="text-lg font-semibold">{title}</h2>
       <h3 className="mb-1 font-normal text-gray-02">
         <span className="text-sm">NT$</span>
-        <span className="text-lg">{total}</span>
+        <span className="text-lg">{total.toLocaleString()}</span>
       </h3>
       <Pie data={chartData} options={options} />
       <div className="mt-4">
@@ -75,7 +84,9 @@ export const PieChartBase = ({
               <p className="flex items-center">
                 <span className="mr-2">{percentages[index]}%</span>
                 <span className="text-sm text-gray-02">NT$</span>
-                <span className="text-gray-02">{data[index]}</span>
+                <span className="text-gray-02">
+                  {data[index].toLocaleString()}
+                </span>
               </p>
             </li>
           ))}

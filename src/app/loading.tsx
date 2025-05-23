@@ -8,6 +8,7 @@ export default function LoadingPage() {
         alt="Loading..."
         width={240}
         height={240}
+        priority
         className="animate-pulse drop-shadow-[0_0_10px_white]"
       />
     </div>

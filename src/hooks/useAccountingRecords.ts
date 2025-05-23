@@ -6,7 +6,7 @@ import {
   getAccountingRecordById,
   getAccountingRecords,
   getAccountingRecordsByRange,
-} from '@/lib/api/accounting';
+} from '@/lib/api-client/accounting';
 import { AccountingRecord } from '@/types/accounting';
 
 export function useAccountingRecords(date: Date | undefined, month: number) {

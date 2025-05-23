@@ -3,14 +3,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleX, Search } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { getVisibleAccounts } from '@/app/api/accounts/route';
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
 import { AccountSelect } from '@/components/select/AccountSelect';
 import { CurrencySelect } from '@/components/select/CurrencySelect';
@@ -30,15 +29,18 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAccountMap } from '@/hooks/useAccountMap';
 import { useAuth } from '@/hooks/useAuth';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
-import { useExchangeRate } from '@/hooks/useExchangeRate';
+import { fetchVisibleAccounts } from '@/lib/api-client/account';
 import {
   addAccountingRecord,
   updateAccountingRecord,
-} from '@/lib/api/accounting';
-import { handleNumericInput } from '@/lib/utils/input';
+} from '@/lib/api-client/accounting';
+import { getEffectiveYearMonth } from '@/lib/utils/date';
+import { handleNumericInput, parseCurrencyValue } from '@/lib/utils/input';
 import { useDateStore } from '@/stores/dateStore';
+import { useExchangeRateStore } from '@/stores/exchangeRateStore';
 import { Account } from '@/types/account';
 import { AccountingRecord } from '@/types/accounting';
+import { ExchangeRateMonthly } from '@/types/exchange-rate';
 
 interface RecordFormProps {
   date: Date | undefined;
@@ -72,21 +74,21 @@ export default function RecordForm({
   const { setDate } = useDateStore();
   const { categoryMap, loading } = useCategoryMap();
   const { accountMap, loading: accountMapLoading } = useAccountMap();
+  const { loading: isExchangeLoading } = useExchangeRateStore();
 
   const [imageList, setImageList] = useState<any[]>([]);
   const [oldImages, setOldImages] = useState<string[]>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
-  const [exchangeRate, setExchangeRate] = useState<number>(1);
+  const [exchangeRateData, setExchangeRateData] =
+    useState<ExchangeRateMonthly | null>(null);
 
   const loadAccounts = async () => {
-    if (!uid) return;
-    const result = await getVisibleAccounts(uid);
-
-    if (Array.isArray(result)) {
+    try {
+      const result = await fetchVisibleAccounts();
       setAccounts(result);
-    } else {
-      console.error('getVisibleAccounts error:', result);
+    } catch (error) {
+      console.error('getVisibleAccounts error:', error);
     }
   };
 
@@ -117,20 +119,31 @@ export default function RecordForm({
 
   const { isSubmitting } = form.formState;
 
-  const originalCurrency = useRef(form.getValues('currency'));
-  const formCurrency = useWatch({
-    control: form.control,
-    name: 'currency',
-  });
   const formDate = useWatch({
     control: form.control,
     name: 'date',
   });
 
-  useExchangeRate(formDate, formCurrency, (rate) => {
-    if (isEditMode && originalCurrency.current === formCurrency) return;
-    setExchangeRate(rate);
-  });
+  useEffect(() => {
+    if (!formDate) return;
+    const yearMonth = getEffectiveYearMonth(formDate);
+
+    const fetchRate = async () => {
+      try {
+        const result = await useExchangeRateStore
+          .getState()
+          .ensureRate(yearMonth);
+        if (!result) {
+          console.error('匯率取得失敗');
+        }
+        setExchangeRateData(result);
+      } catch (error) {
+        console.error('匯率取得失敗', error);
+      }
+    };
+
+    fetchRate();
+  }, [formDate]);
 
   useEffect(() => {
     if (isEditMode && record?.images) {
@@ -181,11 +194,18 @@ export default function RecordForm({
       toast.error('請先登入');
       return;
     }
+    if (!exchangeRateData) {
+      toast.error('尚未取得匯率，請稍候再試');
+      return;
+    }
+    const currencyValue = parseCurrencyValue(data.currency).value;
+    const quoteKey = `TWD${currencyValue}`;
+
     try {
       const recordData = {
         ...data,
         createAt: new Date().toISOString(),
-        exchangeRate: exchangeRate,
+        exchangeRate: exchangeRateData?.quotes[quoteKey] || 1,
         categoryId: data.categoryId,
         categoryType: categoryMap[data.categoryId].type,
         newImages,
@@ -217,7 +237,9 @@ export default function RecordForm({
 
   return (
     <>
-      {(isSubmitting || loading || accountMapLoading) && <FullscreenLoading />}
+      {(isExchangeLoading || isSubmitting || loading || accountMapLoading) && (
+        <FullscreenLoading />
+      )}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

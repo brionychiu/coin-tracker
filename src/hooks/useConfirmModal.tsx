@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
+
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -6,8 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useState } from 'react';
-import { createPortal } from 'react-dom';
 
 interface ConfirmOptions {
   title: string;

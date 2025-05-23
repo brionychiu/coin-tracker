@@ -2,6 +2,7 @@
 import { useState } from 'react';
 
 import CategoryTabs from '@/components/tabs/CategoryTabs';
+
 import AccountManager from './AccountManager';
 
 export default function SettingsPage() {

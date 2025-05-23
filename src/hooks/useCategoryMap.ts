@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useAuth } from '@/hooks/useAuth';
-import { getCategoryMap } from '@/lib/api/categories';
+import { getCategoryMap } from '@/lib/api-client/categories';
 import { Category } from '@/types/category';
 
 export function useCategoryMap() {

@@ -1,4 +1,3 @@
-import Cookies from 'js-cookie';
 import { create } from 'zustand';
 
 import { auth, onAuthStateChanged, User } from '@/lib/firebase';
@@ -10,17 +9,22 @@ type AuthState = {
 };
 
 export const useAuthStore = create<AuthState>((set) => {
-  
   onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    const token = await user.getIdToken();
-    Cookies.set('authToken', token, { expires: 180, secure: true });
-    
-  } else {
-    Cookies.remove('authToken');
-  }
-  set({ user, isLoading: false });
+    if (user) {
+      const token = await user.getIdToken();
 
+      await fetch('/api/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      });
+    } else {
+      await fetch('/api/auth', { method: 'DELETE' });
+    }
+
+    set({ user, isLoading: false });
   });
 
   return {

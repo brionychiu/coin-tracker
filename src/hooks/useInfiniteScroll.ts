@@ -22,7 +22,7 @@ export function useInfiniteScroll({
           onLoadMore();
         }
       },
-      { threshold }
+      { threshold },
     );
 
     const target = loaderRef.current;

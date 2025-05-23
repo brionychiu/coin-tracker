@@ -8,7 +8,7 @@ import { useAccountingRecords } from '@/hooks/useAccountingRecords';
 import { useAccountMap } from '@/hooks/useAccountMap';
 import { useCategoryMap } from '@/hooks/useCategoryMap';
 import { useConfirm } from '@/hooks/useConfirmModal';
-import { deleteAccountingRecord } from '@/lib/api/accounting';
+import { deleteAccountingRecord } from '@/lib/api-client/accounting';
 import { getAccountLabelById } from '@/lib/utils/account';
 import {
   getCategoryIconById,

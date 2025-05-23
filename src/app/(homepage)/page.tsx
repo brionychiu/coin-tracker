@@ -1,5 +1,6 @@
 import Navbar from '@/components/layout/Navbar';
 import { HomeHero } from '@/components/section/HomeHero';
+import { HomeIntro } from '@/components/section/HomeIntro';
 
 export default function HomePage() {
   return (
@@ -9,6 +10,7 @@ export default function HomePage() {
       </header>
       <main className="flex flex-grow flex-col">
         <HomeHero />
+        <HomeIntro />
       </main>
     </div>
   );

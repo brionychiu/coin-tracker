@@ -1,19 +1,20 @@
+import { AlignEndHorizontal, ChartPie } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { AccountingRecord } from '@/types/accounting';
-import { AlignEndHorizontal, ChartPie } from 'lucide-react';
+
 import { BarChartBase } from './BarChartBase';
 import { PieChartBase } from './PieChartBase';
 
-interface ExpenseChartSwitcherProps {
+interface ExpenseAccountSwitcherProps {
   records: AccountingRecord[];
 }
 
-export const ExpenseChartSwitcher = ({
+export const ExpenseAccountSwitcher = ({
   records,
-}: ExpenseChartSwitcherProps) => {
-  const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
+}: ExpenseAccountSwitcherProps) => {
+  const [chartType, setChartType] = useState<'pie' | 'bar'>('bar');
 
   const toggleChart = () => {
     setChartType((prev) => (prev === 'pie' ? 'bar' : 'pie'));
@@ -43,13 +44,15 @@ export const ExpenseChartSwitcher = ({
         <PieChartBase
           records={records}
           categoryType="expense"
-          title="支出類別比"
+          title="支出帳戶比"
+          groupBy="account"
         />
       ) : (
         <BarChartBase
           records={records}
           categoryType="expense"
-          title="支出類別金額"
+          title="支出帳戶金額"
+          groupBy="account"
         />
       )}
     </div>
