@@ -34,7 +34,7 @@ export default function AccountingBookPage() {
 
     setTimeout(() => {
       setIsLoading(false);
-    }, 2000);
+    }, 2500);
   };
 
   return (
