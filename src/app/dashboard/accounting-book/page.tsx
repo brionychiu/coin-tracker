@@ -1,7 +1,8 @@
 'use client';
 
-import { Plus } from 'lucide-react';
+import { Loader2, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import { CustomCalendar } from '@/app/dashboard/accounting-book/CustomCalendar';
 import Records from '@/app/dashboard/accounting-book/Records';
@@ -11,6 +12,8 @@ import { useDateStore } from '@/stores/dateStore';
 
 export default function AccountingBookPage() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
   const { date, setDate } = useDateStore();
   const month = date ? date.getMonth() : new Date().getMonth();
 
@@ -26,7 +29,12 @@ export default function AccountingBookPage() {
   };
 
   const handleCreate = () => {
+    setIsLoading(true);
     router.push('/dashboard/accounting-book/form/new');
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
   };
 
   return (
@@ -42,9 +50,22 @@ export default function AccountingBookPage() {
             recordDates={recordDates}
             className="md:p-4"
           />
-          <Button onClick={handleCreate} className="my-5">
-            <Plus />
-            新增記帳
+          <Button
+            onClick={handleCreate}
+            disabled={isLoading}
+            className="my-5 flex items-center"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                載入中...
+              </>
+            ) : (
+              <>
+                <Plus className="mr-2 h-4 w-4" />
+                新增記帳
+              </>
+            )}
           </Button>
         </div>
         <div className="md:flex-1">
