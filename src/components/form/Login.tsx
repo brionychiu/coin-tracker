@@ -2,7 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -30,7 +29,6 @@ const FormSchema = z.object({
 
 export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -93,8 +91,12 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
           )}
         />
         <div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? '登入中...' : '登入'}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? '登入中...' : '登入'}
           </Button>
           <Button variant="link" onClick={toggleForm} className="mt-2">
             沒有帳號？請點擊註冊
