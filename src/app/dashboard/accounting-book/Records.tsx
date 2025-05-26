@@ -19,12 +19,11 @@ import { AccountingRecord } from '@/types/accounting';
 
 interface RecordsProps {
   date: Date | undefined;
-  month: number;
   onEdit: (record: AccountingRecord) => void;
 }
 
-export default function Records({ date, month, onEdit }: RecordsProps) {
-  const { filteredRecords, loading } = useAccountingRecords(date, month);
+export default function Records({ date, onEdit }: RecordsProps) {
+  const { filteredRecords, loading } = useAccountingRecords(date);
   const { confirm, ConfirmModal } = useConfirm();
   const { categoryMap } = useCategoryMap();
   const { accountMap } = useAccountMap();
