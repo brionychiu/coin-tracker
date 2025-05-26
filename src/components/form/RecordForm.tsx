@@ -76,6 +76,7 @@ export default function RecordForm({
   const { accountMap, loading: accountMapLoading } = useAccountMap();
   const { loading: exchangeLoading } = useExchangeRateStore();
 
+  const [isCategoryLoading, setIsCategoryLoading] = useState(true);
   const [imageList, setImageList] = useState<any[]>([]);
   const [oldImages, setOldImages] = useState<string[]>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
@@ -237,7 +238,10 @@ export default function RecordForm({
 
   return (
     <>
-      {(exchangeLoading || categoryMapLoading || accountMapLoading) && (
+      {(exchangeLoading ||
+        categoryMapLoading ||
+        accountMapLoading ||
+        isCategoryLoading) && (
         <FullscreenLoading gifSrc="/loading-1.gif" message="資料載入中..." />
       )}
       {isSubmitting && (
@@ -336,6 +340,8 @@ export default function RecordForm({
                     value={field.value}
                     onChange={field.onChange}
                     categoryId={isEditMode ? record?.categoryId : undefined}
+                    isLoading={isCategoryLoading}
+                    setIsLoading={setIsCategoryLoading}
                   />
                 </FormControl>
                 <FormMessage />
