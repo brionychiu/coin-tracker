@@ -21,6 +21,8 @@ interface TabsCategoryProps {
   value?: string;
   categoryId?: string;
   onChange?: (value: string) => void;
+  isLoading?: boolean;
+  setIsLoading?: (loading: boolean) => void;
 }
 
 const TabButton = ({
@@ -71,6 +73,8 @@ export default function CategoryTabs({
   value,
   categoryId,
   onChange,
+  isLoading,
+  setIsLoading,
 }: TabsCategoryProps) {
   const { uid } = useAuth();
   const { confirm, ConfirmModal } = useConfirm();
@@ -80,11 +84,10 @@ export default function CategoryTabs({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isDeletedCategory, setIsDeletedCategory] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const loadCategories = async () => {
     if (!uid) return;
-    setIsLoading(true);
+    setIsLoading?.(true);
     try {
       const result = await fetchVisibleCategories();
       if (!Array.isArray(result)) throw new Error('資料格式錯誤');
@@ -113,7 +116,7 @@ export default function CategoryTabs({
       console.error('無法取得類別:', error);
       setCategories([]);
     } finally {
-      setIsLoading(false);
+      setIsLoading?.(false);
     }
   };
 
