@@ -15,9 +15,8 @@ export default function AccountingBookPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const { date, setDate } = useDateStore();
-  const month = date ? date.getMonth() : new Date().getMonth();
 
-  const { records } = useAccountingRecords(date, month);
+  const { records } = useAccountingRecords(date);
   const recordDates = records.map((record) => new Date(record.date));
 
   const handleMonthChange = (newDate: Date) => {
@@ -69,11 +68,7 @@ export default function AccountingBookPage() {
           </Button>
         </div>
         <div className="md:flex-1">
-          <Records
-            date={date}
-            month={month}
-            onEdit={(record) => handleEdit(record.id)}
-          />
+          <Records date={date} onEdit={(record) => handleEdit(record.id)} />
         </div>
       </div>
     </div>
