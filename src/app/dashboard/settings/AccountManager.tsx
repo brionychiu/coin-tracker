@@ -13,17 +13,24 @@ import { deleteAccount, fetchVisibleAccounts } from '@/lib/api-client/account';
 import { cn } from '@/lib/utils/tailwindUtils';
 import { Account } from '@/types/account';
 
-export default function AccountManager() {
+interface AccountManagerProps {
+  isLoading?: boolean;
+  setIsLoading?: (loading: boolean) => void;
+}
+
+export default function AccountManager({
+  isLoading,
+  setIsLoading,
+}: AccountManagerProps) {
   const { uid } = useAuth();
   const { confirm, ConfirmModal } = useConfirm();
 
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [selectAccount, setSelectAccount] = useState<Account | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const loadAccounts = async () => {
-    setLoading(true);
+    setIsLoading?.(true);
     try {
       const result = await fetchVisibleAccounts();
 
@@ -38,7 +45,7 @@ export default function AccountManager() {
     } catch (err) {
       console.error('fetch error:', err);
     } finally {
-      setLoading(false);
+      setIsLoading?.(false);
     }
   };
 
@@ -55,12 +62,15 @@ export default function AccountManager() {
       message: `確定要刪除「${selectAccount.label}」類別嗎？此操作無法復原。`,
       onConfirm: async () => {
         try {
+          setIsLoading?.(true);
           await deleteAccount({ uid, accountId: selectAccount.id });
           await loadAccounts();
           toast.success('刪除成功！');
         } catch (error) {
           console.error('刪除類別失敗', error);
           toast.error('刪除失敗，請稍後再試');
+        } finally {
+          setIsLoading?.(false);
         }
       },
     });
@@ -68,14 +78,14 @@ export default function AccountManager() {
 
   return (
     <div className="rounded-md border p-2 shadow md:p-4">
-      {loading ? (
+      {isLoading ? (
         <LoadingSpinner message="正在載入帳戶..." />
       ) : (
         accounts.map((account: Account) => (
           <Button
             key={account.id}
             variant="ghost"
-            disabled={loading}
+            disabled={isLoading}
             className={cn(
               selectAccount &&
                 selectAccount.id === account.id &&
@@ -96,7 +106,7 @@ export default function AccountManager() {
           variant="iconHover"
           size="icon"
           onClick={() => setIsDialogOpen(true)}
-          disabled={loading}
+          disabled={isLoading}
         >
           <CirclePlus className="size-5" />
         </Button>
@@ -105,7 +115,7 @@ export default function AccountManager() {
           variant="iconHover"
           size="icon"
           onClick={handleDelete}
-          disabled={loading || !selectAccount}
+          disabled={isLoading || !selectAccount}
         >
           <Trash2 className="size-5" />
         </Button>
