@@ -174,17 +174,16 @@ export async function deleteAccountingRecord(id: string) {
 }
 
 /**
- * 監聽指定月份的 Firestore 記帳紀錄
+ * 取得指定日期所在月份的所有記帳記錄，並透過 callback 即時更新資料
  */
 export function getAccountingRecords(
   uid: string,
-  month: number,
+  date: Date,
   callback: (data: AccountingRecord[]) => void,
 ) {
   if (!uid) return () => {};
 
-  const now = new Date();
-  const startOfMonthDate = new Date(now.getFullYear(), month, 1);
+  const startOfMonthDate = new Date(date.getFullYear(), date.getMonth(), 1);
   const startTimestamp = Timestamp.fromDate(startOfMonth(startOfMonthDate));
   const endTimestamp = Timestamp.fromDate(endOfMonth(startOfMonthDate));
 
