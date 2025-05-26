@@ -31,7 +31,7 @@ export function useConfirm() {
               <DialogHeader>
                 <DialogTitle>{options.title}</DialogTitle>
               </DialogHeader>
-              <p>{options.message}</p>
+              <p className="text-center">{options.message}</p>
               <DialogFooter>
                 <div className="flex justify-center gap-4">
                   <Button variant="outline" onClick={close}>
