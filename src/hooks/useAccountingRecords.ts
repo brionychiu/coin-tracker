@@ -19,7 +19,7 @@ export function useAccountingRecords(date: Date | undefined, month: number) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!month || !date || !uid) {
+    if (month === undefined || !date || !uid) {
       setRecords([]);
       setLoading(false);
       return;
