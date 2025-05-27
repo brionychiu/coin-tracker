@@ -27,7 +27,15 @@ const FormSchema = z.object({
     }),
 });
 
-export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
+interface LoginFormProps {
+  toggleForm: () => void;
+  onLoadingChange: (loading: boolean) => void;
+}
+
+export default function LoginForm({
+  toggleForm,
+  onLoadingChange,
+}: LoginFormProps) {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -46,7 +54,7 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
   };
 
   async function onSubmit(values: z.infer<typeof FormSchema>) {
-    setIsLoading(true);
+    onLoadingChange(true);
     try {
       const userCredential = await signIn(values.email, values.password);
       if (userCredential) {
@@ -55,7 +63,7 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
     } catch (error) {
       console.error('登入失敗:', error);
     } finally {
-      setIsLoading(false);
+      onLoadingChange(false);
     }
   }
 
