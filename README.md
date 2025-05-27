@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# <img src="./public/logo.png" alt="Logo" width="60" height="60" style="vertical-align: middle;" /> [開心記帳 Coin Tracker](https://coin-tracker-eosin.vercel.app/)
 
-## Getting Started
+---
 
-First, run the development server:
+## 網站簡介
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+「開心記帳」是一款簡潔高效的記帳工具，支援收入/支出分類、圖表分析、自訂分類、帳戶與圖片上傳，適合日常收支管理。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 專案亮點
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **多幣別支援與匯率自動轉換**：
+  - 支援記錄多種外幣交易，並根據 exchangerate.host 每月匯率自動轉換為新台幣，提供準確報表。
+- **智能化圖表與分析報表**：
+  - 圓餅圖、折線圖、直條圖等，協助清晰掌握收支趨勢與花費結構。
+- **自訂帳戶管理**：
+  - 可新增多個帳戶（如現金、信用卡、銀行帳戶等），分別記錄與統計收支。
+- **靈活的類別設定**：
+  - 可自訂收入與支出分類，搭配 Icon 與軟刪除設計，確保使用彈性。
+- **圖片上傳與預覽**：
+  - 可為每筆記錄上傳發票或單據圖片，支援預覽與放大。
+- **快速搜尋與關鍵字高亮**：
+  - 支援模糊搜尋備註，並高亮顯示關鍵字，找資料更快速。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 使用技術
 
-## Learn More
+| 類別        | 技術                                                                    |
+|-----------|-----------------------------------------------------------------------|
+| 前端框架      | [Next.js 15](https://nextjs.org/)  (React 19)                         |
+| 語言        | TypeScript                                                            |
+| 狀態管理      | Zustand                                                               |
+| 表單驗證      | React Hook Form、Zod                                                   |
+| UI 樣式     | Tailwind CSS、[shadcn/ui](https://ui.shadcn.com/)（基於 Radix + Tailwind） |
+| 圖表        | Chart.js、react-chartjs-2                                              |
+| 前端認證      | Firebase Authentication（使用者登入、token 建立）                   |
+| 後端驗證與 API | Firebase Admin SDK + Next.js App Router API（token 驗證與存取控制） |                                            |
+| 資料庫       | Firebase Firestore、Firebase Storage                                   |
+| 圖片預覽      | react-photo-view、react-images-uploading                               |
+| 日期處理      | date-fns、react-day-picker                                             |
+| 開發工具      | ESLint、Prettier、Husky、lint-staged                                     |
+| 部署        | Vercel                                                                |
 
-To learn more about Next.js, take a look at the following resources:
+## 網站 Demo
+#### RWD：針對電腦、平板、手機的響應式設計
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#### 註冊及登入
+使用者可以使用信箱註冊及登入，支援表單驗證。另可使用測試帳號或 Google 帳號快速登入。
+![Login demo](./public/login-demo.gif)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### 記帳本
+支援 CRUD 功能，可紀錄不同幣值（即時轉換每月匯率）及圖片上傳與預覽。
+![Accounting demo](./public/accounting-demo.gif)
 
-## Deploy on Vercel
+#### 圖表分析
+可以依照類別、帳戶的收入/支出顯示圓餅圖及直條圖，有助於使用者快速掌握財務概況。
+![Report demo](./public/report-demo.gif)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### 搜尋關鍵字
+模糊搜尋備註關鍵字，即時高亮顯示，表格無限滾動，每次加載 100 筆資料。
+![Search demo](./public/search-demo.gif)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+#### 設定類別及帳戶
+自訂 Icon 類別及設定不同帳戶，增加記帳使用彈性，輔以清晰直覺的呈現方式，有助於提升記帳的完整性與靈活性。
+![Setting demo](./public/setting-demo.gif)
+

@@ -44,11 +44,10 @@ export const HomeHero = () => {
         </div>
         <div className="max-w-xl text-center lg:text-left">
           <h2 className="mb-5 text-3xl font-bold lg:text-4xl">
-            懶人記帳首選，無痛養成記帳習慣，原來理財可以很簡單！
+            快樂輕鬆養成記帳習慣，原來理財可以很簡單！
           </h2>
           <h3 className="text-lg font-normal text-gray-600 lg:text-xl">
-            沒有複雜的功能，立志用最「簡單」的模式來幫助大家養成記帳習慣，
-            讓使用者相信只要肯記帳，就能因此改變生活，邁向自由人生！
+            簡易好用的記帳網站，協助使用者輕鬆紀錄日常生活中的收支明細，並以圖表、報表等方式追蹤財務狀況，讓每一筆花費都清楚透明，養成良好的金錢管理習慣。
           </h3>
         </div>
       </div>
