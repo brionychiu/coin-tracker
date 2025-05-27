@@ -72,10 +72,11 @@ export default function RecordForm({
   const isEditMode = !!record;
   const { uid } = useAuth();
   const { setDate } = useDateStore();
-  const { categoryMap, loading } = useCategoryMap();
+  const { categoryMap, loading: categoryMapLoading } = useCategoryMap();
   const { accountMap, loading: accountMapLoading } = useAccountMap();
-  const { loading: isExchangeLoading } = useExchangeRateStore();
+  const { loading: exchangeLoading } = useExchangeRateStore();
 
+  const [isCategoryLoading, setIsCategoryLoading] = useState(true);
   const [imageList, setImageList] = useState<any[]>([]);
   const [oldImages, setOldImages] = useState<string[]>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
@@ -237,8 +238,14 @@ export default function RecordForm({
 
   return (
     <>
-      {(isExchangeLoading || isSubmitting || loading || accountMapLoading) && (
-        <FullscreenLoading />
+      {(exchangeLoading ||
+        categoryMapLoading ||
+        accountMapLoading ||
+        isCategoryLoading) && (
+        <FullscreenLoading gifSrc="/loading-1.gif" message="資料載入中..." />
+      )}
+      {isSubmitting && (
+        <FullscreenLoading gifSrc="/loading-2.gif" message="儲存資料中..." />
       )}
       <Form {...form}>
         <form
@@ -333,6 +340,8 @@ export default function RecordForm({
                     value={field.value}
                     onChange={field.onChange}
                     categoryId={isEditMode ? record?.categoryId : undefined}
+                    isLoading={isCategoryLoading}
+                    setIsLoading={setIsCategoryLoading}
                   />
                 </FormControl>
                 <FormMessage />

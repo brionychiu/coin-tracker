@@ -2,8 +2,8 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { FcGoogle } from 'react-icons/fc';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
-import { signIn } from '@/lib/api-client/auth';
+import { signIn, signInWithGoogle } from '@/lib/api-client/auth';
 
 const FormSchema = z.object({
   email: z.string().email({ message: '請輸入正確格式電子信箱' }),
@@ -28,9 +28,18 @@ const FormSchema = z.object({
     }),
 });
 
-export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
+interface LoginFormProps {
+  toggleForm: () => void;
+  onLoadingChange: (loading: boolean) => void;
+  onSuccess: () => void;
+}
+
+export default function LoginForm({
+  toggleForm,
+  onLoadingChange,
+  onSuccess,
+}: LoginFormProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -48,18 +57,34 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
   };
 
   async function onSubmit(values: z.infer<typeof FormSchema>) {
-    setIsLoading(true);
+    onLoadingChange(true);
     try {
       const userCredential = await signIn(values.email, values.password);
       if (userCredential) {
+        onSuccess();
         router.push('/dashboard/accounting-book');
       }
     } catch (error) {
       console.error('登入失敗:', error);
     } finally {
-      setIsLoading(false);
+      onLoadingChange(false);
     }
   }
+
+  const handleGoogleSignIn = async () => {
+    onLoadingChange(true);
+    try {
+      const user = await signInWithGoogle();
+      if (user) {
+        onSuccess();
+        router.push('/dashboard/accounting-book');
+      }
+    } catch (error) {
+      console.error('Google 登入失敗:', error);
+    } finally {
+      onLoadingChange(false);
+    }
+  };
 
   return (
     <Form {...form}>
@@ -93,14 +118,32 @@ export default function LoginForm({ toggleForm }: { toggleForm: () => void }) {
           )}
         />
         <div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? '登入中...' : '登入'}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? '登入中...' : '登入'}
+          </Button>
+          <Button
+            variant="outline"
+            className="mt-4 w-full"
+            onClick={handleTestLogin}
+            disabled={form.formState.isSubmitting}
+          >
+            使用測試帳號登入
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleGoogleSignIn}
+            className="mt-4 w-full"
+            disabled={form.formState.isSubmitting}
+          >
+            <FcGoogle className="text-xl" />
+            使用 Google 登入
           </Button>
           <Button variant="link" onClick={toggleForm} className="mt-2">
             沒有帳號？請點擊註冊
-          </Button>
-          <Button variant="link" onClick={handleTestLogin} className="mt-2">
-            使用測試帳號登入
           </Button>
         </div>
       </form>

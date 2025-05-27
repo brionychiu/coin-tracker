@@ -1,15 +1,23 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
 import { FullscreenLoading } from '@/components/common/FullscreenLoading';
 import Navbar from '@/components/layout/Navbar';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { uid, isLoading, isAuthenticated } = useAuth();
+  const router = useRouter();
 
-  if (isLoading) return <FullscreenLoading />;
-  if (!isAuthenticated || !uid)
-    return <div className="p-4">請先登入才能使用此功能</div>;
+  useEffect(() => {
+    if (!isLoading && (!isAuthenticated || !uid)) {
+      router.replace('/');
+    }
+  }, [isLoading, isAuthenticated, uid, router]);
+
+  if (isLoading || !isAuthenticated || !uid) return <FullscreenLoading />;
 
   return (
     <>

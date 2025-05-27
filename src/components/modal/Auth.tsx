@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { FullscreenLoading } from '@/components/common/FullscreenLoading';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -18,9 +19,11 @@ import LoginForm from '../form/Login';
 import RegisterForm from '../form/Register';
 
 export default function AuthModal() {
-  const [isLoginView, setIsLoginView] = useState(true);
-  const { isAuthenticated, logout } = useAuth();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isLoginView, setIsLoginView] = useState<boolean>(true);
+  const [loadingMessage, setLoadingMessage] = useState<string>('');
 
+  const { isAuthenticated, logout } = useAuth();
   const { confirm, ConfirmModal } = useConfirm();
 
   const handleLogout = async () => {
@@ -29,6 +32,7 @@ export default function AuthModal() {
       message: '確定要登出嗎？',
       onConfirm: async () => {
         try {
+          setLoadingMessage('登出中...');
           await logout();
         } catch (error) {
           console.error('登出失敗:', error);
@@ -39,6 +43,9 @@ export default function AuthModal() {
 
   return (
     <>
+      {!!loadingMessage && (
+        <FullscreenLoading message={loadingMessage || '確認身份中'} />
+      )}
       {isAuthenticated ? (
         <Button
           variant="link"
@@ -48,7 +55,13 @@ export default function AuthModal() {
           會員登出
         </Button>
       ) : (
-        <Dialog onOpenChange={(open) => open && setIsLoginView(true)}>
+        <Dialog
+          open={isOpen}
+          onOpenChange={(open) => {
+            setIsOpen(open);
+            if (open) setIsLoginView(true);
+          }}
+        >
           <DialogTrigger>
             <span className="text-gray-03 underline-offset-4 hover:underline">
               登入/註冊
@@ -59,7 +72,15 @@ export default function AuthModal() {
               <DialogTitle>{isLoginView ? '登入' : '註冊'}</DialogTitle>
               <DialogDescription></DialogDescription>
               {isLoginView ? (
-                <LoginForm toggleForm={() => setIsLoginView(false)} />
+                <LoginForm
+                  toggleForm={() => setIsLoginView(false)}
+                  onLoadingChange={(loading) => {
+                    if (loading) {
+                      setLoadingMessage('登入中...');
+                    }
+                  }}
+                  onSuccess={() => setIsOpen(false)}
+                />
               ) : (
                 <RegisterForm toggleForm={() => setIsLoginView(true)} />
               )}

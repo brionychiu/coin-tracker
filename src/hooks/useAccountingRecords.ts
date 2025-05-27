@@ -9,17 +9,17 @@ import {
 } from '@/lib/api-client/accounting';
 import { AccountingRecord } from '@/types/accounting';
 
-export function useAccountingRecords(date: Date | undefined, month: number) {
+export function useAccountingRecords(selectedDate: Date | undefined) {
   const { uid } = useAuth();
 
   const [records, setRecords] = useState<AccountingRecord[]>([]);
   const [filteredRecords, setFilteredRecords] = useState<AccountingRecord[]>(
     [],
   );
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!month || !date || !uid) {
+    if (!selectedDate || !uid) {
       setRecords([]);
       setLoading(false);
       return;
@@ -27,20 +27,18 @@ export function useAccountingRecords(date: Date | undefined, month: number) {
 
     setLoading(true);
 
-    const unsubscribe = getAccountingRecords(uid, month, (data) => {
+    const unsubscribe = getAccountingRecords(uid, selectedDate, (data) => {
       setRecords(data);
 
-      if (date) {
-        setFilteredRecords(
-          data.filter((record) => isSameDay(record.date, date)),
-        );
-      }
+      setFilteredRecords(
+        data.filter((record) => isSameDay(record.date, selectedDate)),
+      );
     });
 
     setLoading(false);
 
     return () => unsubscribe();
-  }, [uid, month, date]);
+  }, [uid, selectedDate]);
 
   return { records, filteredRecords, loading };
 }
