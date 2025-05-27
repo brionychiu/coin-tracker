@@ -1,6 +1,8 @@
 import {
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
 } from 'firebase/auth';
 import { toast } from 'sonner';
@@ -38,6 +40,28 @@ export const signIn = async (email: string, password: string) => {
     };
     toast.error(errorMessages[error.code] || '登入失敗，請輸入正確信箱或密碼');
     return null;
+  }
+};
+
+export const signInWithGoogle = async () => {
+  const provider = new GoogleAuthProvider();
+
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const token = await result.user.getIdToken();
+
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken: token }),
+    });
+
+    if (!res.ok) throw new Error('無法設置登入 Cookie');
+
+    return result.user;
+  } catch (error: any) {
+    console.error('Google 登入失敗:', error);
+    throw error;
   }
 };
 
