@@ -24,6 +24,7 @@ import {
   where,
 } from '@/lib/firebase';
 import { convertToTimestamp } from '@/lib/utils/date';
+import { addUnsubscribe } from '@/lib/utils/firestore-unsubscribe';
 import { AccountingRecord, AccountingRecordPayload } from '@/types/accounting';
 
 /**
@@ -205,6 +206,8 @@ export function getAccountingRecords(
     callback(data);
   });
 
+  addUnsubscribe(unsubscribe);
+
   return unsubscribe;
 }
 
@@ -238,6 +241,8 @@ export function getAccountingRecordsByRange(
 
     callback(data);
   });
+
+  addUnsubscribe(unsubscribe);
 
   return unsubscribe;
 }
