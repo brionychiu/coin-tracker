@@ -35,6 +35,8 @@ export default function AuthModal() {
           await logout();
         } catch (error) {
           console.error('登出失敗:', error);
+        } finally {
+          setLoadingMessage('');
         }
       },
     });
