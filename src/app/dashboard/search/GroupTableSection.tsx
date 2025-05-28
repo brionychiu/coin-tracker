@@ -64,7 +64,7 @@ export const GroupTableSection = ({
             <TableCell className="w-[12.5%]">
               {formatToShortDay(record.date)}
             </TableCell>
-            <TableCell className="w-[37.5%] truncate">
+            <TableCell className="w-[37.5%] whitespace-pre-wrap break-words">
               {record.note ? highlightText(record.note, debouncedKeyword) : '-'}
             </TableCell>
             <TableCell className="w-[12.5%] text-right">

@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -36,6 +35,8 @@ export default function AuthModal() {
           await logout();
         } catch (error) {
           console.error('登出失敗:', error);
+        } finally {
+          setLoadingMessage('');
         }
       },
     });
@@ -70,7 +71,6 @@ export default function AuthModal() {
           <DialogContent className="w-350">
             <DialogHeader>
               <DialogTitle>{isLoginView ? '登入' : '註冊'}</DialogTitle>
-              <DialogDescription></DialogDescription>
               {isLoginView ? (
                 <LoginForm
                   toggleForm={() => setIsLoginView(false)}

@@ -1,6 +1,7 @@
 import { useRouter } from 'next/navigation';
 
 import { logoutUser } from '@/lib/api-client/auth';
+import { unsubscribeAll } from '@/lib/utils/firestore-unsubscribe';
 import { useAuthStore } from '@/stores/authStore';
 
 export function useAuth() {
@@ -8,10 +9,13 @@ export function useAuth() {
   const { user, isLoading, setUser } = useAuthStore();
 
   const logout = async () => {
+    unsubscribeAll();
+    setUser(null);
+
     await logoutUser();
     await fetch('/api/auth', { method: 'DELETE' });
-    setUser(null);
-    router.push('/');
+
+    router.replace('/');
   };
 
   return {

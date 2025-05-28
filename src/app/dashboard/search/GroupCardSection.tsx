@@ -73,14 +73,14 @@ export const GroupCardSection = ({
                 )}
               </div>
             </div>
-            <div className="text-right text-sm">
+            <div className="ml-2 text-right text-sm">
               <p className="font-semibold">
                 <span className="text-lg">{record.amount}</span>
-                <span className="ml-1 text-xs">
+                <span className="ml-1 break-keep text-xs">
                   {getCurrencyLabel(record.currency)}
                 </span>
               </p>
-              <p className="text-muted-foreground">
+              <p className="break-keep text-muted-foreground">
                 {getAccountLabelById(record.accountId, accountMap)}
               </p>
             </div>

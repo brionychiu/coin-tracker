@@ -24,6 +24,8 @@ import {
   where,
 } from '@/lib/firebase';
 import { convertToTimestamp } from '@/lib/utils/date';
+import { addUnsubscribe } from '@/lib/utils/firestore-unsubscribe';
+import { useAuthStore } from '@/stores/authStore';
 import { AccountingRecord, AccountingRecordPayload } from '@/types/accounting';
 
 /**
@@ -196,6 +198,9 @@ export function getAccountingRecords(
   );
 
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const currentUser = useAuthStore.getState().user;
+    if (!currentUser) return;
+
     const data = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -204,6 +209,8 @@ export function getAccountingRecords(
 
     callback(data);
   });
+
+  addUnsubscribe(unsubscribe);
 
   return unsubscribe;
 }
@@ -230,6 +237,9 @@ export function getAccountingRecordsByRange(
   );
 
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const currentUser = useAuthStore.getState().user;
+    if (!currentUser) return;
+
     const data = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -238,6 +248,8 @@ export function getAccountingRecordsByRange(
 
     callback(data);
   });
+
+  addUnsubscribe(unsubscribe);
 
   return unsubscribe;
 }

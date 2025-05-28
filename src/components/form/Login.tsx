@@ -134,6 +134,7 @@ export default function LoginForm({
             使用測試帳號登入
           </Button>
           <Button
+            type="button"
             variant="outline"
             onClick={handleGoogleSignIn}
             className="mt-4 w-full"
