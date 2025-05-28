@@ -9,13 +9,13 @@ export function useAuth() {
   const { user, isLoading, setUser } = useAuthStore();
 
   const logout = async () => {
+    unsubscribeAll();
+    setUser(null);
+
     await logoutUser();
     await fetch('/api/auth', { method: 'DELETE' });
 
-    unsubscribeAll();
-
-    setUser(null);
-    router.push('/');
+    router.replace('/');
   };
 
   return {
