@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -70,7 +69,6 @@ export default function AuthModal() {
           <DialogContent className="w-350">
             <DialogHeader>
               <DialogTitle>{isLoginView ? '登入' : '註冊'}</DialogTitle>
-              <DialogDescription></DialogDescription>
               {isLoginView ? (
                 <LoginForm
                   toggleForm={() => setIsLoginView(false)}
