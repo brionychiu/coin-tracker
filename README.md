@@ -40,25 +40,36 @@
 | 部署        | Vercel                                                                |
 
 ## 網站 Demo
+
 #### RWD：針對電腦、平板、手機的響應式設計
 
+<div>
+  <img src="./public/RWD-desktop-demo.gif" alt="RWD desktop demo" width="30%" style="vertical-align: top;" />
+  <img src="./public/RWD-tablet-demo.gif" alt="RWD tablet demo" width="30%" style="vertical-align: top;" />
+  <img src="./public/RWD-mobile-demo.gif" alt="RWD mobile demo" width="30%" style="vertical-align: top;" />
+</div>
+
 #### 註冊及登入
+
 使用者可以使用信箱註冊及登入，支援表單驗證。另可使用測試帳號或 Google 帳號快速登入。
 ![Login demo](./public/login-demo.gif)
 
 #### 記帳本
+
 支援 CRUD 功能，可紀錄不同幣值（即時轉換每月匯率）及圖片上傳與預覽。
 ![Accounting demo](./public/accounting-demo.gif)
 
 #### 圖表分析
+
 可以依照類別、帳戶的收入/支出顯示圓餅圖及直條圖，有助於使用者快速掌握財務概況。
 ![Report demo](./public/report-demo.gif)
 
 #### 搜尋關鍵字
+
 模糊搜尋備註關鍵字，即時高亮顯示，表格無限滾動，每次加載 100 筆資料。
 ![Search demo](./public/search-demo.gif)
 
 #### 設定類別及帳戶
+
 自訂 Icon 類別及設定不同帳戶，增加記帳使用彈性，輔以清晰直覺的呈現方式，有助於提升記帳的完整性與靈活性。
 ![Setting demo](./public/setting-demo.gif)
-
