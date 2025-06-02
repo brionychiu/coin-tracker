@@ -12,24 +12,27 @@
 
 import * as admin from 'firebase-admin';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { DateTime } from 'luxon';
 
 admin.initializeApp();
 
 export const fetchExchangeRates = onSchedule(
-  // 每月初（1 號）執行
+  // 每月 2 號早上 08:10（UTC+8），抓取前天的資料（UTC 1 號) 執行
+  // Doc: https://exchangerate.host/faq
   {
-    schedule: '0 0 1 * *',
+    schedule: '10 8 2 * *',
     timeZone: 'Asia/Taipei',
   },
   async (event) => {
     const base = 'TWD';
-    const now = new Date();
+    const taipeiNow = DateTime.now().setZone('Asia/Taipei');
 
-    // yyyy-mm 格式
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份從 0 開始
-    const docId = `${year}-${month}`;
-    const dateStr = `${year}-${month}-01`;
+    // 要查詢的日期是「前一天」，即 1 號的 EOD 匯率
+    const targetDate = taipeiNow.minus({ days: 1 });
+    const dateStr = targetDate.toFormat('yyyy-MM-dd');
+
+    // yyyy-MM
+    const docId = dateStr.slice(0, 7); // e.g., "2025-06"
 
     const apiKey = process.env.EXCHANGE_RATE_API_KEY;
     const url = `https://api.exchangerate.host/historical?access_key=${apiKey}&source=TWD&date=${dateStr}`;
