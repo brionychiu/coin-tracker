@@ -6,11 +6,15 @@ import { useEffect } from 'react';
 import { auth } from '@/lib/firebase';
 
 const sendTokenToServer = async (token: string) => {
-  await fetch('/api/auth', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ idToken: token }),
-  });
+  try {
+    await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken: token }),
+    });
+  } catch (err) {
+    console.error('Failed to send token to server:', err);
+  }
 };
 
 export function TokenRefresher() {
