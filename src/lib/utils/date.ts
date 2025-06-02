@@ -1,3 +1,5 @@
+import { getDate, isAfter, isSameMonth, subMonths } from 'date-fns';
+
 import { Timestamp } from '@/lib/firebase';
 import { formatYearMonthString } from '@/lib/utils/format';
 
@@ -12,11 +14,23 @@ export function convertToTimestamp(date: Date | null): Timestamp {
 
 /**
  * 根據目標日期與當前日期，決定使用哪個月份。
- * 如果目標日期大於今天，則回傳今天的月份，否則回傳目標日期的月份。
+ * 1. 如果「今天」是當月 1, 2 號，無論目標日期是否在未來，都 fallback 上個月。
+ * 2. 如果目標日期在未來 → 回傳今天的月份。
+ * 3. 否則 → 回傳目標日期的月份。
  */
 export function getEffectiveYearMonth(targetDate: Date): string {
-  const todayYearMonth = formatYearMonthString(new Date());
+  const today = new Date();
+  const todayYearMonth = formatYearMonthString(today);
   const targetYearMonth = formatYearMonthString(targetDate);
 
-  return targetYearMonth > todayYearMonth ? todayYearMonth : targetYearMonth;
+  if (getDate(today) <= 2 && isSameMonth(targetDate, today)) {
+    const prevMonth = subMonths(targetDate, 1);
+    return formatYearMonthString(prevMonth);
+  }
+
+  if (isAfter(targetDate, today)) {
+    return todayYearMonth;
+  }
+
+  return targetYearMonth;
 }
