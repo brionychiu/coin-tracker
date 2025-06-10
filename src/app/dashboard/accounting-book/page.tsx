@@ -2,7 +2,7 @@
 
 import { Loader2, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { CustomCalendar } from '@/app/dashboard/accounting-book/CustomCalendar';
 import Records from '@/app/dashboard/accounting-book/Records';
@@ -30,11 +30,11 @@ export default function AccountingBookPage() {
   const handleCreate = () => {
     setIsLoading(true);
     router.push('/dashboard/accounting-book/form/new');
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2500);
   };
+
+  useEffect(() => {
+    router.prefetch('/dashboard/accounting-book/form/new');
+  }, []);
 
   return (
     <div className="mx-auto h-full w-full max-w-6xl bg-white">
