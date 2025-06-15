@@ -24,6 +24,24 @@ export const metadata: Metadata = {
   icons: {
     icon: '/logo.png',
   },
+  keywords: ['記帳', '理財', '支出管理', '收入記錄', '快樂記帳'],
+  authors: [{ name: 'Briony', url: 'https://coin-tracker-eosin.vercel.app/' }],
+  openGraph: {
+    title: '快樂記帳',
+    description: '輕鬆掌握生活收支，打造專屬你的財務自由。',
+    url: 'https://coin-tracker-eosin.vercel.app/',
+    siteName: '快樂記帳',
+    images: [
+      {
+        url: 'https://coin-tracker-eosin.vercel.app/logo.png',
+        width: 1200,
+        height: 630,
+        alt: '快樂記帳預覽圖',
+      },
+    ],
+    locale: 'zh_TW',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({
