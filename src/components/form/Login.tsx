@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { FcGoogle } from 'react-icons/fc';
+// import { FcGoogle } from 'react-icons/fc';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
-import { signIn, signInWithGoogle } from '@/lib/api-client/auth';
+import { signIn } from '@/lib/api-client/auth';
 
 const FormSchema = z.object({
   email: z.string().email({ message: '請輸入正確格式電子信箱' }),
@@ -70,21 +70,21 @@ export default function LoginForm({
       onLoadingChange(false);
     }
   }
-
-  const handleGoogleSignIn = async () => {
-    onLoadingChange(true);
-    try {
-      const user = await signInWithGoogle();
-      if (user) {
-        onSuccess();
-        router.push('/dashboard/accounting-book');
-      }
-    } catch (error) {
-      console.error('Google 登入失敗:', error);
-    } finally {
-      onLoadingChange(false);
-    }
-  };
+  // TBF: google login bug
+  // const handleGoogleSignIn = async () => {
+  //   onLoadingChange(true);
+  //   try {
+  //     const user = await signInWithGoogle();
+  //     if (user) {
+  //       onSuccess();
+  //       router.push('/dashboard/accounting-book');
+  //     }
+  //   } catch (error) {
+  //     console.error('Google 登入失敗:', error);
+  //   } finally {
+  //     onLoadingChange(false);
+  //   }
+  // };
 
   return (
     <Form {...form}>
@@ -133,7 +133,7 @@ export default function LoginForm({
           >
             使用測試帳號登入
           </Button>
-          <Button
+          {/* <Button
             type="button"
             variant="outline"
             onClick={handleGoogleSignIn}
@@ -142,7 +142,7 @@ export default function LoginForm({
           >
             <FcGoogle className="text-xl" />
             使用 Google 登入
-          </Button>
+          </Button> */}
           <Button variant="link" onClick={toggleForm} className="mt-2">
             沒有帳號？請點擊註冊
           </Button>
